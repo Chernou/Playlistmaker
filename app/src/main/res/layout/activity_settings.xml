@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/settings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/main_text_size"
+        android:drawablePadding="28dp"
+        app:drawableStartCompat="@drawable/ic_arrow_back" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/start_padding_settings_menu_items"
+            android:layout_marginTop="@dimen/vertical_padding_settings_menu_items"
+            android:layout_marginBottom="@dimen/vertical_padding_settings_menu_items"
+            android:text="@string/dark_theme"
+            android:textColor="@color/black"
+            android:textSize="@dimen/settings_text_size" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="18dp"
+            android:minWidth="32dp"
+            android:minHeight="48dp"
+            app:thumbTint="@color/thumb_tint"
+            app:trackTint="@color/settings_icon_colors" />
+
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/start_padding_settings_menu_items"
+        android:paddingTop="@dimen/vertical_padding_settings_menu_items"
+        android:paddingBottom="@dimen/vertical_padding_settings_menu_items"
+        android:paddingEnd="16dp"
+        android:textSize="@dimen/settings_text_size"
+        android:text="@string/share_app"
+        android:textColor="@color/black"
+        app:drawableEndCompat="@drawable/ic_share" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/start_padding_settings_menu_items"
+        android:paddingTop="@dimen/vertical_padding_settings_menu_items"
+        android:paddingBottom="@dimen/vertical_padding_settings_menu_items"
+        android:paddingEnd="14dp"
+        android:textSize="@dimen/settings_text_size"
+        android:text="@string/contact_support"
+        android:textColor="@color/black"
+        app:drawableEndCompat="@drawable/ic_baseline_support_agent_24" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/start_padding_settings_menu_items"
+        android:paddingTop="@dimen/vertical_padding_settings_menu_items"
+        android:paddingBottom="@dimen/vertical_padding_settings_menu_items"
+        android:paddingEnd="20dp"
+        android:textSize="@dimen/settings_text_size"
+        android:text="@string/user_agreement"
+        android:textColor="@color/black"
+        app:drawableEndCompat="@drawable/ic_arrow_forward" />
+
+
+
+</LinearLayout>
