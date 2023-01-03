@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="settings_icons">@color/white</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="background_main">#1A1B22</color>
+    <color name="thumb_tint">#3772E7</color>
+    <color name="track_color">#483772E7</color>
+    <color name="settings_background">@color/background_main</color>
+</resources>

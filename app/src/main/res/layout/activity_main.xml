@@ -20,68 +20,23 @@
 
     <Button
         android:id="@+id/main_search"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/minimum"
+        style="@style/MainButtonsStyle"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="0dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:fontFamily="sans-serif"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
         android:text="@string/search"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/main_text_size"
-        app:cornerRadius="@dimen/corner_radius_main"
-        app:icon="@drawable/ic_search"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/ic_search" />
 
     <Button
         android:id="@+id/main_media"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/minimum"
-        android:layout_marginTop="@dimen/vertical_margin_main_buttons"
-        android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
+        style="@style/MainButtonsStyle"
         android:text="@string/media"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/main_text_size"
-        app:cornerRadius="@dimen/corner_radius_main"
-        app:icon="@drawable/ic_media"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/ic_media" />
 
     <Button
         android:id="@+id/main_settings"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/minimum"
-        android:layout_marginTop="@dimen/vertical_margin_main_buttons"
+        style="@style/MainButtonsStyle"
         android:layout_marginBottom="28dp"
-        android:layout_weight="1"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="center"
         android:text="@string/settings"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/black"
-        android:textSize="@dimen/main_text_size"
-        app:cornerRadius="@dimen/corner_radius_main"
-        app:icon="@drawable/ic_settings"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="@color/black" />
+        app:icon="@drawable/ic_settings" />
 
 </LinearLayout>
