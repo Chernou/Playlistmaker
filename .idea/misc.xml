@@ -10,6 +10,7 @@
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_baseline_support_agent_24.xml" value="0.2265" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2265" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_media.xml" value="0.124" />
+        <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_ripple_effect.xml" value="0.2265" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_search.xml" value="0.124" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_settings.xml" value="0.124" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/drawable/ic_share.xml" value="0.2265" />
@@ -18,6 +19,7 @@
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/layout/activity_media.xml" value="0.25416666666666665" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/layout/activity_search.xml" value="0.25416666666666665" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/layout/activity_settings.xml" value="0.264" />
+        <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/layout/toolbar.xml" value="0.253125" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2265" />
         <entry key="..\:/Android/Projects/PlaylistMaker/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.124" />
       </map>

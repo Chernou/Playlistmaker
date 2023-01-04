@@ -5,11 +5,14 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        val toolbar = findViewById<Toolbar>(R.id.settings_toolbar)
+        toolbar.setNavigationOnClickListener { onBackPressed() }
 
         //val backToMain = findViewById<TextView>(R.id.back_to_main)
         //val switchDarkTheme = findViewById<SwitchCompat>(R.id.switch_dark_theme)
