@@ -26,9 +26,8 @@
         android:layout_marginTop="40dp"
         android:layout_marginBottom="0dp"
         android:layout_weight="1"
+        android:foreground="@drawable/ic_ripple_effect"
         android:backgroundTint="@color/white"
-        android:fontFamily="sans-serif"
-        android:foreground="?attr/selectableItemBackground"
         android:gravity="center"
         android:text="@string/search"
         android:textAlignment="center"
@@ -38,7 +37,7 @@
         app:cornerRadius="@dimen/corner_radius_main"
         app:icon="@drawable/ic_search"
         app:iconGravity="textStart"
-        app:iconPadding="10dp"
+        app:iconPadding="@dimen/main_icon_padding"
         app:iconTint="@color/black" />
 
     <Button
@@ -48,8 +47,8 @@
         android:layout_marginStart="@dimen/minimum"
         android:layout_marginTop="@dimen/vertical_margin_main_buttons"
         android:layout_weight="1"
+        android:foreground="@drawable/ic_ripple_effect"
         android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
         android:gravity="center"
         android:text="@string/media"
         android:textAlignment="center"
@@ -59,7 +58,7 @@
         app:cornerRadius="@dimen/corner_radius_main"
         app:icon="@drawable/ic_media"
         app:iconGravity="textStart"
-        app:iconPadding="10dp"
+        app:iconPadding="@dimen/main_icon_padding"
         app:iconTint="@color/black" />
 
     <Button
@@ -70,8 +69,8 @@
         android:layout_marginTop="@dimen/vertical_margin_main_buttons"
         android:layout_marginBottom="28dp"
         android:layout_weight="1"
+        android:foreground="@drawable/ic_ripple_effect"
         android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
         android:gravity="center"
         android:text="@string/settings"
         android:textAlignment="center"
@@ -81,7 +80,7 @@
         app:cornerRadius="@dimen/corner_radius_main"
         app:icon="@drawable/ic_settings"
         app:iconGravity="textStart"
-        app:iconPadding="10dp"
+        app:iconPadding="@dimen/main_icon_padding"
         app:iconTint="@color/black" />
 
 </LinearLayout>
