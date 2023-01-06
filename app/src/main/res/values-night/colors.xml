@@ -8,4 +8,6 @@
     <color name="track_color">#483772E7</color>
     <color name="settings_background">@color/background_main</color>
     <color name="toolbar_text_color">@color/white</color>
+    <color name="search_view_background">#FFFFFF</color>
+    <color name="search_hint">@color/black</color>
 </resources>
