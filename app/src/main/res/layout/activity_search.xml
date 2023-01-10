@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/settings_background"
@@ -25,20 +26,44 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <EditText
-        android:id="@+id/search_edit_text"
-        style="@style/SearchEditText"
-        android:layout_marginHorizontal="@dimen/start_padding_settings_menu_items"
-        android:autofillHints="@string/search"
-        android:background="@drawable/bg_search_view_rounded"
-        android:drawableStart="@drawable/ic_search_small"
-        android:drawableEnd="@drawable/ic_baseline_clear"
-        android:drawablePadding="9dp"
-        android:hint="@string/search"
-        android:inputType="text"
-        android:lines="1"
-        android:maxLength="30"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/start_padding_settings_menu_items">
 
-        android:visibility="visible" />
+        <EditText
+            android:id="@+id/search_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autofillHints="@string/search"
+            android:background="@drawable/bg_search_view_rounded"
+            android:drawableStart="@drawable/ic_search_small"
+            android:drawablePadding="9dp"
+            android:fontFamily="@font/ys_display_regular"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLength="30"
+            android:paddingStart="13dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/search_hint"
+            android:textSize="@dimen/settings_text_size"
+            android:visibility="visible"
+            app:drawableTint="@color/search_hint"
+            app:fontWeight="400"
+            tools:ignore="RtlSymmetry" />
+
+        <ImageView
+            android:id="@+id/clear_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="14dp"
+            android:visibility="gone"
+            android:background="@drawable/ic_baseline_clear"
+            app:tint="@color/search_hint"
+            android:contentDescription="@string/clear_button" />
+
+    </FrameLayout>
 
 </LinearLayout>

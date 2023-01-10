@@ -1,14 +1,13 @@
 package com.practicum.playlistmaker
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 
@@ -28,10 +27,18 @@ class SearchActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
-        val searchDrawable = R.drawable.ic_search_small
-        searchEditText.setCompoundDrawablesWithIntrinsicBounds(searchDrawable, 0, 0, 0)
         searchEditText.setText(searchText)
-        searchEditText.setupClearButtonWithAction()
+        searchEditText.addTextChangedListener(searchTextWatcher)
+
+        val clearImage = findViewById<ImageView>(R.id.clear_image)
+        clearImage.setOnClickListener {
+            searchText = ""
+            searchEditText.setText(searchText)
+            clearImage.visibility = View.INVISIBLE
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -39,35 +46,18 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH_TEXT, searchText)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun EditText.setupClearButtonWithAction() {
+    private val searchTextWatcher = object: TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
-        addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(editable: Editable?) {
-                val searchDrawable = R.drawable.ic_search_small
-                val clearIcon =
-                    if (editable?.isNotEmpty() == true) R.drawable.ic_baseline_clear else 0
-                setCompoundDrawablesWithIntrinsicBounds(searchDrawable, 0, clearIcon, 0)
-                searchText = editable.toString()
-            }
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-        })
-
-        setOnTouchListener(View.OnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                if (event.rawX >= (this.right - this.compoundPaddingRight)) {
-                    this.setText("")
-                    val inputMethodManager =
-                        getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    inputMethodManager?.hideSoftInputFromWindow(this.windowToken, 0)
-                    return@OnTouchListener true
-                }
-            }
-            return@OnTouchListener false
-        })
+        override fun afterTextChanged(editable: Editable?) {
+            val clearImage = findViewById<ImageView>(R.id.clear_image)
+            if (editable?.isNotEmpty() == true) clearImage.visibility = View.VISIBLE
+            else clearImage.visibility = View.INVISIBLE
+            val searchEditText = findViewById<EditText>(R.id.search_edit_text)
+            searchText = searchEditText.text.toString()
+        }
     }
 
     companion object {

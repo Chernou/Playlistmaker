@@ -37,17 +37,4 @@
         <item name="fontWeight">400</item>
     </style>
 
-    <style name="SearchEditText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">@dimen/start_padding_settings_menu_items</item>
-        <item name="android:textSize">@dimen/settings_text_size</item>
-        <item name="drawableTint">@color/search_hint</item>
-        <item name="fontFamily">@font/ys_display_regular</item>
-        <item name="fontWeight">400</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textColorHint">@color/search_hint</item>
-    </style>
-
-
 </resources>
