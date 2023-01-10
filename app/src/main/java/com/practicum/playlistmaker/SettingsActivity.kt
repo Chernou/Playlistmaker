@@ -21,7 +21,7 @@ class SettingsActivity : AppCompatActivity() {
         val userAgreement = findViewById<TextView>(R.id.user_agreement)
 
         shareApp.setOnClickListener {
-            val sentLink = "https://practicum.yandex.ru/android-developer/"
+            val sentLink = getString(R.string.practicum_android_link)
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.putExtra(Intent.EXTRA_TEXT, sentLink)
             shareIntent.setType("text/plain")
@@ -29,9 +29,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         support.setOnClickListener {
-            val email = "chernov.i.u@gmail.com"
-            val subject = "Сообщение разработчикам и разработчицам приложения Playlist Maker"
-            val textMessage = "Спасибо разработчикам и разработчицам за крутое приложение!"
+            val email = getString(R.string.feedback_addressee_mail)
+            val subject = getString(R.string.feedback_subject)
+            val textMessage = getString(R.string.feedback_message_text)
             val supportIntent = Intent(Intent.ACTION_SENDTO)
             supportIntent.data = Uri.parse("mailto:")
             supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
@@ -41,7 +41,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         userAgreement.setOnClickListener {
-            val link = "https://yandex.ru/legal/practicum_offer/"
+            val link = getString(R.string.practicum_offer_link)
             val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
             startActivity(userAgreementIntent)
         }

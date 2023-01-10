@@ -36,8 +36,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val searchEditText = findViewById<EditText>(R.id.search_edit_text)
-        outState.putString(SEARCH_TEXT, searchEditText.text.toString())
+        outState.putString(SEARCH_TEXT, searchText)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -49,6 +48,7 @@ class SearchActivity : AppCompatActivity() {
                 val clearIcon =
                     if (editable?.isNotEmpty() == true) R.drawable.ic_baseline_clear else 0
                 setCompoundDrawablesWithIntrinsicBounds(searchDrawable, 0, clearIcon, 0)
+                searchText = editable.toString()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit

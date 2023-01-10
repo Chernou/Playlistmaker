@@ -8,6 +8,10 @@
     <string name="contact_support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="media_activity">Media activity</string>
-    <string name="search_activity">Search Activity</string>
+    <string name="practicum_android_link">https://practicum.yandex.ru/android-developer/</string>
+    <string name="feedback_addressee_mail">chernov.i.u@gmail.com</string>
+    <string name="feedback_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+    <string name="feedback_message_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="practicum_offer_link">https://yandex.ru/legal/practicum_offer/</string>
 
 </resources>
