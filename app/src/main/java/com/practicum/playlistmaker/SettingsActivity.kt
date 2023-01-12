@@ -14,8 +14,6 @@ class SettingsActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.settings_toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        //val backToMain = findViewById<TextView>(R.id.back_to_main)
-        //val switchDarkTheme = findViewById<SwitchCompat>(R.id.switch_dark_theme)
         val shareApp = findViewById<TextView>(R.id.share_app)
         val support = findViewById<TextView>(R.id.support)
         val userAgreement = findViewById<TextView>(R.id.user_agreement)
