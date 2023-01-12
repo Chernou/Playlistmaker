@@ -22,7 +22,7 @@ class SettingsActivity : AppCompatActivity() {
             val sentLink = getString(R.string.practicum_android_link)
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.putExtra(Intent.EXTRA_TEXT, sentLink)
-            shareIntent.setType("text/plain")
+            shareIntent.type = "text/plain"
             startActivity(shareIntent)
         }
 
