@@ -4,10 +4,12 @@
     <dimen name="main_text_size">24sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="vertical_margin_main_buttons">16dp</dimen>
-    <dimen name="vertical_padding_settings_menu_items">21dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+    <dimen name="vertical_padding_settings_menu_items">20dp</dimen>
     <dimen name="start_padding_settings_menu_items">16dp</dimen>
     <dimen name="corner_radius_main">16dp</dimen>
-    <dimen name="main_icon_padding">10dp</dimen>
+    <dimen name="main_icon_padding">8dp</dimen>
     <dimen name="track_opacity">100%</dimen>
     <dimen name="font_weight_main">500</dimen>
     <dimen name="font_weight_settings">400</dimen>

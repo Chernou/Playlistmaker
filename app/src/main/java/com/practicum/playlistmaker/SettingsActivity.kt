@@ -14,11 +14,11 @@ class SettingsActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.settings_toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        val shareApp = findViewById<TextView>(R.id.share_app)
-        val support = findViewById<TextView>(R.id.support)
-        val userAgreement = findViewById<TextView>(R.id.user_agreement)
+        val shareAppTextView = findViewById<TextView>(R.id.share_app)
+        val supportTextView = findViewById<TextView>(R.id.support)
+        val userAgreementTextView = findViewById<TextView>(R.id.user_agreement)
 
-        shareApp.setOnClickListener {
+        shareAppTextView.setOnClickListener {
             val sentLink = getString(R.string.practicum_android_link)
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.putExtra(Intent.EXTRA_TEXT, sentLink)
@@ -26,19 +26,20 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
 
-        support.setOnClickListener {
+        supportTextView.setOnClickListener {
             val email = getString(R.string.feedback_addressee_mail)
             val subject = getString(R.string.feedback_subject)
             val textMessage = getString(R.string.feedback_message_text)
-            val supportIntent = Intent(Intent.ACTION_SENDTO)
-            supportIntent.data = Uri.parse("mailto:")
-            supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-            supportIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-            supportIntent.putExtra(Intent.EXTRA_TEXT, textMessage)
-            startActivity(supportIntent)
+            Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_TEXT, textMessage)
+                startActivity(this)
+            }
         }
 
-        userAgreement.setOnClickListener {
+        userAgreementTextView.setOnClickListener {
             val link = getString(R.string.practicum_offer_link)
             val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
             startActivity(userAgreementIntent)

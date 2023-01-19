@@ -28,8 +28,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
@@ -48,19 +47,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="15dp"
+            android:layout_marginEnd="@dimen/padding_12"
             android:minWidth="32dp"
             android:minHeight="48dp"
             app:thumbTint="@color/thumb_tint"
             app:trackTint="@color/track_color" />
-
 
     </FrameLayout>
 
     <TextView
         android:id="@+id/share_app"
         style="@style/SettingsTextStyle"
-        android:paddingEnd="16dp"
+        android:paddingEnd="@dimen/padding_16"
         android:text="@string/share_app"
         app:drawableEndCompat="@drawable/ic_share"
         tools:ignore="RtlSymmetry" />
@@ -68,7 +66,7 @@
     <TextView
         android:id="@+id/support"
         style="@style/SettingsTextStyle"
-        android:paddingEnd="14dp"
+        android:paddingEnd="@dimen/padding_12"
         android:text="@string/contact_support"
         app:drawableEndCompat="@drawable/ic_baseline_support_agent_24"
         tools:ignore="RtlSymmetry" />
@@ -76,10 +74,9 @@
     <TextView
         android:id="@+id/user_agreement"
         style="@style/SettingsTextStyle"
-        android:paddingEnd="20dp"
+        android:paddingEnd="@dimen/padding_16"
         android:text="@string/user_agreement"
         app:drawableEndCompat="@drawable/ic_arrow_forward"
         tools:ignore="RtlSymmetry" />
-
 
 </LinearLayout>

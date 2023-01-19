@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
+    private lateinit var clearImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +31,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setText(searchText)
         searchEditText.addTextChangedListener(searchTextWatcher)
 
-        val clearImage = findViewById<ImageView>(R.id.clear_image)
+        clearImage = findViewById(R.id.clear_image)
         clearImage.setOnClickListener {
             searchText = ""
             searchEditText.setText(searchText)
@@ -52,7 +53,6 @@ class SearchActivity : AppCompatActivity() {
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun afterTextChanged(editable: Editable?) {
-            val clearImage = findViewById<ImageView>(R.id.clear_image)
             if (editable?.isNotEmpty() == true) clearImage.visibility = View.VISIBLE
             else clearImage.visibility = View.INVISIBLE
             val searchEditText = findViewById<EditText>(R.id.search_edit_text)
