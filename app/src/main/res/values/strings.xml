@@ -14,5 +14,6 @@
     <string name="feedback_message_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="practicum_offer_link">https://yandex.ru/legal/practicum_offer/</string>
     <string name="clear_button">Кнопка удаления введенного текста поиска</string>
+    <string name="artwork_content_description">artwork</string>
 
 </resources>

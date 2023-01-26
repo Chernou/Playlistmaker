@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingStart="@dimen/padding_16"
-    android:paddingVertical="@dimen/padding_16"
+    android:paddingStart="@dimen/size_16"
+    android:paddingVertical="@dimen/size_16"
     android:paddingBottom="28dp"
     tools:ignore="RtlSymmetry">
 
