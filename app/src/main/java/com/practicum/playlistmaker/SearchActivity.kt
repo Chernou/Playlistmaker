@@ -43,12 +43,12 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
-        val recyclerView: RecyclerView = findViewById(R.id.search_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
         val trackList = initializeMockList()
         val trackAdapter = TrackAdapter(trackList)
-        recyclerView.adapter = trackAdapter
-
+        findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
+            layoutManager = LinearLayoutManager(this.context)
+            adapter = trackAdapter
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="minimum">1dp</dimen>
+    <dimen name="rounded_corners_album">2dp</dimen>
     <dimen name="main_text_size">24sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="small_text_size">11sp</dimen>

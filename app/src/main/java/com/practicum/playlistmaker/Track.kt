@@ -30,7 +30,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .load(model.artworkUri)
             .fitCenter()
             .centerCrop()
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(2)))
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.rounded_corners_album))))
             .placeholder(R.drawable.ic_track_placeholder)
             .into(artwork)
     }
