@@ -11,7 +11,7 @@
         android:id="@+id/search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginBottom="@dimen/padding_16"
+        android:layout_marginBottom="@dimen/size_16"
         app:navigationIcon="@drawable/ic_arrow_back">
 
         <TextView
@@ -44,7 +44,7 @@
             android:inputType="text"
             android:lines="1"
             android:maxLength="30"
-            android:paddingStart="@dimen/padding_12"
+            android:paddingStart="@dimen/size_12"
             android:textColor="@color/black"
             android:textColorHint="@color/search_hint"
             android:textSize="@dimen/settings_text_size"
@@ -58,12 +58,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="@dimen/padding_12"
-            android:visibility="gone"
+            android:layout_marginEnd="@dimen/size_12"
             android:background="@drawable/ic_baseline_clear"
-            app:tint="@color/search_hint"
-            android:contentDescription="@string/clear_button" />
+            android:contentDescription="@string/clear_button"
+            android:visibility="gone"
+            app:tint="@color/search_hint" />
 
     </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/size_24" />
 
 </LinearLayout>
