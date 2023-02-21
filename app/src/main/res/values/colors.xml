@@ -16,5 +16,6 @@
     <color name="toolbar_text_color">@color/black</color>
     <color name="search_view_background">#E6E8EB</color>
     <color name="search_hint">#AEAFB4</color>
-
+    <color name="black_light_white_night">#FF000000</color>
+    <color name="white_light_black_night">#FFFFFFFF</color>
 </resources>

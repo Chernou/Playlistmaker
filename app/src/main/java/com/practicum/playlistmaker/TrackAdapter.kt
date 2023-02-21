@@ -4,7 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackAdapter(private val trackList: List<Track>): RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter(): RecyclerView.Adapter<TrackViewHolder>() {
+
+    var trackList = ArrayList<Track>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         return TrackViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.card_view, parent, false))
     }
