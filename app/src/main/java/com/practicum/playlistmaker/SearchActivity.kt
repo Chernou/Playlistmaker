@@ -23,6 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
+    private var lastUnsuccessfulSearch: String = ""
     private lateinit var clearImage: ImageView
 
     private val retrofit = Retrofit.Builder()
@@ -44,23 +45,16 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
+        }
+
         searchErrorTextView = findViewById(R.id.search_result_text)
         searchErrorImageView = findViewById(R.id.search_result_image)
         refreshSearchButton = findViewById(R.id.refresh_search_button)
-
-        if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
-            /*searchErrorTextView.visibility = savedInstanceState.getInt(RESULT_TEXT_VISIBILITY)
-            searchErrorImageView.visibility = savedInstanceState.getInt(IMAGE_VISIBILITY)
-            refreshSearchButton.visibility = savedInstanceState.getInt(REFRESH_BUTTON_VISIBILITY)*/
-        }
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
-
-        searchErrorTextView = findViewById(R.id.search_result_text)
-        searchErrorImageView = findViewById(R.id.search_result_image)
-        refreshSearchButton = findViewById(R.id.refresh_search_button)
 
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         searchEditText.setText(searchText)
@@ -86,26 +80,22 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 searchTracks(searchText)
-                //Toast.makeText(applicationContext, "Успешно", Toast.LENGTH_LONG).show()
                 true
             }
             false
         }
 
         refreshSearchButton.setOnClickListener {
-            searchTracks(searchText)
+            searchTracks(lastUnsuccessfulSearch)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, searchText)
-        /*outState.putInt(RESULT_TEXT_VISIBILITY, searchErrorTextView.visibility)
-        outState.putInt(IMAGE_VISIBILITY, searchErrorImageView.visibility)
-        outState.putInt(REFRESH_BUTTON_VISIBILITY, refreshSearchButton.visibility)*/
     }
 
-    private val searchTextWatcher = object: TextWatcher {
+    private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -120,7 +110,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun searchTracks(searchText: String) {
 
-        itunesService.search(searchText).enqueue(object: Callback<SearchResponse>{
+        itunesService.search(searchText).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(
                 call: Call<SearchResponse>,
                 response: Response<SearchResponse>
@@ -135,15 +125,17 @@ class SearchActivity : AppCompatActivity() {
                         Log.d("!@#", response.code().toString())
                         Log.d("!@#", searchText)
                         Log.d("!@#", trackList.size.toString())
-                    }
-                    else {
+                    } else {
+                        trackAdapter.trackList.clear()
+                        trackAdapter.notifyDataSetChanged()
                         showMessage(NOTHING_IS_FOUND)
                         Log.d("!@#", response.code().toString())
                         Log.d("!@#", searchText)
                         Log.d("!@#", trackList.size.toString())
                     }
-                }
-                else {
+                } else {
+                    trackAdapter.trackList.clear()
+                    trackAdapter.notifyDataSetChanged()
                     showMessage(UNSUCCESSFUL_CONNECTION)
                     Log.d("!@#", response.code().toString())
                 }
@@ -157,21 +149,32 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun showMessage(errorCode: Int) {
-        when (errorCode) {
+    private fun showMessage(searchState: String) {
+        when (searchState) {
             UNSUCCESSFUL_CONNECTION -> {
                 searchErrorTextView.visibility = View.VISIBLE
                 searchErrorImageView.visibility = View.VISIBLE
                 refreshSearchButton.visibility = View.VISIBLE
                 searchErrorTextView.text = getString(R.string.no_internet_connection)
-                searchErrorImageView.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.no_internet_connection))
+                searchErrorImageView.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.no_internet_connection
+                    )
+                )
+                lastUnsuccessfulSearch = searchText
             }
             NOTHING_IS_FOUND -> {
                 searchErrorTextView.visibility = View.VISIBLE
                 searchErrorImageView.visibility = View.VISIBLE
                 refreshSearchButton.visibility = View.INVISIBLE
                 searchErrorTextView.text = getString(R.string.nothing_is_found)
-                searchErrorImageView.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.nothing_is_found))
+                searchErrorImageView.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.nothing_is_found
+                    )
+                )
             }
             else -> {
                 searchErrorTextView.visibility = View.INVISIBLE
@@ -183,13 +186,10 @@ class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
-        /*const val IMAGE_VISIBILITY = "IMAGE_VISIBILITY"
-        const val RESULT_TEXT_VISIBILITY = "RESULT_TEXT_VISIBILITY"
-        const val REFRESH_BUTTON_VISIBILITY = "REFRESH_BUTTON_VISIBILITY"*/
         const val BASE_URL = "https://itunes.apple.com"
-        const val UNSUCCESSFUL_CONNECTION = 500
-        const val NOTHING_IS_FOUND = 404
-        const val SUCCESSFUL_SEARCH = 200
+        const val UNSUCCESSFUL_CONNECTION = "UNSUCCESSFUL_CONNECTION"
+        const val NOTHING_IS_FOUND = "NOTHING_IS_FOUND"
+        const val SUCCESSFUL_SEARCH = "SUCCESSFUL_SEARCH"
     }
 }
 
