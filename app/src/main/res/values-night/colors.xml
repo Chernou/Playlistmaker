@@ -10,4 +10,6 @@
     <color name="toolbar_text_color">@color/white</color>
     <color name="search_view_background">#FFFFFF</color>
     <color name="search_hint">@color/black</color>
+    <color name="black_light_white_night">#FFFFFFFF</color>
+    <color name="white_light_black_night">#FF000000</color>
 </resources>

@@ -4,6 +4,7 @@
     <dimen name="rounded_corners_album">2dp</dimen>
     <dimen name="main_text_size">24sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="refresh_search_text_size">14sp</dimen>
     <dimen name="small_text_size">11sp</dimen>
     <dimen name="vertical_margin_main_buttons">16dp</dimen>
     <dimen name="size_24">24dp</dimen>
@@ -15,12 +16,27 @@
     <dimen name="vertical_padding_settings_menu_items">20dp</dimen>
     <dimen name="start_padding_settings_menu_items">16dp</dimen>
     <dimen name="corner_radius_main">16dp</dimen>
+    <dimen name="refresh_search_corner_radius">54dp</dimen>
     <dimen name="main_icon_padding">8dp</dimen>
     <dimen name="track_opacity">100%</dimen>
     <dimen name="font_weight_main">500</dimen>
     <dimen name="font_weight_settings">400</dimen>
     <dimen name="size_68">68dp</dimen>
+    <dimen name="size_44">44dp</dimen>
     <dimen name="size_64">64dp</dimen>
     <dimen name="size_46">46dp</dimen>
+    <dimen name="size_120">120dp</dimen>
+    <dimen name="size_312">312dp</dimen>
+    <dimen name="size_346">346dp</dimen>
+    <dimen name="size_458">458dp</dimen>
+    <dimen name="size_96">96dp</dimen>
+    <dimen name="size_322">322dp</dimen>
+    <dimen name="size_436">436dp</dimen>
+    <dimen name="size_112">112dp</dimen>
+    <dimen name="size_136">136dp</dimen>
+    <dimen name="size_86">86dp</dimen>
+    <dimen name="size_224">224dp</dimen>
+    <dimen name="size_336">336dp</dimen>
+    <dimen name="size_332">332dp</dimen>
 
 </resources>

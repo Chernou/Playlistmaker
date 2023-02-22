@@ -4,19 +4,42 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
+    private var lastUnsuccessfulSearch: String = ""
     private lateinit var clearImage: ImageView
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val itunesService = retrofit.create(ItunesService::class.java)
+
+    var trackList = ArrayList<Track>()
+
+    val trackAdapter = TrackAdapter()
+
+    private lateinit var searchErrorImageView: ImageView
+    private lateinit var searchErrorTextView: TextView
+    private lateinit var refreshSearchButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +48,10 @@ class SearchActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
         }
+
+        searchErrorTextView = findViewById(R.id.search_result_text)
+        searchErrorImageView = findViewById(R.id.search_result_image)
+        refreshSearchButton = findViewById(R.id.refresh_search_button)
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -37,17 +64,28 @@ class SearchActivity : AppCompatActivity() {
         clearImage.setOnClickListener {
             searchText = ""
             searchEditText.setText(searchText)
+            clearTracks()
             clearImage.visibility = View.INVISIBLE
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
-        val trackList = initializeMockList()
-        val trackAdapter = TrackAdapter(trackList)
         findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = trackAdapter
+        }
+
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                searchTracks(searchText)
+                true
+            }
+            false
+        }
+
+        refreshSearchButton.setOnClickListener {
+            searchTracks(lastUnsuccessfulSearch)
         }
     }
 
@@ -56,7 +94,7 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH_TEXT, searchText)
     }
 
-    private val searchTextWatcher = object: TextWatcher {
+    private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
@@ -69,48 +107,111 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun initializeMockList(): ArrayList<Track> {
-        val track1 = Track(
-            "Smells Like Teen Spirit",
-            "Nirvana",
-            "5:01",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-        )
-        val track2 = Track(
-            "Billie Jean",
-            "Michael Jackson",
-            "4:35",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-        )
-        val track3 = Track(
-            "Stayin' Alive",
-            "Bee Gees",
-            "4:10",
-            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-        )
-        val track4 = Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        )
-        val track5 = Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        )
-        val track6 = Track(
-            "Страна дождей",
-            "Noize MC",
-            "2:18",
-            ""
-        )
-        return arrayListOf(track1, track2, track3, track4, track5, track6)
+    private fun searchTracks(searchText: String) {
+
+        itunesService.search(searchText).enqueue(object : Callback<SearchResponse> {
+            override fun onResponse(
+                call: Call<SearchResponse>,
+                response: Response<SearchResponse>
+            ) {
+                if (response.isSuccessful) {
+                    if (response.body()?.results?.isNotEmpty() == true) {
+                        trackList.clear()
+                        trackList.addAll(response.body()?.results!!)
+                        trackAdapter.trackList = trackList
+                        trackAdapter.notifyDataSetChanged()
+                        showMessage(SearchState.SUCCESSFUL_SEARCH)
+                        Log.d("!@#", response.code().toString())
+                        Log.d("!@#", searchText)
+                        Log.d("!@#", trackList.size.toString())
+                    } else {
+                        clearTracks()
+                        showMessage(SearchState.NOTHING_IS_FOUND)
+                        Log.d("!@#", response.code().toString())
+                        Log.d("!@#", searchText)
+                        Log.d("!@#", trackList.size.toString())
+                    }
+                } else {
+                    clearTracks()
+                    showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
+                    Log.d("!@#", response.code().toString())
+                }
+            }
+
+            override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+                showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
+                Log.d("!@#", "Критическая ошибка")
+                Log.d("!@#", t.message.toString())
+            }
+        })
     }
+
+    private fun clearTracks() {
+        trackAdapter.trackList.clear()
+        trackAdapter.notifyDataSetChanged()
+    }
+
+    private fun showMessage(searchState: SearchState) {
+        when (searchState) {
+            SearchState.UNSUCCESSFUL_CONNECTION -> {
+                setViewsVisibility(
+                    textVisibility = true,
+                    imageVisibility = true,
+                    buttonVisibility = true
+                )
+                setViewsResources(
+                    R.string.no_internet_connection,
+                    R.drawable.no_internet_connection
+                )
+                lastUnsuccessfulSearch = searchText
+            }
+            SearchState.NOTHING_IS_FOUND -> {
+                setViewsVisibility(
+                    textVisibility = true,
+                    imageVisibility = true,
+                    buttonVisibility = false
+                )
+                setViewsResources(R.string.nothing_is_found, R.drawable.nothing_is_found)
+            }
+            SearchState.SUCCESSFUL_SEARCH -> {
+                setViewsVisibility(
+                    textVisibility = false,
+                    imageVisibility = false,
+                    buttonVisibility = false
+                )
+            }
+        }
+    }
+
+    private fun setViewsVisibility(
+        textVisibility: Boolean,
+        imageVisibility: Boolean,
+        buttonVisibility: Boolean
+    ) {
+        searchErrorTextView.visibility = if (textVisibility) View.VISIBLE else View.INVISIBLE
+        searchErrorImageView.visibility = if (imageVisibility) View.VISIBLE else View.INVISIBLE
+        refreshSearchButton.visibility = if (buttonVisibility) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun setViewsResources(text: Int, image: Int) {
+        searchErrorTextView.text = getString(text)
+        searchErrorImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                image
+            )
+        )
+    }
+
 
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val BASE_URL = "https://itunes.apple.com"
     }
 }
 
+enum class SearchState {
+    UNSUCCESSFUL_CONNECTION,
+    NOTHING_IS_FOUND,
+    SUCCESSFUL_SEARCH
+}
