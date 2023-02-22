@@ -64,8 +64,7 @@ class SearchActivity : AppCompatActivity() {
         clearImage.setOnClickListener {
             searchText = ""
             searchEditText.setText(searchText)
-            trackList.clear()
-            trackAdapter.notifyDataSetChanged()
+            clearTracks()
             clearImage.visibility = View.INVISIBLE
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -121,75 +120,98 @@ class SearchActivity : AppCompatActivity() {
                         trackList.addAll(response.body()?.results!!)
                         trackAdapter.trackList = trackList
                         trackAdapter.notifyDataSetChanged()
-                        showMessage(SUCCESSFUL_SEARCH)
+                        showMessage(SearchState.SUCCESSFUL_SEARCH)
                         Log.d("!@#", response.code().toString())
                         Log.d("!@#", searchText)
                         Log.d("!@#", trackList.size.toString())
                     } else {
-                        trackAdapter.trackList.clear()
-                        trackAdapter.notifyDataSetChanged()
-                        showMessage(NOTHING_IS_FOUND)
+                        clearTracks()
+                        showMessage(SearchState.NOTHING_IS_FOUND)
                         Log.d("!@#", response.code().toString())
                         Log.d("!@#", searchText)
                         Log.d("!@#", trackList.size.toString())
                     }
                 } else {
-                    trackAdapter.trackList.clear()
-                    trackAdapter.notifyDataSetChanged()
-                    showMessage(UNSUCCESSFUL_CONNECTION)
+                    clearTracks()
+                    showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
                     Log.d("!@#", response.code().toString())
                 }
             }
 
             override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                showMessage(UNSUCCESSFUL_CONNECTION)
+                showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
                 Log.d("!@#", "Критическая ошибка")
                 Log.d("!@#", t.message.toString())
             }
         })
     }
 
-    private fun showMessage(searchState: String) {
+    private fun clearTracks() {
+        trackAdapter.trackList.clear()
+        trackAdapter.notifyDataSetChanged()
+    }
+
+    private fun showMessage(searchState: SearchState) {
         when (searchState) {
-            UNSUCCESSFUL_CONNECTION -> {
-                searchErrorTextView.visibility = View.VISIBLE
-                searchErrorImageView.visibility = View.VISIBLE
-                refreshSearchButton.visibility = View.VISIBLE
-                searchErrorTextView.text = getString(R.string.no_internet_connection)
-                searchErrorImageView.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        this,
-                        R.drawable.no_internet_connection
-                    )
+            SearchState.UNSUCCESSFUL_CONNECTION -> {
+                setViewsVisibility(
+                    textVisibility = true,
+                    imageVisibility = true,
+                    buttonVisibility = true
+                )
+                setViewsResources(
+                    R.string.no_internet_connection,
+                    R.drawable.no_internet_connection
                 )
                 lastUnsuccessfulSearch = searchText
             }
-            NOTHING_IS_FOUND -> {
-                searchErrorTextView.visibility = View.VISIBLE
-                searchErrorImageView.visibility = View.VISIBLE
-                refreshSearchButton.visibility = View.INVISIBLE
-                searchErrorTextView.text = getString(R.string.nothing_is_found)
-                searchErrorImageView.setImageDrawable(
-                    AppCompatResources.getDrawable(
-                        this,
-                        R.drawable.nothing_is_found
-                    )
+            SearchState.NOTHING_IS_FOUND -> {
+                setViewsVisibility(
+                    textVisibility = true,
+                    imageVisibility = true,
+                    buttonVisibility = false
                 )
+                setViewsResources(R.string.nothing_is_found, R.drawable.nothing_is_found)
             }
-            else -> {
-                searchErrorTextView.visibility = View.INVISIBLE
-                searchErrorImageView.visibility = View.INVISIBLE
-                refreshSearchButton.visibility = View.INVISIBLE
+            SearchState.SUCCESSFUL_SEARCH -> {
+                setViewsVisibility(
+                    textVisibility = false,
+                    imageVisibility = false,
+                    buttonVisibility = false
+                )
             }
         }
     }
 
+    private fun setViewsVisibility(
+        textVisibility: Boolean,
+        imageVisibility: Boolean,
+        buttonVisibility: Boolean
+    ) {
+        searchErrorTextView.visibility = if (textVisibility) View.VISIBLE else View.INVISIBLE
+        searchErrorImageView.visibility = if (imageVisibility) View.VISIBLE else View.INVISIBLE
+        refreshSearchButton.visibility = if (buttonVisibility) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun setViewsResources(text: Int, image: Int) {
+        searchErrorTextView.text = getString(text)
+        searchErrorImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                image
+            )
+        )
+    }
+
+
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val BASE_URL = "https://itunes.apple.com"
-        const val UNSUCCESSFUL_CONNECTION = "UNSUCCESSFUL_CONNECTION"
-        const val NOTHING_IS_FOUND = "NOTHING_IS_FOUND"
-        const val SUCCESSFUL_SEARCH = "SUCCESSFUL_SEARCH"
     }
 }
 
+enum class SearchState {
+    UNSUCCESSFUL_CONNECTION,
+    NOTHING_IS_FOUND,
+    SUCCESSFUL_SEARCH
+}
