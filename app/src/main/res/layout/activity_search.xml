@@ -100,13 +100,14 @@
 
         <Button
             android:id="@+id/refresh_search_button"
-            android:layout_width="@dimen/size_96"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/size_44"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/size_332"
             android:backgroundTint="@color/black_light_white_night"
             android:letterSpacing="0"
             android:text="@string/refresh_search"
+            android:gravity="center"
             android:textAllCaps="false"
             android:textColor="@color/white_light_black_night"
             android:textSize="@dimen/refresh_search_text_size"
