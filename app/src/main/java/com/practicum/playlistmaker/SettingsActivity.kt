@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -17,6 +19,7 @@ class SettingsActivity : AppCompatActivity() {
         val shareAppTextView = findViewById<TextView>(R.id.share_app)
         val supportTextView = findViewById<TextView>(R.id.support)
         val userAgreementTextView = findViewById<TextView>(R.id.user_agreement)
+        val themeSwitch = findViewById<SwitchMaterial>(R.id.switch_dark_theme)
 
         shareAppTextView.setOnClickListener {
             val sentLink = getString(R.string.practicum_android_link)
@@ -44,5 +47,18 @@ class SettingsActivity : AppCompatActivity() {
             val userAgreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
             startActivity(userAgreementIntent)
         }
+        
+        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked) {
+                App.
+            } else {
+
+            }
+        }
+    }
+
+    companion object {
+        const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
+        const val LIGHT_OR_DARK_THEME = "LIGHT_OR_DARK_THEME"
     }
 }
