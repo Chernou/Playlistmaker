@@ -20,6 +20,8 @@ class SettingsActivity : AppCompatActivity() {
         val supportTextView = findViewById<TextView>(R.id.support)
         val userAgreementTextView = findViewById<TextView>(R.id.user_agreement)
         val themeSwitch = findViewById<SwitchMaterial>(R.id.switch_dark_theme)
+        themeSwitch.isChecked = getSharedPreferences(App.SHARED_PREFERENCE, MODE_PRIVATE)
+            .getBoolean(App.DARK_THEME_ENABLED, false)
 
         shareAppTextView.setOnClickListener {
             val sentLink = getString(R.string.practicum_android_link)
@@ -49,16 +51,11 @@ class SettingsActivity : AppCompatActivity() {
         }
         
         themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked) {
-                App.
-            } else {
-
-            }
+            (applicationContext as App).switchTheme(isChecked)
+            getSharedPreferences(App.SHARED_PREFERENCE, MODE_PRIVATE)
+                .edit()
+                .putBoolean(App.DARK_THEME_ENABLED, isChecked)
+                .apply()
         }
-    }
-
-    companion object {
-        const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
-        const val LIGHT_OR_DARK_THEME = "LIGHT_OR_DARK_THEME"
     }
 }
