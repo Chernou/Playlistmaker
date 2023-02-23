@@ -42,7 +42,6 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var searchHistory: SearchHistory
     private lateinit var searchHistoryAdapter: TrackAdapter
-
     private lateinit var searchEditText: EditText
     private lateinit var searchErrorImageView: ImageView
     private lateinit var searchErrorTextView: TextView
@@ -60,7 +59,7 @@ class SearchActivity : AppCompatActivity() {
             searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
         }
 
-        initializeLateinitViews()
+        initializeLateinitItems()
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -91,8 +90,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 searchTracks(searchText)
-                searchLayout.visibility = View.VISIBLE
-                searchHistoryLayout.visibility = View.INVISIBLE
+                setSearchLayoutsVisibility(searchVisibility = true, searchHistoryVisibility = false)
                 true
             }
             false
@@ -104,9 +102,11 @@ class SearchActivity : AppCompatActivity() {
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && searchText.isEmpty()) {
-                searchLayout.visibility = View.INVISIBLE
-                searchHistoryLayout.visibility = View.VISIBLE
+                setSearchLayoutsVisibility(searchVisibility = false, searchHistoryVisibility = true)
                 searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
+                if (searchHistory.searchHistoryTrackList.isEmpty()) {
+                    clearSearchButton.visibility = View.INVISIBLE
+                }
             }
         }
 
@@ -114,10 +114,11 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.clearSearchHistory()
             searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
             searchHistoryAdapter.notifyDataSetChanged()
+            clearSearchButton.visibility = View.INVISIBLE
         }
     }
 
-    private fun initializeLateinitViews() {
+    private fun initializeLateinitItems() {
         searchErrorTextView = findViewById(R.id.search_result_text)
         searchErrorImageView = findViewById(R.id.search_result_image)
         refreshSearchButton = findViewById(R.id.refresh_search_button)
@@ -146,8 +147,9 @@ class SearchActivity : AppCompatActivity() {
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             if (searchEditText.hasFocus() && p0?.isEmpty() == true) {
-                searchLayout.visibility = View.INVISIBLE
-                searchHistoryLayout.visibility = View.VISIBLE
+                setSearchLayoutsVisibility(searchVisibility = false, searchHistoryVisibility = true)
+            } else {
+                setSearchLayoutsVisibility(searchVisibility = true, searchHistoryVisibility = false)
             }
         }
 
@@ -242,6 +244,14 @@ class SearchActivity : AppCompatActivity() {
         searchErrorTextView.visibility = if (textVisibility) View.VISIBLE else View.GONE
         searchErrorImageView.visibility = if (imageVisibility) View.VISIBLE else View.GONE
         refreshSearchButton.visibility = if (buttonVisibility) View.VISIBLE else View.GONE
+    }
+
+    private fun setSearchLayoutsVisibility(
+        searchVisibility: Boolean,
+        searchHistoryVisibility: Boolean
+    ) {
+        searchLayout.visibility = if (searchVisibility) View.VISIBLE else View.GONE
+        searchHistoryLayout.visibility = if (searchHistoryVisibility) View.VISIBLE else View.GONE
     }
 
     private fun setViewsResources(text: Int, image: Int) {
