@@ -8,6 +8,10 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
 
     var searchHistoryTrackList: ArrayList<Track> = initializedSearchedHistory()
 
+    init {
+        searchHistoryTrackList = initializedSearchedHistory()
+    }
+
     private fun initializedSearchedHistory(): ArrayList<Track> {
         val json = sharedPref.getString(SEARCH_HISTORY, null)
         val type = object : TypeToken<ArrayList<Track>>() {}.type
@@ -15,15 +19,20 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
     }
 
 
-    fun addTrack(track: Track) {
+    fun addTrack(track: Track) : Boolean {
         if (searchHistoryTrackList.contains(track)) {
             searchHistoryTrackList.remove(track)
             searchHistoryTrackList.add(0, track)
+            return true
         } else {
             if (searchHistoryTrackList.size == 10) {
                 searchHistoryTrackList.removeAt(9)
                 searchHistoryTrackList.add(0, track)
-            } else searchHistoryTrackList.add(0, track)
+                return true
+            } else {
+                searchHistoryTrackList.add(0, track)
+                return false
+            }
         }
     }
 

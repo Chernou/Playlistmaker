@@ -36,8 +36,9 @@ class SearchActivity : AppCompatActivity() {
 
     var trackList = ArrayList<Track>()
     val trackAdapter = TrackAdapter {
-        searchHistory.addTrack(it)
-        searchHistoryAdapter.notifyItemInserted(0)
+        if (searchHistory.addTrack(it)) {
+            searchHistoryAdapter.notifyDataSetChanged()
+        } else searchHistoryAdapter.notifyItemInserted(0)
     }
 
     private lateinit var searchHistory: SearchHistory
@@ -70,7 +71,7 @@ class SearchActivity : AppCompatActivity() {
         clearImage.setOnClickListener {
             searchText = ""
             searchEditText.setText(searchText)
-            clearTracks()
+            clearTracks(trackAdapter)
             clearImage.visibility = View.GONE
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -90,7 +91,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 searchTracks(searchText)
-                setSearchLayoutsVisibility(searchVisibility = true, searchHistoryVisibility = false)
+                setSearchVisible()
                 true
             }
             false
@@ -101,20 +102,17 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchText.isEmpty()) {
-                setSearchLayoutsVisibility(searchVisibility = false, searchHistoryVisibility = true)
-                searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
-                if (searchHistory.searchHistoryTrackList.isEmpty()) {
-                    clearSearchButton.visibility = View.INVISIBLE
-                }
+            if (hasFocus && searchText.isEmpty() && searchHistory.searchHistoryTrackList.isNotEmpty()) {
+                setSearchHistoryVisible()
+            } else {
+                setSearchVisible()
             }
         }
 
         clearSearchButton.setOnClickListener {
             searchHistory.clearSearchHistory()
-            searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
             searchHistoryAdapter.notifyDataSetChanged()
-            clearSearchButton.visibility = View.INVISIBLE
+            setSearchVisible()
         }
     }
 
@@ -128,6 +126,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryLayout = findViewById(R.id.search_history_linear_layout)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE))
         searchHistoryAdapter = TrackAdapter {}
+        searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
         searchEditText = findViewById(R.id.search_edit_text)
         clearImage = findViewById(R.id.clear_image)
     }
@@ -146,10 +145,10 @@ class SearchActivity : AppCompatActivity() {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            if (searchEditText.hasFocus() && p0?.isEmpty() == true) {
-                setSearchLayoutsVisibility(searchVisibility = false, searchHistoryVisibility = true)
+            if (searchEditText.hasFocus() && p0?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
+                setSearchHistoryVisible()
             } else {
-                setSearchLayoutsVisibility(searchVisibility = true, searchHistoryVisibility = false)
+                setSearchVisible()
             }
         }
 
@@ -178,20 +177,20 @@ class SearchActivity : AppCompatActivity() {
                         Log.d("!@#", response.code().toString())
                         Log.d("!@#", trackList.size.toString())
                     } else {
-                        clearTracks()
+                        clearTracks(trackAdapter)
                         showMessage(SearchState.NOTHING_IS_FOUND)
                         Log.d("!@#", response.code().toString())
                         Log.d("!@#", trackList.size.toString())
                     }
                 } else {
-                    clearTracks()
+                    clearTracks(trackAdapter)
                     showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
                     Log.d("!@#", response.code().toString())
                 }
             }
 
             override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
-                clearTracks()
+                clearTracks(trackAdapter)
                 showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
                 Log.d("!@#", "Критическая ошибка")
                 Log.d("!@#", t.message.toString())
@@ -199,9 +198,9 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun clearTracks() {
-        trackAdapter.trackList.clear()
-        trackAdapter.notifyDataSetChanged()
+    private fun clearTracks(adapter: TrackAdapter) {
+        adapter.trackList.clear()
+        adapter.notifyDataSetChanged()
     }
 
     private fun showMessage(searchState: SearchState) {
@@ -246,13 +245,18 @@ class SearchActivity : AppCompatActivity() {
         refreshSearchButton.visibility = if (buttonVisibility) View.VISIBLE else View.GONE
     }
 
-    private fun setSearchLayoutsVisibility(
-        searchVisibility: Boolean,
-        searchHistoryVisibility: Boolean
-    ) {
-        searchLayout.visibility = if (searchVisibility) View.VISIBLE else View.GONE
-        searchHistoryLayout.visibility = if (searchHistoryVisibility) View.VISIBLE else View.GONE
+    private fun setSearchVisible() {
+        searchLayout.visibility = View.VISIBLE
+        searchHistoryLayout.visibility = View.GONE
+        clearSearchButton.visibility = View.GONE
     }
+
+    private fun setSearchHistoryVisible() {
+        searchLayout.visibility = View.GONE
+        searchHistoryLayout.visibility = View.VISIBLE
+        clearSearchButton.visibility = View.VISIBLE
+    }
+
 
     private fun setViewsResources(text: Int, image: Int) {
         searchErrorTextView.text = getString(text)
