@@ -9,7 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 data class Track(
     val trackName: String,
