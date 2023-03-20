@@ -31,18 +31,16 @@
         android:layout_height="wrap_content">
 
         <TextView
+            style="@style/ThemeSwitchTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/start_padding_settings_menu_items"
             android:layout_marginTop="@dimen/vertical_padding_settings_menu_items"
             android:layout_marginBottom="@dimen/vertical_padding_settings_menu_items"
-            android:fontFamily="@font/ys_display_regular"
-            android:text="@string/dark_theme"
-            android:textSize="@dimen/settings_text_size"
-            app:fontWeight="400" />
+            android:text="@string/dark_theme" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_dark_theme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,7 +75,6 @@
         android:paddingEnd="@dimen/size_16"
         android:text="@string/user_agreement"
         app:drawableEndCompat="@drawable/ic_arrow_forward"
-        tools:ignore="RtlSymmetry"
-        />
+        tools:ignore="RtlSymmetry" />
 
 </LinearLayout>
