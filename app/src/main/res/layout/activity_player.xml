@@ -85,15 +85,15 @@
 
     <TextView
         android:id="@+id/track_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_24"
-        app:layout_constraintEnd_toStartOf="@id/right_top_guideline"
-        app:layout_constraintHorizontal_bias="0.0"
         android:fontFamily="@font/ys_display_medium"
         android:textColor="@color/black_light_white_night"
         android:textSize="@dimen/media_track_text_size"
         app:fontWeight="@dimen/font_weight_settings"
+        app:layout_constraintEnd_toStartOf="@id/right_top_guideline"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/left_top_guideline"
         app:layout_constraintTop_toBottomOf="@id/cover_image" />
 
@@ -106,9 +106,9 @@
         android:textColor="@color/black_light_white_night"
         android:textSize="@dimen/support_search_buttons_text_size"
         app:fontWeight="@dimen/font_weight_settings"
+        app:layout_constraintBottom_toTopOf="@id/top_barrier"
         app:layout_constraintStart_toEndOf="@id/left_top_guideline"
-        app:layout_constraintTop_toBottomOf="@id/track_name"
-        app:layout_constraintBottom_toTopOf="@id/top_barrier"/>
+        app:layout_constraintTop_toBottomOf="@id/track_name" />
 
     <ImageView
         android:id="@+id/queue_image"
@@ -230,6 +230,5 @@
         style="@style/media_features"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
