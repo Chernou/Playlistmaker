@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -42,6 +43,9 @@ class SearchActivity : AppCompatActivity() {
         if (searchHistory.addTrack(it)) {
             searchHistoryAdapter.notifyDataSetChanged()
         } else searchHistoryAdapter.notifyItemInserted(0)
+        val playerIntent = Intent(this, PlayerActivity::class.java)
+        playerIntent.putExtra(Track::class.java.simpleName, it)
+        startActivity(playerIntent)
     }
 
     private lateinit var searchHistory: SearchHistory
@@ -128,7 +132,11 @@ class SearchActivity : AppCompatActivity() {
         searchLayout = findViewById(R.id.search_frame_layout)
         searchHistoryLayout = findViewById(R.id.search_history_linear_layout)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE))
-        searchHistoryAdapter = TrackAdapter {}
+        searchHistoryAdapter = TrackAdapter {
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra(Track::class.java.simpleName, it)
+            startActivity(playerIntent)
+        }
         searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
         searchEditText = findViewById(R.id.search_edit_text)
         clearImage = findViewById(R.id.clear_image)
