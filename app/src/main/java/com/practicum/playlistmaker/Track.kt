@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.os.Parcelable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -8,16 +9,22 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-data class Track(
+@Parcelize
+data class Track (
+    val trackId: Int,
     val trackName: String,
     val artistName: String,
+    val country: String,
+    val releaseDate: String,
     @SerializedName("trackTimeMillis") val trackTime: Int,
     @SerializedName("artworkUrl100") val artworkUri: String,
-    val trackId: Int
-)
+    @SerializedName("primaryGenreName") val genre: String,
+    @SerializedName("collectionName") val album: String
+) : Parcelable
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -34,8 +41,11 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .load(model.artworkUri)
             .fitCenter()
             .centerCrop()
-            .apply(RequestOptions.bitmapTransform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.rounded_corners_album))))
-            .placeholder(R.drawable.ic_track_placeholder)
+            .apply(RequestOptions
+                .bitmapTransform(RoundedCorners(itemView
+                    .resources
+                    .getDimensionPixelSize(R.dimen.rounded_corners_album_preview))))
+            .placeholder(R.drawable.ic_track_placeholder_small)
             .into(artwork)
     }
 }

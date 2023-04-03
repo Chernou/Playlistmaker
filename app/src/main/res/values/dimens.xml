@@ -2,11 +2,14 @@
 <resources>
     <dimen name="zero_letter_spacing">0</dimen>
     <dimen name="minimum">1dp</dimen>
-    <dimen name="rounded_corners_album">2dp</dimen>
+    <dimen name="rounded_corners_album_preview">2dp</dimen>
+    <dimen name="rounded_corners_album">8dp</dimen>
     <dimen name="main_text_size">24sp</dimen>
+    <dimen name="media_track_text_size">22sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="support_search_buttons_text_size">14sp</dimen>
     <dimen name="small_text_size">11sp</dimen>
+    <dimen name="media_subtitles_text_size">13sp</dimen>
     <dimen name="vertical_margin_main_buttons">16dp</dimen>
     <dimen name="size_24">24dp</dimen>
     <dimen name="size_20">20dp</dimen>
@@ -23,14 +26,17 @@
     <dimen name="font_weight_main">500</dimen>
     <dimen name="font_weight_settings">400</dimen>
     <dimen name="size_68">68dp</dimen>
+    <dimen name="size_40">40dp</dimen>
     <dimen name="size_44">44dp</dimen>
     <dimen name="size_64">64dp</dimen>
     <dimen name="size_46">46dp</dimen>
+    <dimen name="size_54">54dp</dimen>
     <dimen name="size_120">120dp</dimen>
     <dimen name="size_312">312dp</dimen>
     <dimen name="size_346">346dp</dimen>
     <dimen name="size_458">458dp</dimen>
     <dimen name="size_96">96dp</dimen>
+    <dimen name="size_28">28dp</dimen>
     <dimen name="size_322">322dp</dimen>
     <dimen name="size_436">436dp</dimen>
     <dimen name="size_112">112dp</dimen>

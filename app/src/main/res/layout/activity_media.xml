@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:paddingStart="@dimen/size_16"
-    android:paddingVertical="@dimen/size_16"
-    android:paddingBottom="28dp"
-    tools:ignore="RtlSymmetry">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/media_activity"
-        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/white"
+        android:layout_margin="@dimen/size_20"
         android:textSize="@dimen/main_text_size" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

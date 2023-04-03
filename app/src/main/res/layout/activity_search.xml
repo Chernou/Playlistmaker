@@ -48,10 +48,10 @@
             android:paddingStart="@dimen/size_12"
             android:singleLine="true"
             android:textColor="@color/black"
-            android:textColorHint="@color/search_hint"
+            android:textColorHint="@color/search_hint_color"
             android:textSize="@dimen/settings_text_size"
             android:visibility="visible"
-            app:drawableTint="@color/search_hint"
+            app:drawableTint="@color/search_hint_color"
             app:fontWeight="400"
             tools:ignore="RtlSymmetry" />
 
@@ -64,7 +64,7 @@
             android:background="@drawable/ic_baseline_clear"
             android:contentDescription="@string/clear_button"
             android:visibility="gone"
-            app:tint="@color/search_hint" />
+            app:tint="@color/search_hint_color" />
 
     </FrameLayout>
 
