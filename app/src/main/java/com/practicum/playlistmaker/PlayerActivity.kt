@@ -36,7 +36,7 @@ class PlayerActivity : AppCompatActivity() {
         //val playImageView: ImageView = findViewById(R.id.play_image)
         //val likeImageView: ImageView = findViewById(R.id.like_image)
 
-        val track = intent.getSerializableExtra(Track::class.java.simpleName) as Track
+        val track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
 
         trackName.text = track.trackName
         artistName.text = track.artistName
@@ -57,12 +57,9 @@ class PlayerActivity : AppCompatActivity() {
         val artworkUriHighRes = getCoverArtwork(track.artworkUri)
         Glide.with(coverImageView)
             .load(artworkUriHighRes)
-            .fitCenter()
             .centerCrop()
-            .apply(RequestOptions
-                .bitmapTransform(RoundedCorners(coverImageView
-                    .resources
-                    .getDimensionPixelSize(R.dimen.rounded_corners_album))))
+            .transform(RoundedCorners(coverImageView.resources
+                .getDimensionPixelSize(R.dimen.rounded_corners_album)))
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 

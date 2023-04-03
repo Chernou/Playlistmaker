@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.os.Parcelable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -8,11 +9,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-data class Track(
+@Parcelize
+data class Track (
     val trackId: Int,
     val trackName: String,
     val artistName: String,
@@ -22,7 +25,7 @@ data class Track(
     @SerializedName("artworkUrl100") val artworkUri: String,
     @SerializedName("primaryGenreName") val genre: String,
     @SerializedName("collectionName") val album: String
-) : Serializable
+) : Parcelable
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
