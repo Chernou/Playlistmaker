@@ -23,7 +23,8 @@ data class Track (
     @SerializedName("trackTimeMillis") val trackTime: Int,
     @SerializedName("artworkUrl100") val artworkUri: String,
     @SerializedName("primaryGenreName") val genre: String,
-    @SerializedName("collectionName") val album: String
+    @SerializedName("collectionName") val album: String,
+    val previewUrl: String?
 ) : Parcelable
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

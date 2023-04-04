@@ -147,7 +147,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/ys_display_medium"
         android:tag="currentTime"
-        android:text="0:30"
+        android:text="00:00"
         android:textColor="@color/black_light_white_night"
         android:textSize="@dimen/support_search_buttons_text_size"
         app:fontWeight="@dimen/font_weight_settings"

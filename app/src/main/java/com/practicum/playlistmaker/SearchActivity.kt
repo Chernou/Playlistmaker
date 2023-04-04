@@ -3,6 +3,8 @@ package com.practicum.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -13,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -30,6 +33,7 @@ class SearchActivity : AppCompatActivity() {
     private var searchText: String = ""
     private var lastUnsuccessfulSearch: String = ""
     private lateinit var clearImage: ImageView
+    private lateinit var mainThreadHandler: Handler
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -58,6 +62,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearSearchButton: Button
     private lateinit var searchLayout: ViewGroup
     private lateinit var searchHistoryLayout: ViewGroup
+    private lateinit var progressBar: ProgressBar
+    private lateinit var searchRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,23 +91,9 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
-        findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
-            layoutManager = LinearLayoutManager(this.context)
-            adapter = trackAdapter
-        }
-
         findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = searchHistoryAdapter
-        }
-
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTracks(searchText)
-                setSearchVisible()
-                true
-            }
-            false
         }
 
         refreshSearchButton.setOnClickListener {
@@ -140,6 +132,12 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
         searchEditText = findViewById(R.id.search_edit_text)
         clearImage = findViewById(R.id.clear_image)
+        mainThreadHandler = Handler(Looper.getMainLooper())
+        progressBar = findViewById(R.id.progress_bar)
+        searchRecyclerView = findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
+            layoutManager = LinearLayoutManager(this.context)
+            adapter = trackAdapter
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -161,6 +159,9 @@ class SearchActivity : AppCompatActivity() {
             } else {
                 setSearchVisible()
             }
+            if (p0 != null) {
+                searchDebounce(p0.toString())
+            }
         }
 
         override fun afterTextChanged(editable: Editable?) {
@@ -171,13 +172,23 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun searchTracks(searchText: String) {
+    private fun searchDebounce(searchRequest: String) {
+        val searchTask = Runnable { searchTracks(searchRequest) }
+        mainThreadHandler.removeCallbacks(searchTask)
+        mainThreadHandler.postDelayed(searchTask, SEARCH_DEBOUNCE_DELAY)
+    }
 
+    private fun searchTracks(searchText: String) {
+        searchRecyclerView.visibility = View.GONE
+        showMessage(SearchState.SUCCESSFUL_SEARCH)
+        progressBar.visibility = View.VISIBLE
         itunesService.search(searchText).enqueue(object : Callback<SearchResponse> {
             override fun onResponse(
                 call: Call<SearchResponse>,
                 response: Response<SearchResponse>
             ) {
+                progressBar.visibility = View.GONE
+                searchRecyclerView.visibility = View.VISIBLE
                 if (response.isSuccessful) {
                     if (response.body()?.trackList?.isNotEmpty() == true) {
                         trackList.clear()
@@ -185,13 +196,13 @@ class SearchActivity : AppCompatActivity() {
                         trackAdapter.trackList = trackList
                         trackAdapter.notifyDataSetChanged()
                         showMessage(SearchState.SUCCESSFUL_SEARCH)
-                        Log.d("!@#", response.code().toString())
-                        Log.d("!@#", trackList.size.toString())
+                        //Log.d("!@#", response.code().toString())
+                        //Log.d("!@#", trackList.size.toString())
                     } else {
                         clearTracks(trackAdapter)
                         showMessage(SearchState.NOTHING_IS_FOUND)
-                        Log.d("!@#", response.code().toString())
-                        Log.d("!@#", trackList.size.toString())
+                        //Log.d("!@#", response.code().toString())
+                        //Log.d("!@#", trackList.size.toString())
                     }
                 } else {
                     clearTracks(trackAdapter)
@@ -201,10 +212,11 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 clearTracks(trackAdapter)
                 showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
-                Log.d("!@#", "Критическая ошибка")
-                Log.d("!@#", t.message.toString())
+                //Log.d("!@#", "Критическая ошибка")
+                //Log.d("!@#", t.message.toString())
             }
         })
     }
@@ -283,6 +295,7 @@ class SearchActivity : AppCompatActivity() {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val BASE_URL = "https://itunes.apple.com"
         const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
+        const val SEARCH_DEBOUNCE_DELAY = 2_000L
     }
 }
 
