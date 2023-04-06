@@ -9,5 +9,4 @@ object DateUtils {
         return SimpleDateFormat("mm:ss", Locale.getDefault())
             .format(trackTimeMillis)
     }
-
 }
