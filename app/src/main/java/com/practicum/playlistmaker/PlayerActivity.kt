@@ -110,7 +110,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun preparePlayer() {
-        var url = track.previewUrl
+        val url = track.previewUrl
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
