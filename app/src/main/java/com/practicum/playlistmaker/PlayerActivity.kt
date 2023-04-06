@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Locale
@@ -55,8 +56,7 @@ class PlayerActivity : AppCompatActivity() {
 
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault())
-            .format(track.trackTime)
+        trackDuration.text = formatTime(track.trackTime)
         trackGenre.text = track.genre
         trackCountry.text = track.country
 
@@ -120,7 +120,7 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.setOnCompletionListener {
             playerState = STATE_PREPARED
             mainThreadHandler.removeCallbacks(setPlaybackTimer())
-            currentPlaybackTime.text = "00:00"
+            currentPlaybackTime.text = ZERO_TIMER
             switchPlayPauseImage(R.drawable.ic_play_button)
         }
     }
@@ -189,6 +189,7 @@ class PlayerActivity : AppCompatActivity() {
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
         private const val PLAYBACK_TIME_REFRESH = 500L
+        const val ZERO_TIMER = "00:00"
     }
 
 }
