@@ -1,18 +1,21 @@
 package com.practicum.playlistmaker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -29,7 +32,9 @@ class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
     private var lastUnsuccessfulSearch: String = ""
-    private lateinit var clearImage: ImageView
+    private var mainThreadHandler: Handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
+
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
@@ -39,15 +44,19 @@ class SearchActivity : AppCompatActivity() {
     private val itunesService = retrofit.create(ItunesService::class.java)
 
     var trackList = ArrayList<Track>()
+    @SuppressLint("NotifyDataSetChanged")
     val trackAdapter = TrackAdapter {
-        if (searchHistory.addTrack(it)) {
-            searchHistoryAdapter.notifyDataSetChanged()
-        } else searchHistoryAdapter.notifyItemInserted(0)
-        val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra(Track::class.java.simpleName, it)
-        startActivity(playerIntent)
+        if (clickDebounce()) {
+            if (searchHistory.addTrack(it)) {
+                searchHistoryAdapter.notifyDataSetChanged()
+            } else searchHistoryAdapter.notifyItemInserted(0)
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra(Track::class.java.simpleName, it)
+            startActivity(playerIntent)
+        }
     }
 
+    private lateinit var clearImage: ImageView
     private lateinit var searchHistory: SearchHistory
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
@@ -58,7 +67,10 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var clearSearchButton: Button
     private lateinit var searchLayout: ViewGroup
     private lateinit var searchHistoryLayout: ViewGroup
+    private lateinit var progressBar: ProgressBar
+    private lateinit var searchRecyclerView: RecyclerView
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -85,27 +97,14 @@ class SearchActivity : AppCompatActivity() {
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
-        findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
-            layoutManager = LinearLayoutManager(this.context)
-            adapter = trackAdapter
-        }
-
         findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = searchHistoryAdapter
         }
 
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                searchTracks(searchText)
-                setSearchVisible()
-                true
-            }
-            false
-        }
-
         refreshSearchButton.setOnClickListener {
-            searchTracks(lastUnsuccessfulSearch)
+            searchText = lastUnsuccessfulSearch
+            searchTracks()
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -133,13 +132,20 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryLayout = findViewById(R.id.search_history_linear_layout)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE))
         searchHistoryAdapter = TrackAdapter {
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            playerIntent.putExtra(Track::class.java.simpleName, it)
-            startActivity(playerIntent)
+            if (clickDebounce()) {
+                val playerIntent = Intent(this, PlayerActivity::class.java)
+                playerIntent.putExtra(Track::class.java.simpleName, it)
+                startActivity(playerIntent)
+            }
         }
         searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
         searchEditText = findViewById(R.id.search_edit_text)
         clearImage = findViewById(R.id.clear_image)
+        progressBar = findViewById(R.id.progress_bar)
+        searchRecyclerView = findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
+            layoutManager = LinearLayoutManager(this.context)
+            adapter = trackAdapter
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -161,6 +167,10 @@ class SearchActivity : AppCompatActivity() {
             } else {
                 setSearchVisible()
             }
+            if (p0 != null) {
+                searchText = p0.toString()
+                searchDebounce()
+            }
         }
 
         override fun afterTextChanged(editable: Editable?) {
@@ -171,13 +181,27 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun searchTracks(searchText: String) {
+    private val searchRunnable = Runnable {
+        searchTracks()
+    }
 
+    private fun searchDebounce() {
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun searchTracks() {
+        searchRecyclerView.visibility = View.GONE
+        showMessage(SearchState.SUCCESSFUL_SEARCH)
+        progressBar.visibility = View.VISIBLE
         itunesService.search(searchText).enqueue(object : Callback<SearchResponse> {
+            @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(
                 call: Call<SearchResponse>,
                 response: Response<SearchResponse>
             ) {
+                progressBar.visibility = View.GONE
+                searchRecyclerView.visibility = View.VISIBLE
                 if (response.isSuccessful) {
                     if (response.body()?.trackList?.isNotEmpty() == true) {
                         trackList.clear()
@@ -185,13 +209,13 @@ class SearchActivity : AppCompatActivity() {
                         trackAdapter.trackList = trackList
                         trackAdapter.notifyDataSetChanged()
                         showMessage(SearchState.SUCCESSFUL_SEARCH)
-                        Log.d("!@#", response.code().toString())
-                        Log.d("!@#", trackList.size.toString())
+                        //Log.d("!@#", response.code().toString())
+                        //Log.d("!@#", trackList.size.toString())
                     } else {
                         clearTracks(trackAdapter)
                         showMessage(SearchState.NOTHING_IS_FOUND)
-                        Log.d("!@#", response.code().toString())
-                        Log.d("!@#", trackList.size.toString())
+                        //Log.d("!@#", response.code().toString())
+                        //Log.d("!@#", trackList.size.toString())
                     }
                 } else {
                     clearTracks(trackAdapter)
@@ -201,17 +225,28 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<SearchResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 clearTracks(trackAdapter)
                 showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
-                Log.d("!@#", "Критическая ошибка")
-                Log.d("!@#", t.message.toString())
+                //Log.d("!@#", "Критическая ошибка")
+                //Log.d("!@#", t.message.toString())
             }
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun clearTracks(adapter: TrackAdapter) {
         adapter.trackList.clear()
         adapter.notifyDataSetChanged()
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            mainThreadHandler.postDelayed({ isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun showMessage(searchState: SearchState) {
@@ -283,6 +318,8 @@ class SearchActivity : AppCompatActivity() {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val BASE_URL = "https://itunes.apple.com"
         const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
+        const val SEARCH_DEBOUNCE_DELAY = 2_000L
+        const val CLICK_DEBOUNCE_DELAY = 1_000L
     }
 }
 

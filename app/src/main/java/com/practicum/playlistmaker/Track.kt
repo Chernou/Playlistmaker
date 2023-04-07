@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.annotations.SerializedName
+import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import kotlinx.parcelize.Parcelize
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -23,7 +24,8 @@ data class Track (
     @SerializedName("trackTimeMillis") val trackTime: Int,
     @SerializedName("artworkUrl100") val artworkUri: String,
     @SerializedName("primaryGenreName") val genre: String,
-    @SerializedName("collectionName") val album: String
+    @SerializedName("collectionName") val album: String,
+    val previewUrl: String?
 ) : Parcelable
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -36,7 +38,7 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(model: Track) {
         trackName.text = model.trackName
         artistName.text = model.artistName
-        trackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(model.trackTime)
+        trackTime.text = formatTime(model.trackTime)
         Glide.with(artwork)
             .load(model.artworkUri)
             .fitCenter()

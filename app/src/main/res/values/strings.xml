@@ -30,6 +30,6 @@
     <string name="media_year">Год</string>
     <string name="media_genre">Жанр</string>
     <string name="media_country">Страна</string>
-
+    <string name="no_preview_url">Аудиозапись недоступна</string>
 
 </resources>
