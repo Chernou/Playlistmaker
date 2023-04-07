@@ -95,7 +95,12 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        if (track.previewUrl != null) preparePlayer()
+        if (track.previewUrl != null) {
+            preparePlayer()
+        } else {
+            noPreviewUrlMessage()
+            playImageView.isEnabled = true
+        }
     }
 
     override fun onPause() {
