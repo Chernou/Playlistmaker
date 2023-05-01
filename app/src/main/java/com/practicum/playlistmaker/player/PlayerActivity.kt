@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.player
 
 import android.media.MediaPlayer
 import android.os.Build
@@ -14,6 +14,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
