@@ -9,7 +9,7 @@ class SearchPresenter(
     private val searchRepository: SearchRepository
 ) {
 
-    fun clearHistory() {
+    fun clearHistoryPressed() {
     }
 
     fun clearSearchTextPressed() {

@@ -45,9 +45,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    private val searchRepository = SearchRepository(retrofit.create(ItunesService::class.java))
-
-    var trackList = ArrayList<Track>()
+    private var trackList = ArrayList<Track>()
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
