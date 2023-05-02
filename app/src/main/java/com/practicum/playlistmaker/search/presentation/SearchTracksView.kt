@@ -5,13 +5,14 @@ import com.practicum.playlistmaker.Track
 interface SearchTracksView {
     fun clearSearchText()
     fun hideKeyboard()
-    fun hideSearchResult()
+    fun clearSearchResult()
     fun showSearchResult(tracks: List<Track>)
     fun showEmptySearch()
     fun showSearchError()
-    fun setSearchHistoryVisible()
-    fun setSearchResultVisible()
-    fun saveSearchRequest(searchRequest: String)
-    fun searchDebounce()
+    fun showSearchHistoryLayout()
+    fun showSearchResultLayout()
+    fun moveToPreviousScreen()
+    fun showProgressBar()
 
+    fun executeSearch()
 }

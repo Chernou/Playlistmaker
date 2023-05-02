@@ -35,17 +35,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity(), SearchTracksView {
 
-    private var searchText: String = ""
     private var lastUnsuccessfulSearch: String = ""
     private var mainThreadHandler: Handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
+    private var trackList = ArrayList<Track>()
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-
-    private var trackList = ArrayList<Track>()
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
@@ -60,7 +58,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     }
 
     private lateinit var presenter: SearchPresenter
-
     private lateinit var clearImage: ImageView
     private lateinit var searchHistory: SearchHistory
     private lateinit var searchHistoryAdapter: TrackAdapter
@@ -79,26 +76,10 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
-        if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCH_TEXT).toString()
-        }
-
         initializeLateinitItems()
-        presenter = SearchPresenter(
-            this,
-            searchHistory,
-            SearchRepository(retrofit.create(ItunesService::class.java))
-        )
-
-        val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-
-        searchEditText.setText(searchText)
-        searchEditText.addTextChangedListener(searchTextWatcher)
-
-        clearImage.setOnClickListener {
-            presenter.clearSearchTextPressed()
+        if (searchHistory.searchHistoryTrackList.isNotEmpty()) showSearchHistoryLayout()
+        if (savedInstanceState != null) {
+            searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
         }
 
         findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
@@ -106,13 +87,29 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
             adapter = searchHistoryAdapter
         }
 
+        presenter = SearchPresenter(
+            this,
+            searchHistory,
+            SearchRepository(retrofit.create(ItunesService::class.java))
+        )
+
+        val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
+        toolbar.setNavigationOnClickListener {
+            presenter.backArrowPressed()
+        }
+
+        searchEditText.addTextChangedListener(searchTextWatcher)
+
+        clearImage.setOnClickListener {
+            presenter.clearSearchTextPressed()
+        }
+
         refreshSearchButton.setOnClickListener {
-            searchText = lastUnsuccessfulSearch
-            searchTracks()
+            presenter.refreshSearchButtonPressed(lastUnsuccessfulSearch)
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            presenter.searchEditTextFocusChanged(hasFocus, searchText)
+            presenter.searchEditTextFocusChanged(hasFocus, searchEditText.text.toString())
         }
 
         clearSearchHistoryButton.setOnClickListener {
@@ -123,7 +120,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_TEXT, searchText)
+        outState.putCharSequence(SEARCH_TEXT, searchEditText.text)
     }
 
     override fun onStop() {
@@ -131,9 +128,12 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchHistory.updateSharedPref()
     }
 
+    override fun moveToPreviousScreen() {
+        onBackPressed()
+    }
+
     override fun clearSearchText() {
-        searchText = ""
-        searchEditText.setText(searchText)
+        searchEditText.text.clear()
         clearImage.visibility = View.GONE
     }
 
@@ -143,10 +143,13 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 
-    override fun hideSearchResult() {
-        clearTracks(searchResultAdapter)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun clearSearchResult() {
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun showSearchResult(tracks: List<Track>) {
         progressBar.visibility = View.GONE
         searchRecyclerView.visibility = View.VISIBLE
@@ -157,38 +160,43 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         showMessage(SearchState.SUCCESSFUL_SEARCH)
     }
 
-    override fun showEmptySearch() {
-        progressBar.visibility = View.GONE
-        searchRecyclerView.visibility = View.VISIBLE
-        clearTracks(searchResultAdapter)
-        showMessage(SearchState.NOTHING_IS_FOUND)
-    }
-
-    override fun showSearchError() {
-        progressBar.visibility = View.GONE
-        clearTracks(searchResultAdapter)
-        showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
-    }
-
-    override fun setSearchResultVisible() {
+    override fun showSearchResultLayout() {
         searchLayout.visibility = View.VISIBLE
         searchHistoryLayout.visibility = View.GONE
         clearSearchHistoryButton.visibility = View.GONE
     }
 
-    override fun setSearchHistoryVisible() {
+    override fun showSearchHistoryLayout() {
         searchLayout.visibility = View.GONE
         searchHistoryLayout.visibility = View.VISIBLE
         clearSearchHistoryButton.visibility = View.VISIBLE
     }
 
-    override fun searchDebounce() {
-        mainThreadHandler.removeCallbacks(searchRunnable)
-        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    @SuppressLint("NotifyDataSetChanged")
+    override fun showEmptySearch() {
+        progressBar.visibility = View.GONE
+        searchRecyclerView.visibility = View.VISIBLE
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.notifyDataSetChanged()
+        showMessage(SearchState.NOTHING_IS_FOUND)
     }
 
-    override fun saveSearchRequest(searchRequest: String) {
-        searchText = searchRequest
+    @SuppressLint("NotifyDataSetChanged")
+    override fun showSearchError() {
+        progressBar.visibility = View.GONE
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.notifyDataSetChanged()
+        showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
+    }
+
+    override fun showProgressBar() {
+        searchRecyclerView.visibility = View.GONE
+        showMessage(SearchState.SUCCESSFUL_SEARCH)
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun executeSearch() {
+        searchDebounce() //todo remove from activity?
     }
 
     private fun initializeLateinitItems() {
@@ -217,6 +225,11 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
     }
 
+    private fun searchDebounce() {
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
@@ -227,25 +240,11 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         override fun afterTextChanged(editable: Editable?) {
             if (editable?.isNotEmpty() == true) clearImage.visibility = View.VISIBLE
             else clearImage.visibility = View.GONE
-            searchText = searchEditText.text.toString()
         }
     }
 
     private val searchRunnable = Runnable {
-        searchTracks()
-    }
-
-    private fun searchTracks() {
-        searchRecyclerView.visibility = View.GONE
-        showMessage(SearchState.SUCCESSFUL_SEARCH)
-        progressBar.visibility = View.VISIBLE
-        presenter.loadTracks(searchText)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun clearTracks(adapter: TrackAdapter) {
-        adapter.trackList.clear()
-        adapter.notifyDataSetChanged()
+        presenter.loadTracks(searchEditText.text.toString())
     }
 
     private fun clickDebounce(): Boolean {
@@ -269,7 +268,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
                     R.string.no_internet_connection,
                     R.drawable.no_internet_connection
                 )
-                lastUnsuccessfulSearch = searchText
+                lastUnsuccessfulSearch = searchEditText.text.toString()
             }
             SearchState.NOTHING_IS_FOUND -> {
                 setViewsVisibility(

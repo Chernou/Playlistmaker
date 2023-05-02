@@ -12,7 +12,7 @@ class SearchPresenter(
     fun clearSearchTextPressed() {
         view.clearSearchText()
         view.hideKeyboard()
-        view.hideSearchResult()
+        view.clearSearchResult()
     }
 
     fun loadTracks(searchText: String) {
@@ -33,19 +33,28 @@ class SearchPresenter(
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
         if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
-            view.setSearchHistoryVisible()
+            view.showSearchHistoryLayout()
         } else {
-            view.setSearchResultVisible()
+            view.showSearchResultLayout()
         }
         if (searchText != null && searchText.isNotEmpty()) {
-            view.saveSearchRequest(searchText)
-            view.searchDebounce()
+            view.showProgressBar()
+            view.executeSearch()
         }
     }
 
     fun clearSearchHistoryPressed() {
         searchHistory.clearSearchHistory()
-        view.setSearchResultVisible()
+        view.showSearchResultLayout() //todo odd call?
+    }
+
+    fun backArrowPressed() {
+        view.moveToPreviousScreen()
+    }
+
+    fun refreshSearchButtonPressed(searchRequest: String) {
+        view.showProgressBar()
+        loadTracks(searchRequest)
     }
 
 }
