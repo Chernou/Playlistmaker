@@ -69,7 +69,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     private lateinit var searchErrorTextView: TextView
     private lateinit var refreshSearchButton: Button
     private lateinit var searchHistoryTextView: TextView
-    private lateinit var clearSearchButton: Button
+    private lateinit var clearSearchHistoryButton: Button
     private lateinit var searchLayout: ViewGroup
     private lateinit var searchHistoryLayout: ViewGroup
     private lateinit var progressBar: ProgressBar
@@ -112,17 +112,12 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && searchText.isEmpty() && searchHistory.searchHistoryTrackList.isNotEmpty()) {
-                setSearchHistoryVisible()
-            } else {
-                setSearchResultVisible()
-            }
+            presenter.searchEditTextFocusChanged(hasFocus, searchText)
         }
 
-        clearSearchButton.setOnClickListener {
-            searchHistory.clearSearchHistory()
+        clearSearchHistoryButton.setOnClickListener {
+            presenter.clearSearchHistoryPressed()
             searchHistoryAdapter.notifyDataSetChanged()
-            setSearchResultVisible()
         }
     }
 
@@ -175,12 +170,33 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
     }
 
+    override fun setSearchResultVisible() {
+        searchLayout.visibility = View.VISIBLE
+        searchHistoryLayout.visibility = View.GONE
+        clearSearchHistoryButton.visibility = View.GONE
+    }
+
+    override fun setSearchHistoryVisible() {
+        searchLayout.visibility = View.GONE
+        searchHistoryLayout.visibility = View.VISIBLE
+        clearSearchHistoryButton.visibility = View.VISIBLE
+    }
+
+    override fun searchDebounce() {
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    override fun saveSearchRequest(searchRequest: String) {
+        searchText = searchRequest
+    }
+
     private fun initializeLateinitItems() {
         searchErrorTextView = findViewById(R.id.search_result_text)
         searchErrorImageView = findViewById(R.id.search_result_image)
         refreshSearchButton = findViewById(R.id.refresh_search_button)
         searchHistoryTextView = findViewById(R.id.search_history_text_view)
-        clearSearchButton = findViewById(R.id.clear_search_history_button)
+        clearSearchHistoryButton = findViewById(R.id.clear_search_history_button)
         searchLayout = findViewById(R.id.search_frame_layout)
         searchHistoryLayout = findViewById(R.id.search_history_linear_layout)
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE))
@@ -201,37 +217,22 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
     }
 
-
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            if (searchEditText.hasFocus() && p0?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
-                setSearchHistoryVisible()
-            } else {
-                setSearchResultVisible()
-            }
-            if (p0 != null) {
-                searchText = p0.toString()
-                searchDebounce()
-            }
+            presenter.searchEditTextFocusChanged(searchEditText.hasFocus(), p0?.toString())
         }
 
         override fun afterTextChanged(editable: Editable?) {
             if (editable?.isNotEmpty() == true) clearImage.visibility = View.VISIBLE
             else clearImage.visibility = View.GONE
-            val searchEditText = findViewById<EditText>(R.id.search_edit_text)
             searchText = searchEditText.text.toString()
         }
     }
 
     private val searchRunnable = Runnable {
         searchTracks()
-    }
-
-    private fun searchDebounce() {
-        mainThreadHandler.removeCallbacks(searchRunnable)
-        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun searchTracks() {
@@ -297,19 +298,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchErrorImageView.visibility = if (imageVisibility) View.VISIBLE else View.GONE
         refreshSearchButton.visibility = if (buttonVisibility) View.VISIBLE else View.GONE
     }
-
-    private fun setSearchResultVisible() {
-        searchLayout.visibility = View.VISIBLE
-        searchHistoryLayout.visibility = View.GONE
-        clearSearchButton.visibility = View.GONE
-    }
-
-    private fun setSearchHistoryVisible() {
-        searchLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.VISIBLE
-        clearSearchButton.visibility = View.VISIBLE
-    }
-
 
     private fun setViewsResources(text: Int, image: Int) {
         searchErrorTextView.text = getString(text)

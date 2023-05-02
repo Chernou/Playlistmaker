@@ -9,9 +9,6 @@ class SearchPresenter(
     private val searchRepository: SearchRepository
 ) {
 
-    fun clearHistoryPressed() {
-    }
-
     fun clearSearchTextPressed() {
         view.clearSearchText()
         view.hideKeyboard()
@@ -21,7 +18,7 @@ class SearchPresenter(
     fun loadTracks(searchText: String) {
         searchRepository.searchTracks(
             searchRequest = searchText,
-            onSuccess = {tracks ->
+            onSuccess = { tracks ->
                 if (tracks.isNotEmpty()) {
                     view.showSearchResult(tracks)
                 } else {
@@ -33,4 +30,22 @@ class SearchPresenter(
             }
         )
     }
+
+    fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
+        if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
+            view.setSearchHistoryVisible()
+        } else {
+            view.setSearchResultVisible()
+        }
+        if (searchText != null && searchText.isNotEmpty()) {
+            view.saveSearchRequest(searchText)
+            view.searchDebounce()
+        }
+    }
+
+    fun clearSearchHistoryPressed() {
+        searchHistory.clearSearchHistory()
+        view.setSearchResultVisible()
+    }
+
 }
