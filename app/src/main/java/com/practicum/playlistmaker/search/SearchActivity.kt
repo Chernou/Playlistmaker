@@ -151,7 +151,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         trackList.addAll(tracks)
         searchResultAdapter.trackList = trackList
         searchResultAdapter.notifyDataSetChanged()
-        showMessage(SearchState.SUCCESSFUL_SEARCH)
+        showMessage(MessageType.NO_MESSAGE)
     }
 
     override fun showSearchResultLayout() {
@@ -172,7 +172,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchRecyclerView.visibility = View.VISIBLE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
-        showMessage(SearchState.NOTHING_IS_FOUND)
+        showMessage(MessageType.NOTHING_IS_FOUND)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -180,12 +180,12 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         progressBar.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
-        showMessage(SearchState.UNSUCCESSFUL_CONNECTION)
+        showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
     }
 
     override fun showProgressBar() {
         searchRecyclerView.visibility = View.GONE
-        showMessage(SearchState.SUCCESSFUL_SEARCH)
+        showMessage(MessageType.NO_MESSAGE)
         progressBar.visibility = View.VISIBLE
     }
 
@@ -261,9 +261,9 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         return current
     }
 
-    private fun showMessage(searchState: SearchState) {
-        when (searchState) {
-            SearchState.UNSUCCESSFUL_CONNECTION -> {
+    private fun showMessage(messageType: MessageType) {
+        when (messageType) {
+            MessageType.UNSUCCESSFUL_CONNECTION -> {
                 setViewsVisibility(
                     textVisibility = true,
                     imageVisibility = true,
@@ -275,7 +275,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
                 )
                 lastUnsuccessfulSearch = searchEditText.text.toString()
             }
-            SearchState.NOTHING_IS_FOUND -> {
+            MessageType.NOTHING_IS_FOUND -> {
                 setViewsVisibility(
                     textVisibility = true,
                     imageVisibility = true,
@@ -283,7 +283,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
                 )
                 setViewsResources(R.string.nothing_is_found, R.drawable.nothing_is_found)
             }
-            SearchState.SUCCESSFUL_SEARCH -> {
+            MessageType.NO_MESSAGE -> {
                 setViewsVisibility(
                     textVisibility = false,
                     imageVisibility = false,
@@ -322,8 +322,8 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     }
 }
 
-enum class SearchState {
+enum class MessageType {
     UNSUCCESSFUL_CONNECTION,
     NOTHING_IS_FOUND,
-    SUCCESSFUL_SEARCH
+    NO_MESSAGE
 }
