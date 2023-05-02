@@ -13,6 +13,7 @@ interface SearchTracksView {
     fun showSearchResultLayout()
     fun moveToPreviousScreen()
     fun showProgressBar()
-
     fun executeSearch()
+    fun openTrack(track: Track)
+    fun refreshSearchHistoryAdapter()
 }

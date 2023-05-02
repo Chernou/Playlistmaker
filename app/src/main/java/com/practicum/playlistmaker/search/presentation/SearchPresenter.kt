@@ -46,7 +46,7 @@ class SearchPresenter(
 
     fun onClearSearchHistoryPressed() {
         searchHistory.clearSearchHistory()
-        view.showSearchResultLayout() //todo odd call?
+        view.showSearchResultLayout()
     }
 
     fun onBackArrowPressed() {
@@ -58,8 +58,9 @@ class SearchPresenter(
         loadTracks(searchRequest)
     }
 
-    fun onTrackPressed(track: Track): Boolean {
-        return searchHistory.addTrack(track)
+    fun onTrackPressed(track: Track) {
+        searchHistory.addTrack(track)
+        view.refreshSearchHistoryAdapter()
+        view.openTrack(track)
     }
-
 }

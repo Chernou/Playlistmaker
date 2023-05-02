@@ -48,12 +48,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
-            if (presenter.onTrackPressed(it)) {
-                searchHistoryAdapter.notifyDataSetChanged()
-            } else searchHistoryAdapter.notifyItemInserted(0)
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            playerIntent.putExtra(Track::class.java.simpleName, it)
-            startActivity(playerIntent)
+            presenter.onTrackPressed(it) //todo notifyItemInserted when appropriate
         }
     }
 
@@ -197,6 +192,17 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     override fun executeSearch() {
         searchDebounce() //todo remove from activity?
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun refreshSearchHistoryAdapter() {
+        searchHistoryAdapter.notifyDataSetChanged()
+    }
+
+    override fun openTrack(track: Track) {
+        val playerIntent = Intent(this, PlayerActivity::class.java)
+        playerIntent.putExtra(Track::class.java.simpleName, track)
+        startActivity(playerIntent)
     }
 
     private fun initializeLateinitItems() {
