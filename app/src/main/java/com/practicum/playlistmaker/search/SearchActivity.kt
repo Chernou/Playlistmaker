@@ -109,7 +109,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
         clearSearchHistoryButton.setOnClickListener {
             presenter.onClearSearchHistoryPressed()
-            searchHistoryAdapter.notifyDataSetChanged()
         }
     }
 

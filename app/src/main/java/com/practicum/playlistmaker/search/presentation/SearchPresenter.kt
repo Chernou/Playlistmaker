@@ -46,6 +46,7 @@ class SearchPresenter(
 
     fun onClearSearchHistoryPressed() {
         searchHistory.clearSearchHistory()
+        view.refreshSearchHistoryAdapter()
         view.showSearchResultLayout()
     }
 
