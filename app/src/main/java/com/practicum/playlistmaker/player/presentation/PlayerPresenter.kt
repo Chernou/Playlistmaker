@@ -1,4 +1,10 @@
 package com.practicum.playlistmaker.player.presentation
 
-class PlayerPresenter {
+class PlayerPresenter(
+    private val view: PlayerView
+) {
+    fun backArrowPressed() {
+        view.moveToPreviousScreen()
+    }
+
 }

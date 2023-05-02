@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.presentation
 
+import com.practicum.playlistmaker.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.data.SearchRepository
 
@@ -9,7 +10,7 @@ class SearchPresenter(
     private val searchRepository: SearchRepository
 ) {
 
-    fun clearSearchTextPressed() {
+    fun onClearSearchTextPressed() {
         view.clearSearchText()
         view.hideKeyboard()
         view.clearSearchResult()
@@ -43,18 +44,22 @@ class SearchPresenter(
         }
     }
 
-    fun clearSearchHistoryPressed() {
+    fun onClearSearchHistoryPressed() {
         searchHistory.clearSearchHistory()
         view.showSearchResultLayout() //todo odd call?
     }
 
-    fun backArrowPressed() {
+    fun onBackArrowPressed() {
         view.moveToPreviousScreen()
     }
 
-    fun refreshSearchButtonPressed(searchRequest: String) {
+    fun onRefreshSearchButtonPressed(searchRequest: String) {
         view.showProgressBar()
         loadTracks(searchRequest)
+    }
+
+    fun onTrackPressed(track: Track): Boolean {
+        return searchHistory.addTrack(track)
     }
 
 }

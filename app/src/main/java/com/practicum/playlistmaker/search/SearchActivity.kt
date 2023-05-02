@@ -48,7 +48,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
-            if (searchHistory.addTrack(it)) {
+            if (presenter.onTrackPressed(it)) {
                 searchHistoryAdapter.notifyDataSetChanged()
             } else searchHistoryAdapter.notifyItemInserted(0)
             val playerIntent = Intent(this, PlayerActivity::class.java)
@@ -95,17 +95,17 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener {
-            presenter.backArrowPressed()
+            presenter.onBackArrowPressed()
         }
 
         searchEditText.addTextChangedListener(searchTextWatcher)
 
         clearImage.setOnClickListener {
-            presenter.clearSearchTextPressed()
+            presenter.onClearSearchTextPressed()
         }
 
         refreshSearchButton.setOnClickListener {
-            presenter.refreshSearchButtonPressed(lastUnsuccessfulSearch)
+            presenter.onRefreshSearchButtonPressed(lastUnsuccessfulSearch)
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -113,7 +113,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
 
         clearSearchHistoryButton.setOnClickListener {
-            presenter.clearSearchHistoryPressed()
+            presenter.onClearSearchHistoryPressed()
             searchHistoryAdapter.notifyDataSetChanged()
         }
     }

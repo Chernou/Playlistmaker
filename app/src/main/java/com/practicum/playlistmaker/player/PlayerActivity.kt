@@ -16,15 +16,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.player.presentation.PlayerPresenter
+import com.practicum.playlistmaker.player.presentation.PlayerView
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), PlayerView {
 
     private var playerState = STATE_DEFAULT
     private var mediaPlayer = MediaPlayer()
+    private var presenter = PlayerPresenter(this)
     private lateinit var currentPlaybackTime: TextView
     private lateinit var playImageView: ImageView
     private lateinit var mainThreadHandler: Handler
@@ -86,7 +89,7 @@ class PlayerActivity : AppCompatActivity() {
             .into(coverImageView)
 
         backArrowImageView.setOnClickListener {
-            onBackPressed()
+            presenter.backArrowPressed()
         }
 
         playImageView.setOnClickListener {
@@ -114,6 +117,10 @@ class PlayerActivity : AppCompatActivity() {
         super.onDestroy()
         mediaPlayer.release()
         mainThreadHandler.removeCallbacks(setPlaybackTimer())
+    }
+
+    override fun moveToPreviousScreen() {
+        onBackPressed()
     }
 
     private fun preparePlayer() {
