@@ -1,11 +1,8 @@
 package com.practicum.playlistmaker.player
 
-import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,18 +16,15 @@ import com.practicum.playlistmaker.Track
 import com.practicum.playlistmaker.player.presentation.PlayerPresenter
 import com.practicum.playlistmaker.player.presentation.PlayerView
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.util.Locale
+import com.practicum.playlistmaker.utils.DateUtils.getYear
+import com.practicum.playlistmaker.utils.TextUtils.getHighResArtwork
+import com.practicum.playlistmaker.utils.TextUtils.removeLastChar
 
 class PlayerActivity : AppCompatActivity(), PlayerView {
 
-    private var playerState = STATE_DEFAULT
-    private var mediaPlayer = MediaPlayer()
-    private var presenter = PlayerPresenter(this)
+    private lateinit var presenter: PlayerPresenter
     private lateinit var currentPlaybackTime: TextView
     private lateinit var playImageView: ImageView
-    private lateinit var mainThreadHandler: Handler
     private lateinit var track: Track
     //private lateinit var queueImageView: ImageView
     //private lateinit var likeImageView: ImageView
@@ -55,7 +49,6 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
         playImageView.isEnabled = false
         //val queueImageView: ImageView = findViewById(R.id.queue_image)
         //val likeImageView: ImageView = findViewById(R.id.like_image)
-        mainThreadHandler = Handler(Looper.getMainLooper())
 
         track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
 
@@ -72,10 +65,10 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             trackAlbum.text = track.album
         }
 
-        val year = LocalDateTime.parse(removeLastChar(track.releaseDate)).year.toString()
+        val year = getYear(removeLastChar(track.releaseDate))
         trackYear.text = year
 
-        val artworkUriHighRes = getCoverArtwork(track.artworkUri)
+        val artworkUriHighRes = getHighResArtwork(track.artworkUri)
         Glide.with(coverImageView)
             .load(artworkUriHighRes)
             .centerCrop()
@@ -88,121 +81,67 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
+        presenter = PlayerPresenter(this, track)
+
         backArrowImageView.setOnClickListener {
             presenter.backArrowPressed()
         }
 
         playImageView.setOnClickListener {
-            if (track.previewUrl == null) {
-                noPreviewUrlMessage()
-            } else {
-                playbackControl()
-            }
+            presenter.onPlayPressed()
         }
 
-        if (track.previewUrl != null) {
-            preparePlayer()
-        } else {
-            noPreviewUrlMessage()
-            playImageView.isEnabled = true
-        }
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        presenter.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        mainThreadHandler.removeCallbacks(setPlaybackTimer())
+        presenter.destroyPlayer()
     }
 
     override fun moveToPreviousScreen() {
         onBackPressed()
     }
 
-    private fun preparePlayer() {
-        val url = track.previewUrl
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playImageView.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            playerState = STATE_PREPARED
-            mainThreadHandler.removeCallbacks(setPlaybackTimer())
-            currentPlaybackTime.text = ZERO_TIMER
-            switchPlayPauseImage(R.drawable.ic_play_button)
-        }
+    override fun setPlaybackTime(time: String) {
+        currentPlaybackTime.text = time
     }
 
-    private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerState = STATE_PLAYING
-        switchPlayPauseImage(R.drawable.ic_pause_button)
-        mainThreadHandler.post(setPlaybackTimer())
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerState = STATE_PAUSED
-        switchPlayPauseImage(R.drawable.ic_play_button)
-        mainThreadHandler.removeCallbacks(setPlaybackTimer())
-    }
-
-    private fun setPlaybackTimer(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                if (playerState == STATE_PLAYING) {
-                    currentPlaybackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault())
-                        .format(mediaPlayer.currentPosition)
-                    mainThreadHandler.postDelayed(this, PLAYBACK_TIME_REFRESH)
-                }
-            }
-        }
-    }
-
-    private fun noPreviewUrlMessage() {
+    override fun noPreviewUrlMessage() {
         Toast.makeText(this, getText(R.string.no_preview_url), Toast.LENGTH_SHORT).show()
     }
 
-    private fun removeLastChar(str: String?): String? {
-        return str?.replaceFirst(".$".toRegex(), "")
-    }
-
-    private fun getCoverArtwork(artworkUriLowRes: String): String {
-        return artworkUriLowRes.replaceAfterLast('/', "512x512bb.jpg")
-    }
-
-    private fun switchPlayPauseImage(res: Int) {
+    override fun setPauseImageView() {
         playImageView.setImageDrawable(
             AppCompatResources.getDrawable(
                 this,
-                res
+                R.drawable.ic_pause_button
             )
         )
     }
 
+    override fun setPlayImageView() {
+        playImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_play_button
+            )
+        )
+    }
+
+    override fun enablePlayImageView() {
+        playImageView.isEnabled = true
+    }
+
+    override fun setZeroTimer() {
+        currentPlaybackTime.text = ZERO_TIMER
+    }
+
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val PLAYBACK_TIME_REFRESH = 500L
         const val ZERO_TIMER = "00:00"
     }
 
