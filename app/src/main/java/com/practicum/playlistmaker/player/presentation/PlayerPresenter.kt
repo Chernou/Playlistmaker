@@ -12,6 +12,7 @@ class PlayerPresenter(
 ) {
 
     private val mediaPlayer = MediaPlayer()
+
     init {
         if (track.previewUrl != null) {
             preparePlayer()
@@ -43,6 +44,7 @@ class PlayerPresenter(
             playbackControl()
         }
     }
+
     private fun playbackControl() {
         when (playerState) {
             STATE_PLAYING -> {
