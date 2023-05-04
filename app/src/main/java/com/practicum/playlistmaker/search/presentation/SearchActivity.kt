@@ -1,8 +1,7 @@
-package com.practicum.playlistmaker.search
+package com.practicum.playlistmaker.search.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,13 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.ItunesService
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.TrackAdapter
-import com.practicum.playlistmaker.player.PlayerActivity
 import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.data.SearchRepository
-import com.practicum.playlistmaker.search.presentation.SearchPresenter
-import com.practicum.playlistmaker.search.presentation.SearchTracksView
+import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -85,7 +82,8 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         presenter = SearchPresenter(
             this,
             searchHistory,
-            SearchRepository(retrofit.create(ItunesService::class.java))
+            SearchRepository(retrofit.create(ItunesService::class.java)),
+            SearchRouter(this)
         )
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
@@ -120,10 +118,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     override fun onStop() {
         super.onStop()
         searchHistory.updateSharedPref()
-    }
-
-    override fun moveToPreviousScreen() {
-        onBackPressed()
     }
 
     override fun clearSearchText() {
@@ -198,12 +192,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchHistoryAdapter.notifyDataSetChanged()
     }
 
-    override fun openTrack(track: Track) {
-        val playerIntent = Intent(this, PlayerActivity::class.java)
-        playerIntent.putExtra(Track::class.java.simpleName, track)
-        startActivity(playerIntent)
-    }
-
     private fun initializeLateinitItems() {
         searchErrorTextView = findViewById(R.id.search_result_text)
         searchErrorImageView = findViewById(R.id.search_result_image)
@@ -215,9 +203,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE))
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
-                val playerIntent = Intent(this, PlayerActivity::class.java)
-                playerIntent.putExtra(Track::class.java.simpleName, it)
-                startActivity(playerIntent)
+                presenter.onTrackPressed(it)
             }
         }
         searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList

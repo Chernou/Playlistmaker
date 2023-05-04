@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import com.practicum.playlistmaker.ItunesService
 import com.practicum.playlistmaker.SearchResponse
-import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.search.domain.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

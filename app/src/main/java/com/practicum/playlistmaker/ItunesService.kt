@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker
 
 import com.google.gson.annotations.SerializedName
-import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.search.domain.Track
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.presentation
+package com.practicum.playlistmaker.player.presentation.api
 
 interface PlayerView {
     fun moveToPreviousScreen()

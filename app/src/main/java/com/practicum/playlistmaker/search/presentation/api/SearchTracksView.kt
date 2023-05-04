@@ -1,6 +1,6 @@
-package com.practicum.playlistmaker.search.presentation
+package com.practicum.playlistmaker.search.presentation.api
 
-import com.practicum.playlistmaker.Track
+import com.practicum.playlistmaker.search.domain.Track
 
 interface SearchTracksView {
     fun clearSearchText()
@@ -11,9 +11,7 @@ interface SearchTracksView {
     fun showSearchError()
     fun showSearchHistoryLayout()
     fun showSearchResultLayout()
-    fun moveToPreviousScreen()
     fun showProgressBar()
     fun executeSearch()
-    fun openTrack(track: Track)
     fun refreshSearchHistoryAdapter()
 }

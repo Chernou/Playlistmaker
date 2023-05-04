@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player
+package com.practicum.playlistmaker.player.presentation
 
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -12,9 +12,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.Track
-import com.practicum.playlistmaker.player.presentation.PlayerPresenter
-import com.practicum.playlistmaker.player.presentation.PlayerView
+import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.player.presentation.api.PlayerView
+import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.TextUtils.getHighResArtwork
@@ -81,7 +81,7 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        presenter = PlayerPresenter(this, track)
+        presenter = Creator.providePlayerPresenter(this, track)
 
         backArrowImageView.setOnClickListener {
             presenter.backArrowPressed()
@@ -90,17 +90,16 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
         playImageView.setOnClickListener {
             presenter.onPlayPressed()
         }
-
     }
 
     override fun onPause() {
         super.onPause()
-        presenter.pausePlayer()
+        presenter.onPaused()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.destroyPlayer()
+        presenter.onDestroyed()
     }
 
     override fun moveToPreviousScreen() {
@@ -144,5 +143,4 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
     companion object {
         const val ZERO_TIMER = "00:00"
     }
-
 }
