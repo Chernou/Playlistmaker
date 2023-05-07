@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker
 
-import android.os.Parcelable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -8,25 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.google.gson.annotations.SerializedName
-import com.practicum.playlistmaker.utils.DateUtils.formatTime
-import kotlinx.parcelize.Parcelize
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.utils.DateUtils
 
-@Parcelize
-data class Track (
-    val trackId: Int,
-    val trackName: String,
-    val artistName: String,
-    val country: String,
-    val releaseDate: String,
-    @SerializedName("trackTimeMillis") val trackTime: Int,
-    @SerializedName("artworkUrl100") val artworkUri: String,
-    @SerializedName("primaryGenreName") val genre: String,
-    @SerializedName("collectionName") val album: String,
-    val previewUrl: String?
-) : Parcelable
 
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -38,15 +21,18 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(model: Track) {
         trackName.text = model.trackName
         artistName.text = model.artistName
-        trackTime.text = formatTime(model.trackTime)
+        trackTime.text = DateUtils.formatTime(model.trackTime)
         Glide.with(artwork)
             .load(model.artworkUri)
             .fitCenter()
             .centerCrop()
-            .apply(RequestOptions
-                .bitmapTransform(RoundedCorners(itemView
+            .apply(
+                RequestOptions
+                .bitmapTransform(
+                    RoundedCorners(itemView
                     .resources
-                    .getDimensionPixelSize(R.dimen.rounded_corners_album_preview))))
+                    .getDimensionPixelSize(R.dimen.rounded_corners_album_preview))
+                ))
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(artwork)
     }
