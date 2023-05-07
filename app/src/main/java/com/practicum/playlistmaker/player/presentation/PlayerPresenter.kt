@@ -13,7 +13,7 @@ class PlayerPresenter(
     private val track: Track,
 ) {
 
-    private val interactor = Creator.getPlayerInteractor()
+    private val interactor = Creator.providePlayerInteractor()
     private val mainThreadHandler = Handler(Looper.getMainLooper())
     private var playerState = PlayerState.STATE_DEFAULT
 
@@ -27,7 +27,7 @@ class PlayerPresenter(
                 },
                 onCompletion = {
                     playerState = PlayerState.STATE_PREPARED
-                    mainThreadHandler.removeCallbacks(runPlaybackTimer())
+                    mainThreadHandler.removeCallbacks(playbackTimerRunnable)
                     view?.setZeroTimer()
                     view?.setPlayImageView()
                 }
@@ -53,7 +53,7 @@ class PlayerPresenter(
 
     fun onDestroyed() {
         interactor.releasePlayer()
-        mainThreadHandler.removeCallbacks(runPlaybackTimer())
+        mainThreadHandler.removeCallbacksAndMessages(null)
         view = null
     }
 
@@ -61,8 +61,10 @@ class PlayerPresenter(
         interactor.pausePlayer()
         playerState = PlayerState.STATE_PAUSED
         view?.setPlayImageView()
-        mainThreadHandler.removeCallbacks(runPlaybackTimer())
+        mainThreadHandler.removeCallbacks(playbackTimerRunnable)
     }
+
+    private val playbackTimerRunnable = runPlaybackTimer()
 
     private fun playbackControl() {
         when (playerState) {

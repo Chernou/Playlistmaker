@@ -120,6 +120,11 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchHistory.updateSharedPref()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mainThreadHandler.removeCallbacksAndMessages(null)
+    }
+
     override fun clearSearchText() {
         searchEditText.text.clear()
         clearImage.visibility = View.GONE

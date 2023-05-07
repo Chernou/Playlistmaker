@@ -17,11 +17,11 @@ object Creator {
         )
     }
 
-    fun getPlayerInteractor(): PlayerInteractorApi {
-        return PlayerInteractor(getPlayer())
+    fun providePlayerInteractor(): PlayerInteractorApi {
+        return PlayerInteractor(providePlayer())
     }
 
-    private fun getPlayer(): PlayerApi {
+    private fun providePlayer(): PlayerApi {
         return Player()
     }
 }

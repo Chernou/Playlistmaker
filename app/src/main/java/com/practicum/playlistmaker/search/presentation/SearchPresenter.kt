@@ -66,4 +66,5 @@ class SearchPresenter(
         view.refreshSearchHistoryAdapter()
         router.openTrack(track)
     }
+
 }
