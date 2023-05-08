@@ -1,15 +1,17 @@
 package com.practicum.playlistmaker.search.presentation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
-import com.practicum.playlistmaker.search.data.SearchRepository
+import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
 
 class SearchPresenter(
     private val view: SearchTracksView,
     private val searchHistory: SearchHistory,
-    private val searchRepository: SearchRepository,
-    private val router: SearchRouter
+    private val router: SearchRouter,
+    private val interactor: SearchInteractor
 ) {
 
     fun onClearSearchTextPressed() {
@@ -18,6 +20,7 @@ class SearchPresenter(
         view.clearSearchResult()
     }
 
+    /*@RequiresApi(Build.VERSION_CODES.O)
     fun loadTracks(searchText: String) {
         searchRepository.searchTracks(
             searchRequest = searchText,
@@ -32,6 +35,18 @@ class SearchPresenter(
                 view.showSearchError()
             }
         )
+    }*/
+
+    fun loadTracks(searchText: String) {
+        interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>) {
+                if (foundTracks.isNotEmpty()) {
+                    view.showSearchResult(foundTracks)
+                } else {
+                    view.showEmptySearch()
+                }
+            }
+        })
     }
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
@@ -56,6 +71,7 @@ class SearchPresenter(
         router.goBack()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onRefreshSearchButtonPressed(searchRequest: String) {
         view.showProgressBar()
         loadTracks(searchRequest)

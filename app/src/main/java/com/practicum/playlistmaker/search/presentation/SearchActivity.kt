@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.search.presentation
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,20 +16,18 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.playlistmaker.ItunesService
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.TrackAdapter
 import com.practicum.playlistmaker.search.data.SearchHistory
-import com.practicum.playlistmaker.search.data.SearchRepository
 import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.practicum.playlistmaker.utils.Creator
 
 class SearchActivity : AppCompatActivity(), SearchTracksView {
 
@@ -36,11 +35,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     private var mainThreadHandler: Handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
@@ -64,6 +58,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     private lateinit var progressBar: ProgressBar
     private lateinit var searchRecyclerView: RecyclerView
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +74,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
             adapter = searchHistoryAdapter
         }
 
-        presenter = SearchPresenter(
-            this,
-            searchHistory,
-            SearchRepository(retrofit.create(ItunesService::class.java)),
-            SearchRouter(this)
-        )
+        presenter = Creator.provideSearchPresenter(this, searchHistory, SearchRouter(this))
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener {
@@ -144,13 +134,15 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showSearchResult(tracks: List<Track>) {
-        progressBar.visibility = View.GONE
-        searchRecyclerView.visibility = View.VISIBLE
-        trackList.clear()
-        trackList.addAll(tracks)
-        searchResultAdapter.trackList = trackList
-        searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.NO_MESSAGE)
+        mainThreadHandler.post {
+            progressBar.visibility = View.GONE
+            searchRecyclerView.visibility = View.VISIBLE
+            trackList.clear()
+            trackList.addAll(tracks)
+            searchResultAdapter.trackList = trackList
+            searchResultAdapter.notifyDataSetChanged()
+            showMessage(MessageType.NO_MESSAGE)
+        }
     }
 
     override fun showSearchResultLayout() {
@@ -188,6 +180,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         progressBar.visibility = View.VISIBLE
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun executeSearch() {
         searchDebounce() //todo remove from activity?
     }
@@ -221,6 +214,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun searchDebounce() {
         mainThreadHandler.removeCallbacks(searchRunnable)
         mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
@@ -239,6 +233,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private val searchRunnable = Runnable {
         presenter.loadTracks(searchEditText.text.toString())
     }
@@ -306,7 +301,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val BASE_URL = "https://itunes.apple.com"
         const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
         const val SEARCH_DEBOUNCE_DELAY = 2_000L
         const val CLICK_DEBOUNCE_DELAY = 1_000L

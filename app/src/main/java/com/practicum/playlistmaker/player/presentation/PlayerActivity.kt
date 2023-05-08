@@ -12,13 +12,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.player.presentation.api.PlayerView
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.utils.DateUtils.formatTime
-import com.practicum.playlistmaker.utils.DateUtils.getYear
-import com.practicum.playlistmaker.utils.TextUtils.getHighResArtwork
-import com.practicum.playlistmaker.utils.TextUtils.removeLastChar
 
 class PlayerActivity : AppCompatActivity(), PlayerView {
 
@@ -54,9 +50,10 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
 
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackDuration.text = formatTime(track.trackTime)
+        trackDuration.text = track.duration
         trackGenre.text = track.genre
         trackCountry.text = track.country
+        trackYear.text = track.releaseYear
 
         if (track.album == "") {
             trackAlbum.visibility = View.GONE
@@ -65,10 +62,7 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             trackAlbum.text = track.album
         }
 
-        val year = getYear(removeLastChar(track.releaseDate))
-        trackYear.text = year
-
-        val artworkUriHighRes = getHighResArtwork(track.artworkUri)
+        val artworkUriHighRes = track.highResArtworkUri
         Glide.with(coverImageView)
             .load(artworkUriHighRes)
             .centerCrop()

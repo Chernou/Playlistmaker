@@ -15,6 +15,6 @@ object DateUtils {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getYear(str: String?): String {
-        return LocalDateTime.parse(str).year.toString()
+        return LocalDateTime.parse(str).year.toString() //todo seek for solution applicable for API 21
     }
 }

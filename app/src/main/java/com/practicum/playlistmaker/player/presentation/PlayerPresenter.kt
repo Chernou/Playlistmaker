@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.player.presentation
 
 import android.os.Handler
 import android.os.Looper
-import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.player.domain.PlayerState
 import com.practicum.playlistmaker.player.presentation.api.PlayerView
 import com.practicum.playlistmaker.search.domain.Track
