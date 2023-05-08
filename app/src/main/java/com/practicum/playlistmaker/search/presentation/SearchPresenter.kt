@@ -20,24 +20,24 @@ class SearchPresenter(
         view.clearSearchResult()
     }
 
-    /*@RequiresApi(Build.VERSION_CODES.O)
     fun loadTracks(searchText: String) {
-        searchRepository.searchTracks(
-            searchRequest = searchText,
-            onSuccess = { tracks ->
-                if (tracks.isNotEmpty()) {
-                    view.showSearchResult(tracks)
-                } else {
-                    view.showEmptySearch()
+        interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
+                if (foundTracks != null) {
+                    if (foundTracks.isNotEmpty()) {
+                        view.showSearchResult(foundTracks)
+                    } else {
+                        view.showEmptySearch()
+                    }
                 }
-            },
-            onFailure = {
-                view.showSearchError()
+                if (errorMessage != null) {
+                    view.showSearchError()
+                }
             }
-        )
-    }*/
+        })
+    }
 
-    fun loadTracks(searchText: String) {
+    /*fun loadTracks(searchText: String) {
         interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
             override fun consume(foundTracks: List<Track>) {
                 if (foundTracks.isNotEmpty()) {
@@ -47,7 +47,7 @@ class SearchPresenter(
                 }
             }
         })
-    }
+    }*/
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
         if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {

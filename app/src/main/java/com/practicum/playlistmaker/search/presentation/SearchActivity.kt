@@ -74,7 +74,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
             adapter = searchHistoryAdapter
         }
 
-        presenter = Creator.provideSearchPresenter(this, searchHistory, SearchRouter(this))
+        presenter = Creator.provideSearchPresenter(this, searchHistory, SearchRouter(this), this)
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener {
@@ -159,19 +159,23 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showEmptySearch() {
-        progressBar.visibility = View.GONE
-        searchRecyclerView.visibility = View.VISIBLE
-        searchResultAdapter.trackList.clear()
-        searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.NOTHING_IS_FOUND)
+        mainThreadHandler.post {
+            progressBar.visibility = View.GONE
+            searchRecyclerView.visibility = View.VISIBLE
+            searchResultAdapter.trackList.clear()
+            searchResultAdapter.notifyDataSetChanged()
+            showMessage(MessageType.NOTHING_IS_FOUND)
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showSearchError() {
-        progressBar.visibility = View.GONE
-        searchResultAdapter.trackList.clear()
-        searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
+        mainThreadHandler.post {
+            progressBar.visibility = View.GONE
+            searchResultAdapter.trackList.clear()
+            searchResultAdapter.notifyDataSetChanged()
+            showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
+        }
     }
 
     override fun showProgressBar() {

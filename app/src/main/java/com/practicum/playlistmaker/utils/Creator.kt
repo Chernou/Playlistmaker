@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.utils
 
+import android.content.Context
 import com.practicum.playlistmaker.player.data.Player
 import com.practicum.playlistmaker.player.domain.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerApi
@@ -19,20 +20,17 @@ import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
 
 object Creator {
 
-    fun provideSearchInteractor(): SearchInteractor {
-        return SearchInteractorImpl(provideSearchRepository())
-    }
-
     fun provideSearchPresenter(
         view: SearchTracksView,
         searchHistory: SearchHistory,
         router: SearchRouter,
+        context: Context
     ): SearchPresenter {
         return SearchPresenter(
             view,
             searchHistory,
             router,
-            provideSearchInteractor()
+            provideSearchInteractor(context)
         )
     }
 
@@ -47,12 +45,16 @@ object Creator {
         return PlayerInteractor(providePlayer())
     }
 
-    private fun provideNetworkClient(): RetrofitNetworkClient {
-        return RetrofitNetworkClient()
+    private fun provideSearchInteractor(context: Context): SearchInteractor {
+        return SearchInteractorImpl(provideSearchRepository(context))
     }
 
-    private fun provideSearchRepository(): SearchRepository {
-        return SearchRepositoryImpl(provideNetworkClient())
+    private fun provideSearchRepository(context: Context): SearchRepository {
+        return SearchRepositoryImpl(provideNetworkClient(context))
+    }
+
+    private fun provideNetworkClient(context: Context): RetrofitNetworkClient {
+        return RetrofitNetworkClient(context)
     }
 
     private fun providePlayer(): PlayerApi {

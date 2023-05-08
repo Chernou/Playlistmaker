@@ -8,37 +8,49 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
+import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.TextUtils
 
 class SearchRepositoryImpl(
     private val networkClient: NetworkClient
 ) : SearchRepository {
+
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun searchTracks(query: String): List<Track> {
+    override fun searchTracks(query: String): Resource<List<Track>> {
         val response = networkClient.doRequest(SearchRequest(query))
-        return if (response.resultCode == SUCCESSFUL_SEARCH_CODE) {
-            (response as SearchResponse).trackList.map {
-                Track(
-                    it.trackId,
-                    it.trackName,
-                    it.artistName,
-                    it.country,
-                    it.releaseDate,
-                    getYear(TextUtils.removeLastChar(it.releaseDate)),
-                    formatTime(it.duration),
-                    it.artworkUri,
-                    TextUtils.getHighResArtwork(it.artworkUri),
-                    it.genre,
-                    it.album,
-                    it.previewUrl
-                )
+        return when (response.resultCode) {
+            NO_CONNECTIVITY_ERROR -> {
+                Resource.Error(NO_CONNECTIVITY_MESSAGE)
             }
-        } else {
-            emptyList()
+            SUCCESSFUL_SEARCH_CODE -> {
+                Resource.Success((response as SearchResponse).trackList.map {
+                    Track(
+                        it.trackId,
+                        it.trackName,
+                        it.artistName,
+                        it.country,
+                        it.releaseDate,
+                        getYear(TextUtils.removeLastChar(it.releaseDate)),
+                        formatTime(it.duration),
+                        it.artworkUri,
+                        TextUtils.getHighResArtwork(it.artworkUri),
+                        it.genre,
+                        it.album,
+                        it.previewUrl
+                    )
+                })
+            }
+            else -> {
+                Resource.Error(SERVER_ERROR_MESSAGE)
+            }
         }
     }
 
     companion object {
         const val SUCCESSFUL_SEARCH_CODE = 200
+        const val NO_CONNECTIVITY_ERROR = -1
+        const val NO_CONNECTIVITY_MESSAGE = "Проверьте подключение к интернету"
+        const val SERVER_ERROR_MESSAGE = "Ошибка сервера"
+
     }
 }
