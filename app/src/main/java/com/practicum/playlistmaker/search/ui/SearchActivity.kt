@@ -27,6 +27,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.presentation.SearchPresenter
 import com.practicum.playlistmaker.search.presentation.SearchRouter
+import com.practicum.playlistmaker.search.presentation.SearchState
 import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
 import com.practicum.playlistmaker.utils.Creator
 
@@ -114,6 +115,16 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     override fun onDestroy() {
         super.onDestroy()
         mainThreadHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun render(state: SearchState) {
+        when (state) {
+            is SearchState.Loading -> showProgressBar()
+            is SearchState.SearchContent -> showSearchResult(state.tracks)
+            is SearchState.HistoryContent -> showSearchHistoryLayout()
+            is SearchState.Empty -> showEmptySearch()
+            is SearchState.Error -> showSearchError()
+        }
     }
 
     override fun clearSearchText() {

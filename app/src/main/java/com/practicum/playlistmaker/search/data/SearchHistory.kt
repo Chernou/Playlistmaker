@@ -47,6 +47,10 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
             .apply()
     }
 
+    fun isEmpty(): Boolean {
+        return searchHistoryTrackList.isEmpty()
+    }
+
     companion object {
         const val SEARCH_HISTORY = "SEARCH_HISTORY"
     }

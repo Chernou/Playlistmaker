@@ -42,7 +42,6 @@ class SearchPresenter(
             view.showSearchResultLayout()
         }
         if (searchText != null && searchText.isNotEmpty()) {
-            view.showProgressBar()
             searchDebounce(searchText)
         }
     }
@@ -59,7 +58,6 @@ class SearchPresenter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun onRefreshSearchButtonPressed(searchRequest: String) {
-        view.showProgressBar()
         searchRequest(searchRequest)
     }
 
@@ -91,19 +89,19 @@ class SearchPresenter(
 
     private fun searchRequest(searchText: String) {
         if (searchText.isNotEmpty()) {
-            view.showProgressBar()
+            view.render(SearchState.Loading)
             interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
                     handler.post {
                         if (foundTracks != null) {
                             if (foundTracks.isNotEmpty()) {
-                                view.showSearchResult(foundTracks)
+                                view.render(SearchState.SearchContent(foundTracks))
                             } else {
-                                view.showEmptySearch()
+                                view.render(SearchState.Empty)
                             }
                         }
                         if (errorMessage != null) {
-                            view.showSearchError()
+                            view.render(SearchState.Error(errorMessage))
                         }
                     }
                 }
