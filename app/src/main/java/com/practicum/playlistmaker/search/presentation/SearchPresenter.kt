@@ -91,15 +91,17 @@ class SearchPresenter(
             view.showProgressBar()
             interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    if (foundTracks != null) {
-                        if (foundTracks.isNotEmpty()) {
-                            view.showSearchResult(foundTracks)
-                        } else {
-                            view.showEmptySearch()
+                    handler.post {
+                        if (foundTracks != null) {
+                            if (foundTracks.isNotEmpty()) {
+                                view.showSearchResult(foundTracks)
+                            } else {
+                                view.showEmptySearch()
+                            }
                         }
-                    }
-                    if (errorMessage != null) {
-                        view.showSearchError()
+                        if (errorMessage != null) {
+                            view.showSearchError()
+                        }
                     }
                 }
             })

@@ -135,15 +135,13 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showSearchResult(tracks: List<Track>) {
-        mainThreadHandler.post {
-            progressBar.visibility = View.GONE
-            searchRecyclerView.visibility = View.VISIBLE
-            trackList.clear()
-            trackList.addAll(tracks)
-            searchResultAdapter.trackList = trackList
-            searchResultAdapter.notifyDataSetChanged()
-            showMessage(MessageType.NO_MESSAGE)
-        }
+        progressBar.visibility = View.GONE
+        searchRecyclerView.visibility = View.VISIBLE
+        trackList.clear()
+        trackList.addAll(tracks)
+        searchResultAdapter.trackList = trackList
+        searchResultAdapter.notifyDataSetChanged()
+        showMessage(MessageType.NO_MESSAGE)
     }
 
     override fun showSearchResultLayout() {
@@ -162,29 +160,25 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showEmptySearch() {
-        mainThreadHandler.post {
-            progressBar.visibility = View.GONE
-            searchRecyclerView.visibility = View.VISIBLE
-            searchResultAdapter.trackList.clear()
-            searchResultAdapter.notifyDataSetChanged()
-            showMessage(MessageType.NOTHING_IS_FOUND)
-        }
+        progressBar.visibility = View.GONE
+        searchRecyclerView.visibility = View.VISIBLE
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.notifyDataSetChanged()
+        showMessage(MessageType.NOTHING_IS_FOUND)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showSearchError() {
-        mainThreadHandler.post {
-            progressBar.visibility = View.GONE
-            searchResultAdapter.trackList.clear()
-            searchResultAdapter.notifyDataSetChanged()
-            showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
-        }
+        progressBar.visibility = View.GONE
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.notifyDataSetChanged()
+        showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
     }
 
     override fun showProgressBar() {
         searchRecyclerView.visibility = View.GONE
-        showMessage(MessageType.NO_MESSAGE)
         progressBar.visibility = View.VISIBLE
+        showMessage(MessageType.NO_MESSAGE)
     }
 
     @SuppressLint("NotifyDataSetChanged")
