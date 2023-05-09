@@ -294,7 +294,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
-        const val SEARCH_DEBOUNCE_DELAY = 2_000L
         const val CLICK_DEBOUNCE_DELAY = 1_000L
     }
 }

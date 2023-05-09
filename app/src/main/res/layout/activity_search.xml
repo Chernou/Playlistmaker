@@ -26,6 +26,8 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- TODO: Reformat search layout -->
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -16,12 +16,10 @@ class SearchPresenter(
     private val view: SearchTracksView,
     private val searchHistory: SearchHistory,
     private val router: SearchRouter,
-    private val context: Context
+    context: Context
 ) {
 
     companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
         const val SEARCH_DEBOUNCE_DELAY = 2_000L
         private val SEARCH_REQUEST_TOKEN = Any()
     }
