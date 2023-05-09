@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.presentation
 
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -9,12 +10,13 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
+import com.practicum.playlistmaker.utils.Creator
 
 class SearchPresenter(
     private val view: SearchTracksView,
     private val searchHistory: SearchHistory,
     private val router: SearchRouter,
-    private val interactor: SearchInteractor
+    private val context: Context
 ) {
 
     companion object {
@@ -24,6 +26,7 @@ class SearchPresenter(
         private val SEARCH_REQUEST_TOKEN = Any()
     }
 
+    private val interactor = Creator.provideSearchInteractor(context)
     private val handler = Handler(Looper.getMainLooper())
 
     fun onClearSearchTextPressed() {

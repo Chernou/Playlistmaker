@@ -30,7 +30,7 @@ object Creator {
             view,
             searchHistory,
             router,
-            provideSearchInteractor(context)
+            context
         )
     }
 
@@ -45,7 +45,7 @@ object Creator {
         return PlayerInteractor(providePlayer())
     }
 
-    private fun provideSearchInteractor(context: Context): SearchInteractor {
+    fun provideSearchInteractor(context: Context): SearchInteractor {
         return SearchInteractorImpl(provideSearchRepository(context))
     }
 
