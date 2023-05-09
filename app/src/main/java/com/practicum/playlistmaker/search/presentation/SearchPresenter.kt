@@ -32,12 +32,7 @@ class SearchPresenter(
         view.clearSearchResult()
     }
 
-    //todo implement advanced search debounce and move search debounce from activity
-
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
-        if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
-            view.showSearchHistoryLayout()
-        }
         if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
             view.showSearchHistoryLayout()
         } else {
