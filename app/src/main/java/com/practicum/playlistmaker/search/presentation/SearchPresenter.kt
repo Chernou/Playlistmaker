@@ -32,12 +32,12 @@ class SearchPresenter(
     fun onClearSearchTextPressed() {
         view.clearSearchText()
         view.hideKeyboard()
-        view.clearSearchResult()
+        view.render(SearchState.SearchContent(ArrayList()))
     }
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
         if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
-            view.showSearchHistoryLayout()
+            view.render(SearchState.HistoryContent(ArrayList()))
         } else {
             view.showSearchResultLayout()
         }

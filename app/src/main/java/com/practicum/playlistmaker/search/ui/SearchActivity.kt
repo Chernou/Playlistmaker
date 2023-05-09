@@ -47,7 +47,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     private lateinit var presenter: SearchPresenter
     private lateinit var clearImage: ImageView
-    private lateinit var searchHistory: SearchHistory
+    private lateinit var searchHistory: SearchHistory //todo move search history from activity
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
     private lateinit var searchErrorImageView: ImageView
@@ -121,7 +121,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         when (state) {
             is SearchState.Loading -> showProgressBar()
             is SearchState.SearchContent -> showSearchResult(state.tracks)
-            is SearchState.HistoryContent -> showSearchHistoryLayout()
+            is SearchState.HistoryContent -> showSearchHistoryLayout() //todo move search history from activity and pass tracklist through render
             is SearchState.Empty -> showEmptySearch()
             is SearchState.Error -> showSearchError()
         }
@@ -138,21 +138,13 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun clearSearchResult() {
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun showSearchResult(tracks: List<Track>) {
-        progressBar.visibility = View.GONE
-        searchRecyclerView.visibility = View.VISIBLE
-        trackList.clear()
-        trackList.addAll(tracks)
-        searchResultAdapter.trackList = trackList
-        searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.NO_MESSAGE)
+    override fun refreshSearchHistoryAdapter() {
+        searchHistoryAdapter.notifyDataSetChanged()
     }
 
     override fun showSearchResultLayout() {
@@ -162,15 +154,24 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         showMessage(MessageType.NO_MESSAGE)
     }
 
-    override fun showSearchHistoryLayout() {
+    private fun showSearchResult(tracks: List<Track>) {
+        progressBar.visibility = View.GONE
+        searchRecyclerView.visibility = View.VISIBLE
+        trackList.clear()
+        trackList.addAll(tracks)
+        searchResultAdapter.trackList = trackList
+        searchResultAdapter.notifyDataSetChanged()
+        showMessage(MessageType.NO_MESSAGE)
+    }
+
+    private fun showSearchHistoryLayout() {
         searchLayout.visibility = View.GONE
         searchHistoryLayout.visibility = View.VISIBLE
         clearSearchHistoryButton.visibility = View.VISIBLE
         showMessage(MessageType.NO_MESSAGE)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun showEmptySearch() {
+    private fun showEmptySearch() {
         progressBar.visibility = View.GONE
         searchRecyclerView.visibility = View.VISIBLE
         searchResultAdapter.trackList.clear()
@@ -178,23 +179,17 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         showMessage(MessageType.NOTHING_IS_FOUND)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    override fun showSearchError() {
+    private fun showSearchError() {
         progressBar.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
         showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
     }
 
-    override fun showProgressBar() {
+    private fun showProgressBar() {
         searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         showMessage(MessageType.NO_MESSAGE)
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    override fun refreshSearchHistoryAdapter() {
-        searchHistoryAdapter.notifyDataSetChanged()
     }
 
     private fun initializeLateinitItems() {
