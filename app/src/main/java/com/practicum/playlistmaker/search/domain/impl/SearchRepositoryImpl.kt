@@ -1,7 +1,8 @@
-package com.practicum.playlistmaker.search.data
+package com.practicum.playlistmaker.search.domain.impl
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
 import com.practicum.playlistmaker.search.domain.Track

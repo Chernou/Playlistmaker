@@ -34,44 +34,10 @@ class SearchPresenter(
 
     //todo implement advanced search debounce and move search debounce from activity
 
-    fun searchRequest(searchText: String) {
-        interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
-            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                if (foundTracks != null) {
-                    if (foundTracks.isNotEmpty()) {
-                        view.showSearchResult(foundTracks)
-                    } else {
-                        view.showEmptySearch()
-                    }
-                }
-                if (errorMessage != null) {
-                    view.showSearchError()
-                }
-            }
-        })
-    }
-
-    fun searchDebounce(changedText: String) {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { searchRequest(changedText) }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            handler.postDelayed(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                SEARCH_DEBOUNCE_DELAY
-            )
-        } else {
-            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-            handler.postAtTime(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                postTime,
-            )
-        }
-    }
-
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
+        if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
+            view.showSearchHistoryLayout()
+        }
         if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
             view.showSearchHistoryLayout()
         } else {
@@ -79,7 +45,7 @@ class SearchPresenter(
         }
         if (searchText != null && searchText.isNotEmpty()) {
             view.showProgressBar()
-            view.executeSearch()
+            searchDebounce(searchText)
         }
     }
 
@@ -105,4 +71,43 @@ class SearchPresenter(
         router.openTrack(track)
     }
 
+    private fun searchDebounce(changedText: String) {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        val searchRunnable = Runnable { searchRequest(changedText) }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            handler.postDelayed(
+                searchRunnable,
+                SEARCH_REQUEST_TOKEN,
+                SEARCH_DEBOUNCE_DELAY
+            )
+        } else {
+            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+            handler.postAtTime(
+                searchRunnable,
+                SEARCH_REQUEST_TOKEN,
+                postTime,
+            )
+        }
+    }
+
+    private fun searchRequest(searchText: String) {
+        if (searchText.isNotEmpty()) {
+            view.showProgressBar()
+            interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
+                    if (foundTracks != null) {
+                        if (foundTracks.isNotEmpty()) {
+                            view.showSearchResult(foundTracks)
+                        } else {
+                            view.showEmptySearch()
+                        }
+                    }
+                    if (errorMessage != null) {
+                        view.showSearchError()
+                    }
+                }
+            })
+        }
+    }
 }

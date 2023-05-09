@@ -150,12 +150,14 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchLayout.visibility = View.VISIBLE
         searchHistoryLayout.visibility = View.GONE
         clearSearchHistoryButton.visibility = View.GONE
+        showMessage(MessageType.NO_MESSAGE)
     }
 
     override fun showSearchHistoryLayout() {
         searchLayout.visibility = View.GONE
         searchHistoryLayout.visibility = View.VISIBLE
         clearSearchHistoryButton.visibility = View.VISIBLE
+        showMessage(MessageType.NO_MESSAGE)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -183,11 +185,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchRecyclerView.visibility = View.GONE
         showMessage(MessageType.NO_MESSAGE)
         progressBar.visibility = View.VISIBLE
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun executeSearch() {
-        searchDebounce() //todo remove from activity?
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -219,28 +216,18 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun searchDebounce() {
-        mainThreadHandler.removeCallbacks(searchRunnable)
-        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
     private val searchTextWatcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            presenter.searchEditTextFocusChanged(searchEditText.hasFocus(), p0?.toString())
+            presenter.searchEditTextFocusChanged(searchEditText.hasFocus(), p0.toString() ?: "")
+            //todo hide search result when editText is empty
         }
 
         override fun afterTextChanged(editable: Editable?) {
             if (editable?.isNotEmpty() == true) clearImage.visibility = View.VISIBLE
             else clearImage.visibility = View.GONE
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val searchRunnable = Runnable {
-        presenter.searchRequest(searchEditText.text.toString())
     }
 
     private fun clickDebounce(): Boolean {

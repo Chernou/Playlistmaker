@@ -12,6 +12,5 @@ interface SearchTracksView {
     fun showSearchHistoryLayout()
     fun showSearchResultLayout()
     fun showProgressBar()
-    fun executeSearch()
     fun refreshSearchHistoryAdapter()
 }

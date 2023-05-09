@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.search.presentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.player.presentation.PlayerActivity
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 
 class SearchRouter(
     private val activity: AppCompatActivity

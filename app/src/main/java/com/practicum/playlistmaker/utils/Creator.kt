@@ -8,7 +8,7 @@ import com.practicum.playlistmaker.player.presentation.PlayerPresenter
 import com.practicum.playlistmaker.player.presentation.api.PlayerInteractorApi
 import com.practicum.playlistmaker.player.presentation.api.PlayerView
 import com.practicum.playlistmaker.search.data.SearchHistory
-import com.practicum.playlistmaker.search.data.SearchRepositoryImpl
+import com.practicum.playlistmaker.search.domain.impl.SearchRepositoryImpl
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.presentation
+package com.practicum.playlistmaker.player.ui
 
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +12,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.player.presentation.PlayerPresenter
 import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.player.presentation.api.PlayerView
 import com.practicum.playlistmaker.search.domain.Track
