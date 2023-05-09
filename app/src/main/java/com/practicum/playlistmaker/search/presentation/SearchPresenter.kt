@@ -1,6 +1,9 @@
 package com.practicum.playlistmaker.search.presentation
 
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
@@ -14,13 +17,24 @@ class SearchPresenter(
     private val interactor: SearchInteractor
 ) {
 
+    companion object {
+        const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
+        const val SEARCH_DEBOUNCE_DELAY = 2_000L
+        private val SEARCH_REQUEST_TOKEN = Any()
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+
     fun onClearSearchTextPressed() {
         view.clearSearchText()
         view.hideKeyboard()
         view.clearSearchResult()
     }
 
-    fun loadTracks(searchText: String) {
+    //todo implement advanced search debounce and move search debounce from activity
+
+    fun searchRequest(searchText: String) {
         interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
             override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
                 if (foundTracks != null) {
@@ -37,17 +51,25 @@ class SearchPresenter(
         })
     }
 
-    /*fun loadTracks(searchText: String) {
-        interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
-            override fun consume(foundTracks: List<Track>) {
-                if (foundTracks.isNotEmpty()) {
-                    view.showSearchResult(foundTracks)
-                } else {
-                    view.showEmptySearch()
-                }
-            }
-        })
-    }*/
+    fun searchDebounce(changedText: String) {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        val searchRunnable = Runnable { searchRequest(changedText) }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            handler.postDelayed(
+                searchRunnable,
+                SEARCH_REQUEST_TOKEN,
+                SEARCH_DEBOUNCE_DELAY
+            )
+        } else {
+            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+            handler.postAtTime(
+                searchRunnable,
+                SEARCH_REQUEST_TOKEN,
+                postTime,
+            )
+        }
+    }
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
         if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
@@ -74,7 +96,7 @@ class SearchPresenter(
     @RequiresApi(Build.VERSION_CODES.O)
     fun onRefreshSearchButtonPressed(searchRequest: String) {
         view.showProgressBar()
-        loadTracks(searchRequest)
+        searchRequest(searchRequest)
     }
 
     fun onTrackPressed(track: Track) {

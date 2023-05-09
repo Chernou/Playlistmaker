@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.presentation
+package com.practicum.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,15 +24,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.TrackAdapter
 import com.practicum.playlistmaker.search.data.SearchHistory
+import com.practicum.playlistmaker.search.presentation.SearchPresenter
+import com.practicum.playlistmaker.search.presentation.SearchRouter
 import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
 import com.practicum.playlistmaker.utils.Creator
 
 class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     private var lastUnsuccessfulSearch: String = ""
-    private var mainThreadHandler: Handler = Handler(Looper.getMainLooper())
+    private var mainThreadHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
 
@@ -239,7 +240,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val searchRunnable = Runnable {
-        presenter.loadTracks(searchEditText.text.toString())
+        presenter.searchRequest(searchEditText.text.toString())
     }
 
     private fun clickDebounce(): Boolean {
