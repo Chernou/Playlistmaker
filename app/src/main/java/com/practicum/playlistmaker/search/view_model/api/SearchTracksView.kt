@@ -1,6 +1,6 @@
-package com.practicum.playlistmaker.search.presentation.api
+package com.practicum.playlistmaker.search.view_model.api
 
-import com.practicum.playlistmaker.search.presentation.SearchState
+import com.practicum.playlistmaker.search.view_model.SearchState
 
 interface SearchTracksView {
     fun render(state: SearchState)

@@ -4,9 +4,9 @@ import android.content.Context
 import com.practicum.playlistmaker.player.data.Player
 import com.practicum.playlistmaker.player.domain.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerApi
-import com.practicum.playlistmaker.player.presentation.PlayerPresenter
-import com.practicum.playlistmaker.player.presentation.api.PlayerInteractorApi
-import com.practicum.playlistmaker.player.presentation.api.PlayerView
+import com.practicum.playlistmaker.player.view_model.PlayerPresenter
+import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
+import com.practicum.playlistmaker.player.view_model.api.PlayerView
 import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.domain.impl.SearchRepositoryImpl
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -14,9 +14,9 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
-import com.practicum.playlistmaker.search.presentation.SearchPresenter
-import com.practicum.playlistmaker.search.presentation.SearchRouter
-import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
+import com.practicum.playlistmaker.search.view_model.SearchViewModel
+import com.practicum.playlistmaker.search.view_model.SearchRouter
+import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
 
 object Creator {
 
@@ -25,8 +25,8 @@ object Creator {
         searchHistory: SearchHistory,
         router: SearchRouter,
         context: Context
-    ): SearchPresenter {
-        return SearchPresenter(
+    ): SearchViewModel {
+        return SearchViewModel(
             view,
             searchHistory,
             router,

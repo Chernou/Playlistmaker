@@ -25,10 +25,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
-import com.practicum.playlistmaker.search.presentation.SearchPresenter
-import com.practicum.playlistmaker.search.presentation.SearchRouter
-import com.practicum.playlistmaker.search.presentation.SearchState
-import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
+import com.practicum.playlistmaker.search.view_model.SearchViewModel
+import com.practicum.playlistmaker.search.view_model.SearchRouter
+import com.practicum.playlistmaker.search.view_model.SearchState
+import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
 import com.practicum.playlistmaker.utils.Creator
 
 class SearchActivity : AppCompatActivity(), SearchTracksView {
@@ -45,7 +45,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
     }
 
-    private lateinit var presenter: SearchPresenter
+    private lateinit var presenter: SearchViewModel
     private lateinit var clearImage: ImageView
     private lateinit var searchHistory: SearchHistory //todo move search history from activity
     private lateinit var searchHistoryAdapter: TrackAdapter

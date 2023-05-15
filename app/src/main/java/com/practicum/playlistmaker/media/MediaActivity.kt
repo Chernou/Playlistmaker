@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.media
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

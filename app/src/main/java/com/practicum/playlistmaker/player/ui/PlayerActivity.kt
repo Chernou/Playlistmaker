@@ -12,9 +12,9 @@ import androidx.appcompat.content.res.AppCompatResources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.presentation.PlayerPresenter
+import com.practicum.playlistmaker.player.view_model.PlayerPresenter
 import com.practicum.playlistmaker.utils.Creator
-import com.practicum.playlistmaker.player.presentation.api.PlayerView
+import com.practicum.playlistmaker.player.view_model.api.PlayerView
 import com.practicum.playlistmaker.search.domain.Track
 
 class PlayerActivity : AppCompatActivity(), PlayerView {

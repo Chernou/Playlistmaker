@@ -1,7 +1,7 @@
 package com.practicum.playlistmaker.player.domain
 
 import com.practicum.playlistmaker.player.domain.api.PlayerApi
-import com.practicum.playlistmaker.player.presentation.api.PlayerInteractorApi
+import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
 
 class PlayerInteractor(private val player: PlayerApi) : PlayerInteractorApi {
 

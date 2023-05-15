@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.presentation
+package com.practicum.playlistmaker.search.view_model
 
 import android.content.Context
 import android.os.Build
@@ -6,18 +6,19 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
-import com.practicum.playlistmaker.search.presentation.api.SearchTracksView
+import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
 import com.practicum.playlistmaker.utils.Creator
 
-class SearchPresenter(
+class SearchViewModel(
     private val view: SearchTracksView,
     private val searchHistory: SearchHistory,
     private val router: SearchRouter,
     context: Context
-) {
+) : ViewModel() {
 
     companion object {
         const val SEARCH_DEBOUNCE_DELAY = 2_000L
@@ -69,20 +70,12 @@ class SearchPresenter(
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(changedText) }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            handler.postDelayed(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                SEARCH_DEBOUNCE_DELAY
-            )
-        } else {
-            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-            handler.postAtTime(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                postTime,
-            )
-        }
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        handler.postAtTime(
+            searchRunnable,
+            SEARCH_REQUEST_TOKEN,
+            postTime,
+        )
     }
 
     private fun searchRequest(searchText: String) {
