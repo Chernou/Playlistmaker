@@ -27,4 +27,7 @@ class SearchInteractorImpl(private val repository: SearchRepository) : SearchInt
         repository.addTrackToSearchHistory(track)
     }
 
+    override fun clearSearchHistory() {
+        repository.clearSearchHistory()
+    }
 }

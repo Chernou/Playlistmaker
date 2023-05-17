@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.search.view_model.SearchRouter
 import com.practicum.playlistmaker.search.view_model.SearchState
@@ -47,7 +46,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     private lateinit var presenter: SearchViewModel
     private lateinit var clearImage: ImageView
-    private lateinit var searchHistory: SearchHistory //todo move search history from activity
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
     private lateinit var searchErrorImageView: ImageView
@@ -66,6 +64,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
+        presenter = Creator.provideSearchPresenter(this, SearchRouter(this), this)
         presenter.onCreate()
         if (savedInstanceState != null) {
             searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
@@ -75,8 +74,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
             layoutManager = LinearLayoutManager(this.context)
             adapter = searchHistoryAdapter
         }
-
-        presenter = Creator.provideSearchPresenter(this, searchHistory, SearchRouter(this), this)
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener {
@@ -107,11 +104,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         outState.putCharSequence(SEARCH_TEXT, searchEditText.text)
     }
 
-    override fun onStop() {
-        super.onStop()
-        searchHistory.updateSharedPref()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         mainThreadHandler.removeCallbacksAndMessages(null)
@@ -121,7 +113,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         when (state) {
             is SearchState.Loading -> showProgressBar()
             is SearchState.SearchContent -> showSearchResult(state.tracks)
-            is SearchState.HistoryContent -> showSearchHistoryLayout(state.tracks) //todo move search history from activity and pass tracklist through render
+            is SearchState.HistoryContent -> showSearchHistoryLayout(state.tracks)
             is SearchState.EmptySearch -> showEmptySearch()
             is SearchState.Error -> showSearchError()
             is SearchState.EmptyScreen -> showEmptyScreen()
@@ -209,13 +201,11 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         clearSearchHistoryButton = findViewById(R.id.clear_search_history_button)
         searchLayout = findViewById(R.id.search_frame_layout)
         searchHistoryLayout = findViewById(R.id.search_history_linear_layout)
-        searchHistory = SearchHistory(getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE))
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 presenter.onTrackPressed(it)
             }
         }
-        searchHistoryAdapter.trackList = searchHistory.searchHistoryTrackList
         searchEditText = findViewById(R.id.search_edit_text)
         clearImage = findViewById(R.id.clear_image)
         progressBar = findViewById(R.id.progress_bar)

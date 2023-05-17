@@ -34,6 +34,9 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
         saveSearchHistory(searchHistory)
     }
 
+    fun clearSearchHistory() {
+        saveSearchHistory(ArrayList())
+    }
 
     private fun saveSearchHistory(searchHistory: List<Track>) {
         sharedPreferences.edit()

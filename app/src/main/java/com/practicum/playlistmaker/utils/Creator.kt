@@ -7,9 +7,9 @@ import com.practicum.playlistmaker.player.domain.api.PlayerApi
 import com.practicum.playlistmaker.player.view_model.PlayerPresenter
 import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
 import com.practicum.playlistmaker.player.view_model.api.PlayerView
-import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.domain.impl.SearchRepositoryImpl
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
+import com.practicum.playlistmaker.search.data.sharedprefs.LocalStorage
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
@@ -22,17 +22,17 @@ object Creator {
 
     fun provideSearchPresenter(
         view: SearchTracksView,
-        searchHistory: SearchHistory,
         router: SearchRouter,
         context: Context
     ): SearchViewModel {
         return SearchViewModel(
             view,
-            searchHistory,
             router,
             context
         )
     }
+
+    private const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
 
     fun providePlayerPresenter(view: PlayerView, track: Track): PlayerPresenter {
         return PlayerPresenter(
@@ -50,7 +50,10 @@ object Creator {
     }
 
     private fun provideSearchRepository(context: Context): SearchRepository {
-        return SearchRepositoryImpl(provideNetworkClient(context))
+        return SearchRepositoryImpl(
+            provideNetworkClient(context),
+            LocalStorage(context.getSharedPreferences(SHARED_PREFERENCE, Context.MODE_PRIVATE))
+        )
     }
 
     private fun provideNetworkClient(context: Context): RetrofitNetworkClient {

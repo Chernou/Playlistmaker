@@ -8,14 +8,12 @@ import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.data.SearchHistory
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
 import com.practicum.playlistmaker.utils.Creator
 
 class SearchViewModel(
     private val view: SearchTracksView,
-    private val searchHistory: SearchHistory,
     private val router: SearchRouter,
     context: Context
 ) : ViewModel() {
@@ -35,8 +33,10 @@ class SearchViewModel(
     }
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
-        if (hasFocus && searchText?.isEmpty() == true && searchHistory.searchHistoryTrackList.isNotEmpty()) {
-            view.render(SearchState.HistoryContent(ArrayList()))
+        if (hasFocus && searchText?.isEmpty() == true && interactor.getSearchHistory()
+                .isNotEmpty()
+        ) {
+            view.render(SearchState.HistoryContent(interactor.getSearchHistory()))
         } else {
             view.showSearchResultLayout()
         }
@@ -46,7 +46,7 @@ class SearchViewModel(
     }
 
     fun onClearSearchHistoryPressed() {
-        searchHistory.clearSearchHistory()
+        interactor.clearSearchHistory()
         view.refreshSearchHistoryAdapter()
         view.showSearchResultLayout()
     }
@@ -61,7 +61,6 @@ class SearchViewModel(
     }
 
     fun onTrackPressed(track: Track) {
-        searchHistory.addTrack(track)
         interactor.addTrackToSearchHistory(track)
         view.refreshSearchHistoryAdapter()
         router.openTrack(track)

@@ -6,7 +6,7 @@ sealed interface SearchState {
 
     object Loading : SearchState
     data class SearchContent(val tracks: List<Track>) : SearchState
-    data class HistoryContent(val tracks: List<Track>) : SearchState //todo move history to presenter
+    data class HistoryContent(val tracks: List<Track>) : SearchState
     data class Error(val errorMessage: String) : SearchState
     object EmptySearch : SearchState
     object EmptyScreen : SearchState
