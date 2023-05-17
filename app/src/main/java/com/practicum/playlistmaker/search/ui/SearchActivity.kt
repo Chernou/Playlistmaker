@@ -67,7 +67,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
         presenter.onCreate()
-        if (searchHistory.searchHistoryTrackList.isNotEmpty()) showSearchHistoryLayout()
         if (savedInstanceState != null) {
             searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
         }
@@ -122,9 +121,10 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         when (state) {
             is SearchState.Loading -> showProgressBar()
             is SearchState.SearchContent -> showSearchResult(state.tracks)
-            is SearchState.HistoryContent -> showSearchHistoryLayout() //todo move search history from activity and pass tracklist through render
-            is SearchState.Empty -> showEmptySearch()
+            is SearchState.HistoryContent -> showSearchHistoryLayout(state.tracks) //todo move search history from activity and pass tracklist through render
+            is SearchState.EmptySearch -> showEmptySearch()
             is SearchState.Error -> showSearchError()
+            is SearchState.EmptyScreen -> showEmptyScreen()
         }
     }
 
@@ -155,6 +155,12 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         showMessage(MessageType.NO_MESSAGE)
     }
 
+    private fun showEmptyScreen() {
+        progressBar.visibility = View.GONE
+        searchLayout.visibility = View.GONE
+        searchHistoryLayout.visibility = View.GONE
+    }
+
     private fun showSearchResult(tracks: List<Track>) {
         progressBar.visibility = View.GONE
         searchRecyclerView.visibility = View.VISIBLE
@@ -165,7 +171,9 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         showMessage(MessageType.NO_MESSAGE)
     }
 
-    private fun showSearchHistoryLayout() {
+    private fun showSearchHistoryLayout(searchHistory: List<Track>) {
+        searchHistoryAdapter.trackList = searchHistory as ArrayList<Track>
+        searchHistoryAdapter.notifyDataSetChanged()
         searchLayout.visibility = View.GONE
         searchHistoryLayout.visibility = View.VISIBLE
         clearSearchHistoryButton.visibility = View.VISIBLE

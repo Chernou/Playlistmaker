@@ -53,10 +53,6 @@ class SearchRepositoryImpl(
         return localStorage.getSearchHistory()
     }
 
-    override fun saveSearchHistory(searchHistory: List<Track>) {
-        localStorage.saveSearchHistory(searchHistory)
-    }
-
     override fun addTrackToSearchHistory(track: Track) {
         localStorage.addTrackToSearchHistory(track)
     }

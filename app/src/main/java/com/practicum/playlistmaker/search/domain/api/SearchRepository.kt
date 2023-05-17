@@ -7,7 +7,6 @@ interface SearchRepository {
 
     fun searchTracks(query: String): Resource<List<Track>>
     fun getSearchHistory(): ArrayList<Track>
-    fun saveSearchHistory(searchHistory: List<Track>)
     fun addTrackToSearchHistory(track: Track)
 
 }

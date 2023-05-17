@@ -62,6 +62,7 @@ class SearchViewModel(
 
     fun onTrackPressed(track: Track) {
         searchHistory.addTrack(track)
+        interactor.addTrackToSearchHistory(track)
         view.refreshSearchHistoryAdapter()
         router.openTrack(track)
     }
@@ -88,7 +89,7 @@ class SearchViewModel(
                             if (foundTracks.isNotEmpty()) {
                                 view.render(SearchState.SearchContent(foundTracks))
                             } else {
-                                view.render(SearchState.Empty)
+                                view.render(SearchState.EmptySearch)
                             }
                         }
                         if (errorMessage != null) {
@@ -101,6 +102,10 @@ class SearchViewModel(
     }
 
     fun onCreate() {
-        TODO("Not yet implemented")
+        if (interactor.getSearchHistory().isNotEmpty()) {
+            view.render(SearchState.HistoryContent(interactor.getSearchHistory()))
+        } else {
+            view.render(SearchState.EmptyScreen)
+        }
     }
 }

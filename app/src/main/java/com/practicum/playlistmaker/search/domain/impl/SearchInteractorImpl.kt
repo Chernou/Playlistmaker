@@ -23,10 +23,6 @@ class SearchInteractorImpl(private val repository: SearchRepository) : SearchInt
         return repository.getSearchHistory()
     }
 
-    override fun saveSearchHistory(searchHistory: List<Track>) {
-        repository.saveSearchHistory(searchHistory)
-    }
-
     override fun addTrackToSearchHistory(track: Track) {
         repository.addTrackToSearchHistory(track)
     }

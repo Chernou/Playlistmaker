@@ -18,12 +18,6 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
         return Gson().fromJson(json, type) ?: ArrayList()
     }
 
-    fun saveSearchHistory(searchHistory: List<Track>) {
-        sharedPreferences.edit()
-            .putString(SEARCH_HISTORY, Gson().toJson(searchHistory))
-            .apply()
-    }
-
     fun addTrackToSearchHistory(track: Track) {
         val searchHistory = getSearchHistory()
         if (searchHistory.contains(track)) {
@@ -38,6 +32,13 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
             }
         }
         saveSearchHistory(searchHistory)
+    }
+
+
+    private fun saveSearchHistory(searchHistory: List<Track>) {
+        sharedPreferences.edit()
+            .putString(SEARCH_HISTORY, Gson().toJson(searchHistory))
+            .apply()
     }
 
     fun getDisplayTheme() {
