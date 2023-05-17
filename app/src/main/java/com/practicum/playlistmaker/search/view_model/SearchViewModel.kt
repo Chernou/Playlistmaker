@@ -99,4 +99,8 @@ class SearchViewModel(
             })
         }
     }
+
+    fun onCreate() {
+        TODO("Not yet implemented")
+    }
 }

@@ -13,13 +13,14 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
         searchHistoryTrackList = initializedSearchedHistory()
     }
 
+    //todo delete
     private fun initializedSearchedHistory(): ArrayList<Track> {
         val json = sharedPref.getString(SEARCH_HISTORY, null)
         val type = object : TypeToken<ArrayList<Track>>() {}.type
         return Gson().fromJson(json, type) ?: ArrayList()
     }
 
-
+    //todo delete
     fun addTrack(track: Track) : Boolean {
         if (searchHistoryTrackList.contains(track)) {
             searchHistoryTrackList.remove(track)
@@ -41,16 +42,14 @@ class SearchHistory(private val sharedPref: SharedPreferences) {
         searchHistoryTrackList.clear()
     }
 
+    //todo delete
     fun updateSharedPref() {
         sharedPref.edit()
             .putString(SEARCH_HISTORY, Gson().toJson(searchHistoryTrackList))
             .apply()
     }
 
-    fun isEmpty(): Boolean {
-        return searchHistoryTrackList.isEmpty()
-    }
-
+    //todo delete
     companion object {
         const val SEARCH_HISTORY = "SEARCH_HISTORY"
     }

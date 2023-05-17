@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.search.domain.impl
 
+import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.utils.Resource
@@ -17,4 +18,17 @@ class SearchInteractorImpl(private val repository: SearchRepository) : SearchInt
             }
         }
     }
+
+    override fun getSearchHistory(): ArrayList<Track> {
+        return repository.getSearchHistory()
+    }
+
+    override fun saveSearchHistory(searchHistory: List<Track>) {
+        repository.saveSearchHistory(searchHistory)
+    }
+
+    override fun addTrackToSearchHistory(track: Track) {
+        repository.addTrackToSearchHistory(track)
+    }
+
 }

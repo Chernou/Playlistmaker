@@ -66,6 +66,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
+        presenter.onCreate()
         if (searchHistory.searchHistoryTrackList.isNotEmpty()) showSearchHistoryLayout()
         if (savedInstanceState != null) {
             searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable

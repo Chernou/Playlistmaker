@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
+import com.practicum.playlistmaker.search.data.sharedprefs.LocalStorage
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
@@ -13,7 +14,8 @@ import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.TextUtils
 
 class SearchRepositoryImpl(
-    private val networkClient: NetworkClient
+    private val networkClient: NetworkClient,
+    private val localStorage: LocalStorage
 ) : SearchRepository {
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -45,6 +47,18 @@ class SearchRepositoryImpl(
                 Resource.Error(SERVER_ERROR_MESSAGE)
             }
         }
+    }
+
+    override fun getSearchHistory(): ArrayList<Track> {
+        return localStorage.getSearchHistory()
+    }
+
+    override fun saveSearchHistory(searchHistory: List<Track>) {
+        localStorage.saveSearchHistory(searchHistory)
+    }
+
+    override fun addTrackToSearchHistory(track: Track) {
+        localStorage.addTrackToSearchHistory(track)
     }
 
     companion object {
