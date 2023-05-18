@@ -199,8 +199,8 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         refreshSearchButton = findViewById(R.id.refresh_search_button)
         searchHistoryTextView = findViewById(R.id.search_history_text_view)
         clearSearchHistoryButton = findViewById(R.id.clear_search_history_button)
-        searchLayout = findViewById(R.id.search_frame_layout)
-        searchHistoryLayout = findViewById(R.id.search_history_linear_layout)
+        searchLayout = findViewById(R.id.search_result_layout)
+        searchHistoryLayout = findViewById(R.id.search_history_layout)
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 presenter.onTrackPressed(it)

@@ -48,5 +48,7 @@
     <dimen name="size_52">52dp</dimen>
     <dimen name="size_92">92dp</dimen>
     <dimen name="size_76">76dp</dimen>
+    <dimen name="size_0">0dp</dimen>
+    <dimen name="size_36">36dp</dimen>
 
 </resources>
