@@ -26,10 +26,18 @@ class SearchViewModel(
     private val interactor = Creator.provideSearchInteractor(context)
     private val handler = Handler(Looper.getMainLooper())
 
+    fun onCreate() {
+        if (interactor.getSearchHistory().isNotEmpty()) {
+            view.render(SearchState.HistoryContent(interactor.getSearchHistory()))
+        } else {
+            view.render(SearchState.EmptyScreen)
+        }
+    }
+
     fun onClearSearchTextPressed() {
         view.clearSearchText()
         view.hideKeyboard()
-        view.render(SearchState.SearchContent(ArrayList()))
+        onCreate()
     }
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
@@ -101,14 +109,6 @@ class SearchViewModel(
                     }
                 }
             })
-        }
-    }
-
-    fun onCreate() {
-        if (interactor.getSearchHistory().isNotEmpty()) {
-            view.render(SearchState.HistoryContent(interactor.getSearchHistory()))
-        } else {
-            view.render(SearchState.EmptyScreen)
         }
     }
 }

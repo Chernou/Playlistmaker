@@ -45,7 +45,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     }
 
     private lateinit var presenter: SearchViewModel
-    private lateinit var clearImage: ImageView
+    private lateinit var clearSearchTextImage: ImageView
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
     private lateinit var searchErrorImageView: ImageView
@@ -53,7 +53,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     private lateinit var refreshSearchButton: Button
     private lateinit var searchHistoryTextView: TextView
     private lateinit var clearSearchHistoryButton: Button
-    private lateinit var searchLayout: ViewGroup
+    private lateinit var searchErrorLayout: ViewGroup
     private lateinit var searchHistoryLayout: ViewGroup
     private lateinit var progressBar: ProgressBar
     private lateinit var searchRecyclerView: RecyclerView
@@ -82,7 +82,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
         searchEditText.addTextChangedListener(searchTextWatcher)
 
-        clearImage.setOnClickListener {
+        clearSearchTextImage.setOnClickListener {
             presenter.onClearSearchTextPressed()
         }
 
@@ -122,7 +122,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     override fun clearSearchText() {
         searchEditText.text.clear()
-        clearImage.visibility = View.GONE
+        clearSearchTextImage.visibility = View.GONE
     }
 
     override fun hideKeyboard() {
@@ -141,47 +141,54 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     }
 
     override fun showSearchResultLayout() {
-        searchLayout.visibility = View.VISIBLE
+        searchRecyclerView.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        searchErrorLayout.visibility = View.GONE
         searchHistoryLayout.visibility = View.GONE
-        clearSearchHistoryButton.visibility = View.GONE
-        showMessage(MessageType.NO_MESSAGE)
     }
 
     private fun showEmptyScreen() {
+        searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.GONE
-        searchLayout.visibility = View.GONE
+        searchErrorLayout.visibility = View.GONE
         searchHistoryLayout.visibility = View.GONE
     }
 
     private fun showSearchResult(tracks: List<Track>) {
-        progressBar.visibility = View.GONE
         searchRecyclerView.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
+        searchErrorLayout.visibility = View.GONE
+        searchHistoryLayout.visibility = View.GONE
         trackList.clear()
         trackList.addAll(tracks)
         searchResultAdapter.trackList = trackList
         searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.NO_MESSAGE)
     }
 
     private fun showSearchHistoryLayout(searchHistory: List<Track>) {
+        searchRecyclerView.visibility = View.GONE
+        progressBar.visibility = View.GONE
+        searchErrorLayout.visibility = View.GONE
+        searchHistoryLayout.visibility = View.VISIBLE
         searchHistoryAdapter.trackList = searchHistory as ArrayList<Track>
         searchHistoryAdapter.notifyDataSetChanged()
-        searchLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.VISIBLE
-        clearSearchHistoryButton.visibility = View.VISIBLE
-        showMessage(MessageType.NO_MESSAGE)
     }
 
     private fun showEmptySearch() {
+        searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.GONE
-        searchRecyclerView.visibility = View.VISIBLE
+        searchErrorLayout.visibility = View.VISIBLE
+        searchHistoryLayout.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
         showMessage(MessageType.NOTHING_IS_FOUND)
     }
 
     private fun showSearchError() {
+        searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.GONE
+        searchErrorLayout.visibility = View.VISIBLE
+        searchHistoryLayout.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
         showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
@@ -190,7 +197,8 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     private fun showProgressBar() {
         searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
-        showMessage(MessageType.NO_MESSAGE)
+        searchErrorLayout.visibility = View.GONE
+        searchHistoryLayout.visibility = View.GONE
     }
 
     private fun initializeLateinitItems() {
@@ -199,7 +207,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         refreshSearchButton = findViewById(R.id.refresh_search_button)
         searchHistoryTextView = findViewById(R.id.search_history_text_view)
         clearSearchHistoryButton = findViewById(R.id.clear_search_history_button)
-        searchLayout = findViewById(R.id.search_result_layout)
+        searchErrorLayout = findViewById(R.id.search_error_layout)
         searchHistoryLayout = findViewById(R.id.search_history_layout)
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
@@ -207,7 +215,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
             }
         }
         searchEditText = findViewById(R.id.search_edit_text)
-        clearImage = findViewById(R.id.clear_image)
+        clearSearchTextImage = findViewById(R.id.clear_image)
         progressBar = findViewById(R.id.progress_bar)
         searchRecyclerView = findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
             layoutManager = LinearLayoutManager(this.context)
@@ -224,8 +232,8 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         }
 
         override fun afterTextChanged(editable: Editable?) {
-            if (editable?.isNotEmpty() == true) clearImage.visibility = View.VISIBLE
-            else clearImage.visibility = View.GONE
+            if (editable?.isNotEmpty() == true) clearSearchTextImage.visibility = View.VISIBLE
+            else clearSearchTextImage.visibility = View.GONE
         }
     }
 
@@ -241,11 +249,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
     private fun showMessage(messageType: MessageType) {
         when (messageType) {
             MessageType.UNSUCCESSFUL_CONNECTION -> {
-                setViewsVisibility(
-                    textVisibility = true,
-                    imageVisibility = true,
-                    buttonVisibility = true
-                )
                 setViewsResources(
                     R.string.no_internet_connection,
                     R.drawable.no_internet_connection
@@ -253,31 +256,9 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
                 lastUnsuccessfulSearch = searchEditText.text.toString()
             }
             MessageType.NOTHING_IS_FOUND -> {
-                setViewsVisibility(
-                    textVisibility = true,
-                    imageVisibility = true,
-                    buttonVisibility = false
-                )
                 setViewsResources(R.string.nothing_is_found, R.drawable.nothing_is_found)
             }
-            MessageType.NO_MESSAGE -> {
-                setViewsVisibility(
-                    textVisibility = false,
-                    imageVisibility = false,
-                    buttonVisibility = false
-                )
-            }
         }
-    }
-
-    private fun setViewsVisibility(
-        textVisibility: Boolean,
-        imageVisibility: Boolean,
-        buttonVisibility: Boolean
-    ) {
-        searchErrorTextView.visibility = if (textVisibility) View.VISIBLE else View.GONE
-        searchErrorImageView.visibility = if (imageVisibility) View.VISIBLE else View.GONE
-        refreshSearchButton.visibility = if (buttonVisibility) View.VISIBLE else View.GONE
     }
 
     private fun setViewsResources(text: Int, image: Int) {
@@ -299,5 +280,4 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 enum class MessageType {
     UNSUCCESSFUL_CONNECTION,
     NOTHING_IS_FOUND,
-    NO_MESSAGE
 }
