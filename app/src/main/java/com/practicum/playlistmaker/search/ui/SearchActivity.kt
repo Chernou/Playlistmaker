@@ -106,7 +106,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     override fun onDestroy() {
         super.onDestroy()
-        mainThreadHandler.removeCallbacksAndMessages(null)
+        presenter.onCleared()
     }
 
     override fun render(state: SearchState) {
@@ -292,7 +292,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
         const val CLICK_DEBOUNCE_DELAY = 1_000L
     }
 }

@@ -98,7 +98,7 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
     }
 
     override fun moveToPreviousScreen() {
-        onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun setPlaybackTime(time: String) {

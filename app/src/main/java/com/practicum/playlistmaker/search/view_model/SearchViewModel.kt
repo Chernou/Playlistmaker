@@ -66,6 +66,10 @@ class SearchViewModel(
         router.openTrack(track)
     }
 
+    public override fun onCleared() {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    }
+
     private fun searchDebounce(changedText: String) {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(changedText) }

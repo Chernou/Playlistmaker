@@ -16,6 +16,6 @@ class SearchRouter(
     }
 
     fun goBack() {
-        activity.finish()
+        activity.onBackPressedDispatcher.onBackPressed()
     }
 }
