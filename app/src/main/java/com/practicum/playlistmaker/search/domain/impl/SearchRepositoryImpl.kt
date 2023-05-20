@@ -64,7 +64,8 @@ class SearchRepositoryImpl(
     companion object {
         const val SUCCESSFUL_SEARCH_CODE = 200
         const val NO_CONNECTIVITY_ERROR = -1
-        const val NO_CONNECTIVITY_MESSAGE = "Проверьте подключение к интернету"
+        const val NO_CONNECTIVITY_MESSAGE =
+            "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
         const val SERVER_ERROR_MESSAGE = "Ошибка сервера"
 
     }

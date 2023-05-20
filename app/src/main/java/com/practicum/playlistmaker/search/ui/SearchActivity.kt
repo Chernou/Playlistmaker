@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -16,35 +17,40 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
-import com.practicum.playlistmaker.search.view_model.SearchRouter
 import com.practicum.playlistmaker.search.view_model.SearchState
-import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
-import com.practicum.playlistmaker.utils.Creator
+import com.practicum.playlistmaker.utils.NavigationRouter
 
-class SearchActivity : AppCompatActivity(), SearchTracksView {
+class SearchActivity : ComponentActivity() {
 
     private var lastUnsuccessfulSearch: String = ""
     private var mainThreadHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
+    private val router = NavigationRouter(this)
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
-            presenter.onTrackPressed(it) //todo notifyItemInserted when appropriate
+            viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra(Track::class.java.simpleName, it)
+            startActivity(playerIntent)
         }
     }
 
-    private lateinit var presenter: SearchViewModel
+    private lateinit var viewModel: SearchViewModel
     private lateinit var clearSearchTextImage: ImageView
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
@@ -64,8 +70,12 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
-        presenter = Creator.provideSearchPresenter(this, SearchRouter(this), this)
-        presenter.onCreate()
+        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
+
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+        viewModel.onCreate()
         if (savedInstanceState != null) {
             searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
         }
@@ -77,25 +87,33 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
         toolbar.setNavigationOnClickListener {
-            presenter.onBackArrowPressed()
+            router.goBack()
         }
 
         searchEditText.addTextChangedListener(searchTextWatcher)
 
+        viewModel.observeClearTextState().observe(this) {clearTextState ->
+            if (clearTextState is ClearTextState.ClearText) {
+                clearSearchText()
+                hideKeyboard()
+                viewModel.textCleared()
+            }
+        }
+
         clearSearchTextImage.setOnClickListener {
-            presenter.onClearSearchTextPressed()
+            viewModel.onClearTextPressed()
         }
 
         refreshSearchButton.setOnClickListener {
-            presenter.onRefreshSearchButtonPressed(lastUnsuccessfulSearch)
+            viewModel.onRefreshSearchButtonPressed(lastUnsuccessfulSearch)
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            presenter.searchEditTextFocusChanged(hasFocus, searchEditText.text.toString())
+            viewModel.searchEditTextFocusChanged(hasFocus, searchEditText.text.toString())
         }
 
         clearSearchHistoryButton.setOnClickListener {
-            presenter.onClearSearchHistoryPressed()
+            viewModel.onClearSearchHistoryPressed()
         }
     }
 
@@ -106,45 +124,46 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter.onCleared()
+        viewModel.onCleared()
     }
 
-    override fun render(state: SearchState) {
+    private fun render(state: SearchState) {
         when (state) {
             is SearchState.Loading -> showProgressBar()
             is SearchState.SearchContent -> showSearchResult(state.tracks)
             is SearchState.HistoryContent -> showSearchHistoryLayout(state.tracks)
-            is SearchState.EmptySearch -> showEmptySearch()
-            is SearchState.Error -> showSearchError()
+            is SearchState.EmptySearch -> showEmptySearch(state.emptySearchMessage)
+            is SearchState.Error -> showSearchError(state.errorMessage)
             is SearchState.EmptyScreen -> showEmptyScreen()
         }
     }
 
-    override fun clearSearchText() {
+    private fun clearSearchText() {
         searchEditText.text.clear()
         clearSearchTextImage.visibility = View.GONE
     }
 
-    override fun hideKeyboard() {
+    private fun hideKeyboard() {
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
     }
 
-    override fun clearSearchResult() {
-        searchResultAdapter.trackList.clear()
-        searchResultAdapter.notifyDataSetChanged()
-    }
+    private val searchTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
-    override fun refreshSearchHistoryAdapter() {
-        searchHistoryAdapter.notifyDataSetChanged()
-    }
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            viewModel.searchEditTextFocusChanged(searchEditText.hasFocus(), p0.toString() ?: "")
+            //todo hide search result when editText is empty
+        }
 
-    override fun showSearchResultLayout() {
-        searchRecyclerView.visibility = View.VISIBLE
-        progressBar.visibility = View.GONE
-        searchErrorLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.GONE
+        override fun afterTextChanged(editable: Editable?) {
+            if (editable?.isNotEmpty() == true) {
+                clearSearchTextImage.visibility = View.VISIBLE
+            } else {
+                clearSearchTextImage.visibility = View.GONE
+            }
+        }
     }
 
     private fun showEmptyScreen() {
@@ -174,24 +193,37 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchHistoryAdapter.notifyDataSetChanged()
     }
 
-    private fun showEmptySearch() {
+    private fun showEmptySearch(emptySearchMessage: String) {
         searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.GONE
         searchErrorLayout.visibility = View.VISIBLE
         searchHistoryLayout.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.NOTHING_IS_FOUND)
+        searchErrorTextView.text = emptySearchMessage
+        searchErrorImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.nothing_is_found
+            )
+        )
     }
 
-    private fun showSearchError() {
+    private fun showSearchError(errorMessage: String) {
         searchRecyclerView.visibility = View.GONE
         progressBar.visibility = View.GONE
         searchErrorLayout.visibility = View.VISIBLE
         searchHistoryLayout.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
-        showMessage(MessageType.UNSUCCESSFUL_CONNECTION)
+        searchErrorTextView.text = errorMessage
+        searchErrorImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.no_internet_connection
+            )
+        )
+        lastUnsuccessfulSearch = searchEditText.text.toString()
     }
 
     private fun showProgressBar() {
@@ -211,7 +243,7 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchHistoryLayout = findViewById(R.id.search_history_layout)
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
-                presenter.onTrackPressed(it)
+                viewModel.onTrackPressed(it)
             }
         }
         searchEditText = findViewById(R.id.search_edit_text)
@@ -220,20 +252,6 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         searchRecyclerView = findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = searchResultAdapter
-        }
-    }
-
-    private val searchTextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            presenter.searchEditTextFocusChanged(searchEditText.hasFocus(), p0.toString() ?: "")
-            //todo hide search result when editText is empty
-        }
-
-        override fun afterTextChanged(editable: Editable?) {
-            if (editable?.isNotEmpty() == true) clearSearchTextImage.visibility = View.VISIBLE
-            else clearSearchTextImage.visibility = View.GONE
         }
     }
 
@@ -246,38 +264,8 @@ class SearchActivity : AppCompatActivity(), SearchTracksView {
         return current
     }
 
-    private fun showMessage(messageType: MessageType) {
-        when (messageType) {
-            MessageType.UNSUCCESSFUL_CONNECTION -> {
-                setViewsResources(
-                    R.string.no_internet_connection,
-                    R.drawable.no_internet_connection
-                )
-                lastUnsuccessfulSearch = searchEditText.text.toString()
-            }
-            MessageType.NOTHING_IS_FOUND -> {
-                setViewsResources(R.string.nothing_is_found, R.drawable.nothing_is_found)
-            }
-        }
-    }
-
-    private fun setViewsResources(text: Int, image: Int) {
-        searchErrorTextView.text = getString(text)
-        searchErrorImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                image
-            )
-        )
-    }
-
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val CLICK_DEBOUNCE_DELAY = 1_000L
     }
-}
-
-enum class MessageType {
-    UNSUCCESSFUL_CONNECTION,
-    NOTHING_IS_FOUND,
 }

@@ -14,23 +14,8 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.api.SearchRepository
 import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
-import com.practicum.playlistmaker.search.view_model.SearchViewModel
-import com.practicum.playlistmaker.search.view_model.SearchRouter
-import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
 
 object Creator {
-
-    fun provideSearchPresenter(
-        view: SearchTracksView,
-        router: SearchRouter,
-        context: Context
-    ): SearchViewModel {
-        return SearchViewModel(
-            view,
-            router,
-            context
-        )
-    }
 
     private const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
 

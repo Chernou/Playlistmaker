@@ -104,9 +104,10 @@
                 android:textSize="19sp"
                 app:fontWeight="@dimen/font_weight_settings" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent"
                 android:id="@+id/refresh_search_button"
                 style="@style/SearchScreenSupportButtons"
+                app:cornerRadius="@dimen/support_search_buttons_corner_radius"
                 android:layout_marginTop="@dimen/size_332"
                 android:text="@string/refresh_search" />
 
@@ -155,7 +156,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/search_history_text_view" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent"
                 android:id="@+id/clear_search_history_button"
                 style="@style/SearchScreenSupportButtons"
                 android:layout_gravity="bottom|center_horizontal"

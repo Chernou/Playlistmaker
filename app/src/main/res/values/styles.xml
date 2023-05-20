@@ -56,6 +56,10 @@
         <item name="cornerRadius">@dimen/support_search_buttons_corner_radius</item>
     </style>
 
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">@dimen/support_search_buttons_corner_radius</item>
+    </style>
+
     <style name="media_subtitles">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

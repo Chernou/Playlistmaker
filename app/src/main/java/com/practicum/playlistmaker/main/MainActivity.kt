@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.main
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun onButtonClick(targetClass: Class<out AppCompatActivity>) {
+    private fun onButtonClick(targetClass: Class<out Activity>) {
         val intent = Intent(this, targetClass)
         startActivity(intent)
     }

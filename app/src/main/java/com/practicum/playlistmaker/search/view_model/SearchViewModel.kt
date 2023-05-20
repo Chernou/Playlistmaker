@@ -1,66 +1,81 @@
 package com.practicum.playlistmaker.search.view_model
 
-import android.content.Context
+import android.app.Application
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
-import com.practicum.playlistmaker.search.view_model.api.SearchTracksView
 import com.practicum.playlistmaker.utils.Creator
 
 class SearchViewModel(
-    private val view: SearchTracksView,
-    private val router: SearchRouter,
-    context: Context
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
 
     companion object {
         const val SEARCH_DEBOUNCE_DELAY = 2_000L
         private val SEARCH_REQUEST_TOKEN = Any()
+
+        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SearchViewModel(this[APPLICATION_KEY] as Application)
+            }
+        }
     }
 
-    private val interactor = Creator.provideSearchInteractor(context)
+    private val interactor = Creator.provideSearchInteractor(application)
     private val handler = Handler(Looper.getMainLooper())
+
+    private val stateLiveData = MutableLiveData<SearchState>()
+    fun observeState(): LiveData<SearchState> = stateLiveData
+    private fun renderState(state: SearchState) {
+        stateLiveData.postValue(state)
+    }
+
+    private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+    fun observeClearTextState(): LiveData<ClearTextState> = clearTextState
+    fun textCleared() {
+        clearTextState.value = ClearTextState.None
+    }
+
+
+    fun onClearTextPressed() {
+        clearTextState.value = ClearTextState.ClearText
+    }
 
     fun onCreate() {
         if (interactor.getSearchHistory().isNotEmpty()) {
-            view.render(SearchState.HistoryContent(interactor.getSearchHistory()))
+            renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
         } else {
-            view.render(SearchState.EmptyScreen)
+            renderState(SearchState.EmptyScreen)
         }
-    }
-
-    fun onClearSearchTextPressed() {
-        view.clearSearchText()
-        view.hideKeyboard()
-        onCreate()
     }
 
     fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
-        if (hasFocus && searchText?.isEmpty() == true && interactor.getSearchHistory()
+        if (searchText?.isEmpty() == true && interactor.getSearchHistory()
                 .isNotEmpty()
         ) {
-            view.render(SearchState.HistoryContent(interactor.getSearchHistory()))
-        } else {
-            view.showSearchResultLayout()
-        }
-        if (searchText != null && searchText.isNotEmpty()) {
+            renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
+        } else if (searchText != null && searchText.isNotEmpty()) {
             searchDebounce(searchText)
+        } else {
+            renderState(SearchState.EmptyScreen)
         }
     }
 
     fun onClearSearchHistoryPressed() {
         interactor.clearSearchHistory()
-        view.refreshSearchHistoryAdapter()
-        view.showSearchResultLayout()
-    }
-
-    fun onBackArrowPressed() {
-        router.goBack()
+        renderState(SearchState.EmptyScreen)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,8 +85,6 @@ class SearchViewModel(
 
     fun onTrackPressed(track: Track) {
         interactor.addTrackToSearchHistory(track)
-        view.refreshSearchHistoryAdapter()
-        router.openTrack(track)
     }
 
     public override fun onCleared() {
@@ -92,20 +105,19 @@ class SearchViewModel(
 
     private fun searchRequest(searchText: String) {
         if (searchText.isNotEmpty()) {
-            view.render(SearchState.Loading)
+            renderState(SearchState.Loading)
             interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    handler.post {
-                        if (foundTracks != null) {
-                            if (foundTracks.isNotEmpty()) {
-                                view.render(SearchState.SearchContent(foundTracks))
-                            } else {
-                                view.render(SearchState.EmptySearch)
-                            }
+                    if (foundTracks != null) {
+                        if (foundTracks.isNotEmpty()) {
+                            renderState(SearchState.SearchContent(foundTracks))
+                        } else {
+                            renderState(SearchState.EmptySearch(getApplication<Application>().getString(
+                                R.string.nothing_is_found)))
                         }
-                        if (errorMessage != null) {
-                            view.render(SearchState.Error(errorMessage))
-                        }
+                    }
+                    if (errorMessage != null) {
+                        renderState(SearchState.Error(errorMessage))
                     }
                 }
             })

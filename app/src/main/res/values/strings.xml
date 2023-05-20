@@ -22,6 +22,7 @@
         \n
         Загрузка не удалась. Проверьте подключение к интернету
     </string>
+    <string name="server_error">Ошибка сервера</string>
     <string name="refresh_search">Обновить</string>
     <string name="looked_for">Вы искали</string>
     <string name="clear_search_history">Очистить историю</string>
