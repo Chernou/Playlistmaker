@@ -33,4 +33,8 @@ class Player : PlayerApi {
     override fun releasePlayer() {
         mediaPlayer.release()
     }
+
+    override fun isPlaying(): Boolean {
+        return mediaPlayer.isPlaying
+    }
 }

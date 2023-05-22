@@ -1,28 +1,36 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.IntentCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.view_model.PlayerPresenter
+import com.practicum.playlistmaker.player.view_model.PlayerState
+import com.practicum.playlistmaker.player.view_model.PlayerViewModel
+import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.utils.Creator
-import com.practicum.playlistmaker.player.view_model.api.PlayerView
 import com.practicum.playlistmaker.search.domain.Track
 
-class PlayerActivity : AppCompatActivity(), PlayerView {
+class PlayerActivity : ComponentActivity() {
 
-    private lateinit var presenter: PlayerPresenter
+    companion object {
+        const val ZERO_TIMER = "00:00"
+    }
+
+    private lateinit var viewModel: PlayerViewModel
     private lateinit var currentPlaybackTime: TextView
     private lateinit var playImageView: ImageView
     private lateinit var track: Track
+    private val router = Creator.provideNavigationRouter(this)
     //private lateinit var queueImageView: ImageView
     //private lateinit var likeImageView: ImageView
 
@@ -30,6 +38,22 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+
+        track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
+
+        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track))[PlayerViewModel::class.java]
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+        viewModel.observeToastState().observe(this) {toastState ->
+            if (toastState is ToastState.Show) {
+                noPreviewUrlMessage(toastState.additionalMessage)
+                viewModel.toastWasShown()
+            }
+        }
+        viewModel.observePlaybackTime().observe(this) {playbackTime ->
+            setPlaybackTime(playbackTime)
+        }
 
         val backArrowImageView: ImageView = findViewById(R.id.back_arrow)
         val coverImageView: ImageView = findViewById(R.id.cover_image)
@@ -46,8 +70,6 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
         playImageView.isEnabled = false
         //val queueImageView: ImageView = findViewById(R.id.queue_image)
         //val likeImageView: ImageView = findViewById(R.id.like_image)
-
-        track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
 
         trackName.text = track.trackName
         artistName.text = track.artistName
@@ -76,66 +98,75 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        presenter = Creator.providePlayerPresenter(this, track)
-
         backArrowImageView.setOnClickListener {
-            presenter.backArrowPressed()
+            router.goBack()
         }
 
         playImageView.setOnClickListener {
-            presenter.onPlayPressed()
+            viewModel.onPlayPressed()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        presenter.onPaused()
+        viewModel.onPaused()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.onDestroyed()
+    private fun render(state: PlayerState) {
+        when (state) {
+            is PlayerState.DefaultState -> setDefaultScreen()
+            is PlayerState.PreparedState -> setPreparedScreen()
+            is PlayerState.PlayingState -> setPlayingScreen()
+            is PlayerState.PauseState -> setPauseScreen()
+        }
     }
 
-    override fun moveToPreviousScreen() {
-        onBackPressedDispatcher.onBackPressed()
-    }
-
-    override fun setPlaybackTime(time: String) {
-        currentPlaybackTime.text = time
-    }
-
-    override fun noPreviewUrlMessage() {
-        Toast.makeText(this, getText(R.string.no_preview_url), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun setPauseImageView() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_pause_button
-            )
-        )
-    }
-
-    override fun setPlayImageView() {
+    private fun setDefaultScreen() {
         playImageView.setImageDrawable(
             AppCompatResources.getDrawable(
                 this,
                 R.drawable.ic_play_button
             )
         )
+        playImageView.isEnabled = false
     }
 
-    override fun enablePlayImageView() {
+    private fun setPreparedScreen() {
+        playImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_play_button
+            )
+        )
         playImageView.isEnabled = true
-    }
-
-    override fun setZeroTimer() {
         currentPlaybackTime.text = ZERO_TIMER
     }
 
-    companion object {
-        const val ZERO_TIMER = "00:00"
+    private fun setPlayingScreen() {
+        playImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_pause_button
+            )
+        )
+        playImageView.isEnabled = true
+    }
+
+    private fun setPauseScreen() {
+        playImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_play_button
+            )
+        )
+        playImageView.isEnabled = true
+    }
+
+    private fun setPlaybackTime(time: String) {
+        currentPlaybackTime.text = time
+    }
+
+    private fun noPreviewUrlMessage(additionalMessage: String) {
+        Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
     }
 }

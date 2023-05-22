@@ -48,7 +48,6 @@ class SearchViewModel(
         clearTextState.value = ClearTextState.None
     }
 
-
     fun onClearTextPressed() {
         clearTextState.value = ClearTextState.ClearText
     }

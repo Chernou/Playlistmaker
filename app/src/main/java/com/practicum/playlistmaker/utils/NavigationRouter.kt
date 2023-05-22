@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker.utils
 
-import android.app.Activity
+import androidx.activity.ComponentActivity
 
 class NavigationRouter(
-    private val activity: Activity
+    private val activity: ComponentActivity
 ) {
 
     fun goBack() {
-        activity.onBackPressed()
+        activity.onBackPressedDispatcher.onBackPressed()
     }
 }

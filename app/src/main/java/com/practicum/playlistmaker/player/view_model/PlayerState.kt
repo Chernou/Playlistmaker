@@ -1,8 +1,9 @@
 package com.practicum.playlistmaker.player.view_model
 
-enum class PlayerState {
-    STATE_DEFAULT,
-    STATE_PREPARED,
-    STATE_PLAYING,
-    STATE_PAUSED
+sealed interface PlayerState {
+    object DefaultState: PlayerState
+    object PreparedState: PlayerState
+    object PlayingState: PlayerState
+    object PauseState: PlayerState
+
 }

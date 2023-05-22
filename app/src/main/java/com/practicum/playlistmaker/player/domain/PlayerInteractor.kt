@@ -24,4 +24,8 @@ class PlayerInteractor(private val player: PlayerApi) : PlayerInteractorApi {
     override fun releasePlayer() {
         player.releasePlayer()
     }
+
+    override fun isPlaying(): Boolean {
+        return player.isPlaying()
+    }
 }

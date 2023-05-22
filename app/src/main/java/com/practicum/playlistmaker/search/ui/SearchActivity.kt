@@ -30,6 +30,7 @@ import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.search.view_model.SearchState
+import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.utils.NavigationRouter
 
 class SearchActivity : ComponentActivity() {
@@ -38,7 +39,7 @@ class SearchActivity : ComponentActivity() {
     private var mainThreadHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
-    private val router = NavigationRouter(this)
+    private val router = Creator.provideNavigationRouter(this)
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {

@@ -7,5 +7,6 @@ interface PlayerInteractorApi {
     fun pausePlayer()
     fun releasePlayer()
     fun getPlayerPosition(): Int
+    fun isPlaying(): Boolean
 
 }
