@@ -28,6 +28,7 @@
     <string name="clear_search_history">Очистить историю</string>
     <string name="media_duration">Длительность</string>
     <string name="media_album">Альбом</string>
+    <string name="back_arrow_description">Стрелка назад</string>
     <string name="media_year">Год</string>
     <string name="media_genre">Жанр</string>
     <string name="media_country">Страна</string>

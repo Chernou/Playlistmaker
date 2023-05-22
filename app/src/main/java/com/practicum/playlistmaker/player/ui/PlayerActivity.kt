@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -38,7 +39,7 @@ class PlayerActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
-        val backArrowImageView: ImageView = findViewById(R.id.back_arrow)
+        val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
         val coverImageView: ImageView = findViewById(R.id.cover_image)
         val trackName: TextView = findViewById(R.id.track_name)
         val artistName: TextView = findViewById(R.id.artist_name)
@@ -87,10 +88,6 @@ class PlayerActivity : ComponentActivity() {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        backArrowImageView.setOnClickListener {
-            router.goBack()
-        }
-
         viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track))[PlayerViewModel::class.java]
         viewModel.observeState().observe(this) {
             render(it)
@@ -108,11 +105,19 @@ class PlayerActivity : ComponentActivity() {
         playImageView.setOnClickListener {
             viewModel.onPlayPressed()
         }
+        toolbar.setNavigationOnClickListener {
+            router.goBack()
+        }
     }
 
     override fun onPause() {
         super.onPause()
         viewModel.onPaused()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onCleared()
     }
 
     private fun render(state: PlayerState) {
