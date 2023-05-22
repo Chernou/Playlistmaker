@@ -31,7 +31,6 @@ import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.utils.Creator
-import com.practicum.playlistmaker.utils.NavigationRouter
 
 class SearchActivity : ComponentActivity() {
 
@@ -45,7 +44,7 @@ class SearchActivity : ComponentActivity() {
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
-            val playerIntent = Intent(this, PlayerActivity::class.java)
+            val playerIntent = Intent(this, PlayerActivity::class.java) //todo move intent to router?
             playerIntent.putExtra(Track::class.java.simpleName, it)
             startActivity(playerIntent)
         }
@@ -245,6 +244,9 @@ class SearchActivity : ComponentActivity() {
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
+                val playerIntent = Intent(this, PlayerActivity::class.java) //todo move intent to router?
+                playerIntent.putExtra(Track::class.java.simpleName, it)
+                startActivity(playerIntent)
             }
         }
         searchEditText = findViewById(R.id.search_edit_text)

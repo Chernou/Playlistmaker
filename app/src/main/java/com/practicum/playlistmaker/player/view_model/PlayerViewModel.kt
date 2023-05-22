@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
 import com.practicum.playlistmaker.search.domain.Track
@@ -19,10 +20,32 @@ import com.practicum.playlistmaker.utils.DateUtils.formatTime
 class PlayerViewModel(
     private val track: Track,
     private val interactor: PlayerInteractorApi,
-    application: Application
+    application: App
 ) : AndroidViewModel(application) {
 
-    init {
+    companion object {
+        private const val PLAYBACK_TIME_REFRESH = 500L
+
+        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val interactor = Creator.providePlayerInteractor()
+                PlayerViewModel(track, interactor, this[APPLICATION_KEY] as App)
+            }
+        }
+    }
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val playbackTimerRunnable = runPlaybackTimer()
+    private val stateLiveData = MutableLiveData<PlayerState>()
+    private val toastStateLive = MutableLiveData<ToastState>()
+    private val playbackTimeLive = MutableLiveData<String>()
+
+    public override fun onCleared() {
+        interactor.releasePlayer()
+        handler.removeCallbacks(playbackTimerRunnable)
+    }
+
+    fun preparePlayer() {
         if (track.previewUrl != null) {
             interactor.preparePlayer(
                 trackUri = track.previewUrl,
@@ -40,29 +63,6 @@ class PlayerViewModel(
         }
     }
 
-    companion object {
-        private const val PLAYBACK_TIME_REFRESH = 500L
-        private val PLAYER_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val interactor = Creator.providePlayerInteractor()
-                PlayerViewModel(track, interactor, this[APPLICATION_KEY] as Application)
-            }
-        }
-    }
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val playbackTimerRunnable = runPlaybackTimer()
-    private val stateLiveData = MutableLiveData<PlayerState>()
-    private val toastStateLive = MutableLiveData<ToastState>()
-    private val playbackTimeLive = MutableLiveData<String>()
-
-    public override fun onCleared() {
-        interactor.releasePlayer()
-        handler.removeCallbacksAndMessages(PLAYER_REQUEST_TOKEN)
-    }
-
     fun observeState(): LiveData<PlayerState> = stateLiveData
     fun observeToastState(): LiveData<ToastState> = toastStateLive
     fun observePlaybackTime(): LiveData<String> = playbackTimeLive
@@ -71,7 +71,6 @@ class PlayerViewModel(
         if (track.previewUrl == null) {
             showToast()
         } else {
-            interactor.startPlayer()
             playbackControl()
         }
     }

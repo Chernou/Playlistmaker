@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -38,23 +37,7 @@ class PlayerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-
         track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
-
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track))[PlayerViewModel::class.java]
-        viewModel.observeState().observe(this) {
-            render(it)
-        }
-        viewModel.observeToastState().observe(this) {toastState ->
-            if (toastState is ToastState.Show) {
-                noPreviewUrlMessage(toastState.additionalMessage)
-                viewModel.toastWasShown()
-            }
-        }
-        viewModel.observePlaybackTime().observe(this) {playbackTime ->
-            setPlaybackTime(playbackTime)
-        }
-
         val backArrowImageView: ImageView = findViewById(R.id.back_arrow)
         val coverImageView: ImageView = findViewById(R.id.cover_image)
         val trackName: TextView = findViewById(R.id.track_name)
@@ -68,6 +51,12 @@ class PlayerActivity : ComponentActivity() {
         currentPlaybackTime = findViewById(R.id.current_playback_time)
         playImageView = findViewById(R.id.play_image)
         playImageView.isEnabled = false
+        playImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                R.drawable.ic_play_button
+            )
+        )
         //val queueImageView: ImageView = findViewById(R.id.queue_image)
         //val likeImageView: ImageView = findViewById(R.id.like_image)
 
@@ -102,6 +91,20 @@ class PlayerActivity : ComponentActivity() {
             router.goBack()
         }
 
+        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track))[PlayerViewModel::class.java]
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+        viewModel.observeToastState().observe(this) {toastState ->
+            if (toastState is ToastState.Show) {
+                noPreviewUrlMessage(toastState.additionalMessage)
+                viewModel.toastWasShown()
+            }
+        }
+        viewModel.observePlaybackTime().observe(this) {playbackTime ->
+            setPlaybackTime(playbackTime)
+        }
+        viewModel.preparePlayer()
         playImageView.setOnClickListener {
             viewModel.onPlayPressed()
         }
