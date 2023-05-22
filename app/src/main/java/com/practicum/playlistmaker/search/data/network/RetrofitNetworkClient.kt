@@ -56,6 +56,4 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
         const val BAD_REQUEST_ERROR = 400
         const val NO_CONNECTIVITY_ERROR = -1
     }
-
-
 }

@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.domain.impl
+package com.practicum.playlistmaker.search.data.impl
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -7,7 +7,7 @@ import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
 import com.practicum.playlistmaker.search.data.sharedprefs.LocalStorage
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.domain.api.SearchRepository
+import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
@@ -67,6 +67,5 @@ class SearchRepositoryImpl(
         const val NO_CONNECTIVITY_MESSAGE =
             "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
         const val SERVER_ERROR_MESSAGE = "Ошибка сервера"
-
     }
 }

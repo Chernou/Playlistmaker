@@ -23,17 +23,6 @@ class PlayerViewModel(
     application: App
 ) : AndroidViewModel(application) {
 
-    companion object {
-        private const val PLAYBACK_TIME_REFRESH = 500L
-
-        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val interactor = Creator.providePlayerInteractor()
-                PlayerViewModel(track, interactor, this[APPLICATION_KEY] as App)
-            }
-        }
-    }
-
     private val handler = Handler(Looper.getMainLooper())
     private val playbackTimerRunnable = runPlaybackTimer()
     private val stateLiveData = MutableLiveData<PlayerState>()
@@ -90,7 +79,8 @@ class PlayerViewModel(
     }
 
     private fun showToast() {
-        toastStateLive.value = ToastState.Show(getApplication<Application>().getString(R.string.no_preview_url))
+        toastStateLive.value =
+            ToastState.Show(getApplication<Application>().getString(R.string.no_preview_url))
     }
 
     private fun setPlaybackTime(playbackTime: String) {
@@ -118,6 +108,17 @@ class PlayerViewModel(
                     setPlaybackTime(formatTime(interactor.getPlayerPosition()))
                     handler.postDelayed(this, PLAYBACK_TIME_REFRESH)
                 }
+            }
+        }
+    }
+
+    companion object {
+        private const val PLAYBACK_TIME_REFRESH = 500L
+
+        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val interactor = Creator.providePlayerInteractor()
+                PlayerViewModel(track, interactor, this[APPLICATION_KEY] as App)
             }
         }
     }

@@ -10,7 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.Track
 
-
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val trackName: TextView = itemView.findViewById(R.id.track_name)
@@ -28,11 +27,14 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .centerCrop()
             .apply(
                 RequestOptions
-                .bitmapTransform(
-                    RoundedCorners(itemView
-                    .resources
-                    .getDimensionPixelSize(R.dimen.rounded_corners_album_preview))
-                ))
+                    .bitmapTransform(
+                        RoundedCorners(
+                            itemView
+                                .resources
+                                .getDimensionPixelSize(R.dimen.rounded_corners_album_preview)
+                        )
+                    )
+            )
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(artwork)
     }

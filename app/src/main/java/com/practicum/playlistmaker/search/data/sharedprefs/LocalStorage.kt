@@ -7,11 +7,6 @@ import com.practicum.playlistmaker.search.domain.Track
 
 class LocalStorage(private val sharedPreferences: SharedPreferences) {
 
-    companion object {
-        const val SEARCH_HISTORY = "SEARCH_HISTORY"
-        const val DARK_THEME_ENABLED = "DARK_THEME_ENABLED"
-    }
-
     fun getSearchHistory(): ArrayList<Track> {
         val json = sharedPreferences.getString(SEARCH_HISTORY, null)
         val type = object : TypeToken<ArrayList<Track>>() {}.type
@@ -44,12 +39,7 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
             .apply()
     }
 
-    fun getDisplayTheme() {
-
+    companion object {
+        const val SEARCH_HISTORY = "SEARCH_HISTORY"
     }
-
-    fun saveDisplayTime() {
-
-    }
-
 }

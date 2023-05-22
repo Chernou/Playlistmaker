@@ -1,17 +1,18 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.settings.data.api.SettingsRepository
+import com.practicum.playlistmaker.utils.Creator
 
 class App : Application() {
 
-    private lateinit var sharedPref: SharedPreferences
+    private lateinit var repository: SettingsRepository
 
     override fun onCreate() {
         super.onCreate()
-        sharedPref = getSharedPreferences(SHARED_PREFERENCE, MODE_PRIVATE)
-        switchTheme(sharedPref.getBoolean(DARK_THEME_ENABLED, false))
+        repository = Creator.provideSettingsRepository(this.applicationContext)
+        switchTheme(repository.getThemeSettings().darkThemeEnabled)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
@@ -22,10 +23,5 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
-    }
-
-    companion object {
-        const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
-        const val DARK_THEME_ENABLED = "DARK_THEME_ENABLED"
     }
 }

@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -20,11 +20,7 @@ import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.search.domain.Track
 
-class PlayerActivity : ComponentActivity() {
-
-    companion object {
-        const val ZERO_TIMER = "00:00"
-    }
+class PlayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: PlayerViewModel
     private lateinit var currentPlaybackTime: TextView
@@ -88,17 +84,20 @@ class PlayerActivity : ComponentActivity() {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track))[PlayerViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            PlayerViewModel.getViewModelFactory(track)
+        )[PlayerViewModel::class.java]
         viewModel.observeState().observe(this) {
             render(it)
         }
-        viewModel.observeToastState().observe(this) {toastState ->
+        viewModel.observeToastState().observe(this) { toastState ->
             if (toastState is ToastState.Show) {
                 noPreviewUrlMessage(toastState.additionalMessage)
                 viewModel.toastWasShown()
             }
         }
-        viewModel.observePlaybackTime().observe(this) {playbackTime ->
+        viewModel.observePlaybackTime().observe(this) { playbackTime ->
             setPlaybackTime(playbackTime)
         }
         viewModel.preparePlayer()
@@ -176,5 +175,9 @@ class PlayerActivity : ComponentActivity() {
 
     private fun noPreviewUrlMessage(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        const val ZERO_TIMER = "00:00"
     }
 }

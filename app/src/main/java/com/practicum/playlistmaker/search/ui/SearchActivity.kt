@@ -17,8 +17,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -32,7 +32,7 @@ import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.utils.Creator
 
-class SearchActivity : ComponentActivity() {
+class SearchActivity : AppCompatActivity() {
 
     private var lastUnsuccessfulSearch: String = ""
     private var mainThreadHandler = Handler(Looper.getMainLooper())
@@ -44,7 +44,8 @@ class SearchActivity : ComponentActivity() {
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
-            val playerIntent = Intent(this, PlayerActivity::class.java) //todo move intent to router?
+            val playerIntent =
+                Intent(this, PlayerActivity::class.java) //todo move intent to router?
             playerIntent.putExtra(Track::class.java.simpleName, it)
             startActivity(playerIntent)
         }
@@ -70,7 +71,10 @@ class SearchActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            SearchViewModel.getViewModelFactory()
+        )[SearchViewModel::class.java]
 
         viewModel.observeState().observe(this) {
             render(it)
@@ -92,7 +96,7 @@ class SearchActivity : ComponentActivity() {
 
         searchEditText.addTextChangedListener(searchTextWatcher)
 
-        viewModel.observeClearTextState().observe(this) {clearTextState ->
+        viewModel.observeClearTextState().observe(this) { clearTextState ->
             if (clearTextState is ClearTextState.ClearText) {
                 clearSearchText()
                 hideKeyboard()
@@ -244,7 +248,8 @@ class SearchActivity : ComponentActivity() {
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val playerIntent = Intent(this, PlayerActivity::class.java) //todo move intent to router?
+                val playerIntent =
+                    Intent(this, PlayerActivity::class.java) //todo move intent to router?
                 playerIntent.putExtra(Track::class.java.simpleName, it)
                 startActivity(playerIntent)
             }

@@ -23,17 +23,6 @@ class SearchViewModel(
     application: App
 ) : AndroidViewModel(application) {
 
-    companion object {
-        const val SEARCH_DEBOUNCE_DELAY = 2_000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as App)
-            }
-        }
-    }
-
     private val interactor = Creator.provideSearchInteractor(application)
     private val handler = Handler(Looper.getMainLooper())
 
@@ -112,8 +101,13 @@ class SearchViewModel(
                         if (foundTracks.isNotEmpty()) {
                             renderState(SearchState.SearchContent(foundTracks))
                         } else {
-                            renderState(SearchState.EmptySearch(getApplication<Application>().getString(
-                                R.string.nothing_is_found)))
+                            renderState(
+                                SearchState.EmptySearch(
+                                    getApplication<Application>().getString(
+                                        R.string.nothing_is_found
+                                    )
+                                )
+                            )
                         }
                     }
                     if (errorMessage != null) {
@@ -121,6 +115,17 @@ class SearchViewModel(
                     }
                 }
             })
+        }
+    }
+
+    companion object {
+        const val SEARCH_DEBOUNCE_DELAY = 2_000L
+        private val SEARCH_REQUEST_TOKEN = Any()
+
+        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SearchViewModel(this[APPLICATION_KEY] as App)
+            }
         }
     }
 }
