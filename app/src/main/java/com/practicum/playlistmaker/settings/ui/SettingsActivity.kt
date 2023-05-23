@@ -32,7 +32,7 @@ class SettingsActivity : AppCompatActivity() {
         val userAgreementTextView = findViewById<TextView>(R.id.user_agreement)
         val themeSwitch = findViewById<SwitchMaterial>(R.id.switch_dark_theme)
 
-        themeSwitch.isChecked = viewModel.getThemeSettings()
+        themeSwitch.isChecked = viewModel.darkeThemeIsEnabled()
 
         shareAppTextView.setOnClickListener {
             viewModel.onShareAppPressed()
