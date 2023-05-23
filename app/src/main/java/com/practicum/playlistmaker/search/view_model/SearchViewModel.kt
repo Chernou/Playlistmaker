@@ -42,23 +42,19 @@ class SearchViewModel(
         clearTextState.value = ClearTextState.ClearText
     }
 
-    fun onCreate() {
-        if (interactor.getSearchHistory().isNotEmpty()) {
-            renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
-        } else {
-            renderState(SearchState.EmptyScreen)
-        }
+    public override fun onCleared() {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
-    fun searchEditTextFocusChanged(hasFocus: Boolean, searchText: String?) {
-        if (searchText?.isEmpty() == true && interactor.getSearchHistory()
-                .isNotEmpty()
-        ) {
-            renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
-        } else if (searchText != null && searchText.isNotEmpty()) {
-            searchDebounce(searchText)
+    fun onTextChanged(searchText: String?) {
+        if (searchText.isNullOrEmpty()) {
+            if (interactor.getSearchHistory().isNotEmpty()) renderState(
+                SearchState.HistoryContent(
+                    interactor.getSearchHistory()
+                )
+            ) else renderState(SearchState.EmptyScreen)
         } else {
-            renderState(SearchState.EmptyScreen)
+            searchDebounce(searchText)
         }
     }
 
@@ -76,8 +72,10 @@ class SearchViewModel(
         interactor.addTrackToSearchHistory(track)
     }
 
-    public override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    fun onFocusChanged(hasFocus: Boolean, searchText: String) {
+        if (hasFocus && searchText.isEmpty() && interactor.getSearchHistory().isNotEmpty()) {
+            renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
+        }
     }
 
     private fun searchDebounce(changedText: String) {
