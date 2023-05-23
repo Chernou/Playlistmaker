@@ -34,7 +34,7 @@ class SettingsViewModel(
         settingsInteractor.updateThemeSetting(ThemeSettings(isChecked))
     }
 
-    fun darkeThemeIsEnabled(): Boolean {
+    fun darkThemeIsEnabled(): Boolean {
         return settingsInteractor.getThemeSettings().darkThemeEnabled
     }
 
