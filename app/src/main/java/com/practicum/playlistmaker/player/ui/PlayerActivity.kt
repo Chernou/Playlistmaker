@@ -35,10 +35,10 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(Track::class.java.simpleName, Track::class.java) as Track
+            intent.getParcelableExtra(Track::class.java.simpleName, Track::class.java)
         } else {
-            intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
-        }
+            intent.getParcelableExtra(Track::class.java.simpleName)
+        } as Track
         val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
         val coverImageView: ImageView = findViewById(R.id.cover_image)
         val trackName: TextView = findViewById(R.id.track_name)
