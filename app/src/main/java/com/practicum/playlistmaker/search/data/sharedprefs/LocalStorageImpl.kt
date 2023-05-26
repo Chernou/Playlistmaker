@@ -1,19 +1,25 @@
 package com.practicum.playlistmaker.search.data.sharedprefs
 
-import android.content.SharedPreferences
+import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.domain.Track
 
-class LocalStorage(private val sharedPreferences: SharedPreferences) {
+class LocalStorageImpl(context: Context) : LocalStorage {
 
-    fun getSearchHistory(): ArrayList<Track> {
+    private val sharedPreferences = context.getSharedPreferences(
+        SHARED_PREFERENCE,
+        Context.MODE_PRIVATE
+    )
+
+    override fun getSearchHistory(): ArrayList<Track> {
         val json = sharedPreferences.getString(SEARCH_HISTORY, null)
         val type = object : TypeToken<ArrayList<Track>>() {}.type
         return Gson().fromJson(json, type) ?: ArrayList()
     }
 
-    fun addTrackToSearchHistory(track: Track) {
+    override fun addTrackToSearchHistory(track: Track) {
         val searchHistory = getSearchHistory()
         if (searchHistory.contains(track)) {
             searchHistory.remove(track)
@@ -29,7 +35,7 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
         saveSearchHistory(searchHistory)
     }
 
-    fun clearSearchHistory() {
+    override fun clearSearchHistory() {
         saveSearchHistory(ArrayList())
     }
 
@@ -40,6 +46,7 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
     }
 
     companion object {
-        const val SEARCH_HISTORY = "SEARCH_HISTORY"
+        private const val SEARCH_HISTORY = "SEARCH_HISTORY"
+        private const val SHARED_PREFERENCE = "SHARED_PREFERENCE"
     }
 }

@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.player.domain.api
 
-interface PlayerApi {
+interface Player {
 
     fun preparePlayer(trackUri: String, onPrepared: () -> Unit, onCompletion: () -> Unit)
     fun startPlayer()

@@ -10,23 +10,27 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.view_model.PlayerState
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
 import com.practicum.playlistmaker.player.view_model.ToastState
-import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.utils.NavigationRouter
+import org.koin.android.ext.android.getKoin
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel: PlayerViewModel  by viewModel {
+        parametersOf(track)
+    }
     private lateinit var currentPlaybackTime: TextView
     private lateinit var playImageView: ImageView
     private lateinit var track: Track
-    private val router = Creator.provideNavigationRouter(this)
+
     //private lateinit var queueImageView: ImageView
     //private lateinit var likeImageView: ImageView
 
@@ -88,10 +92,6 @@ class PlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        viewModel = ViewModelProvider(
-            this,
-            PlayerViewModel.getViewModelFactory(track, this)
-        )[PlayerViewModel::class.java]
         viewModel.observeState().observe(this) {
             render(it)
         }
@@ -107,6 +107,10 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.preparePlayer()
         playImageView.setOnClickListener {
             viewModel.onPlayPressed()
+        }
+
+        val router: NavigationRouter = getKoin().get {
+            parametersOf(this)
         }
         toolbar.setNavigationOnClickListener {
             router.goBack()

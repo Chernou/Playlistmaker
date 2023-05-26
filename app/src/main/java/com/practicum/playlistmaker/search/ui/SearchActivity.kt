@@ -21,23 +21,25 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
-import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.search.view_model.SearchState
-import com.practicum.playlistmaker.utils.Creator
+import com.practicum.playlistmaker.search.view_model.SearchViewModel
+import com.practicum.playlistmaker.utils.NavigationRouter
+import org.koin.android.ext.android.getKoin
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
 
     private var mainThreadHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
-    private val router = Creator.provideNavigationRouter(this)
+    private val viewModel: SearchViewModel by viewModel()
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
@@ -50,7 +52,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var viewModel: SearchViewModel
     private lateinit var clearSearchTextImage: ImageView
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
@@ -70,10 +71,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory(this)
-        )[SearchViewModel::class.java]
 
         viewModel.observeState().observe(this) {
             render(it)
@@ -88,6 +85,9 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
+        val router: NavigationRouter = getKoin().get {
+            parametersOf(this)
+        }
         toolbar.setNavigationOnClickListener {
             router.goBack()
         }

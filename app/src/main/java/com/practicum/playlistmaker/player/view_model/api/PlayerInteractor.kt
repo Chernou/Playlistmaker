@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.player.view_model.api
 
-interface PlayerInteractorApi {
+interface PlayerInteractor {
 
     fun preparePlayer(trackUri: String, onPrepared: () -> Unit, onCompletion: () -> Unit)
     fun startPlayer()
