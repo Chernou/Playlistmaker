@@ -24,7 +24,7 @@ class SettingsActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(
             this,
-            SettingsViewModel.getViewModelFactory()
+            SettingsViewModel.getViewModelFactory(this)
         )[SettingsViewModel::class.java]
 
         val shareAppTextView = findViewById<TextView>(R.id.share_app)

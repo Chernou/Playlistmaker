@@ -34,7 +34,6 @@ import com.practicum.playlistmaker.utils.Creator
 
 class SearchActivity : AppCompatActivity() {
 
-    private var lastUnsuccessfulSearch: String = ""
     private var mainThreadHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
@@ -73,7 +72,7 @@ class SearchActivity : AppCompatActivity() {
         initializeLateinitItems()
         viewModel = ViewModelProvider(
             this,
-            SearchViewModel.getViewModelFactory()
+            SearchViewModel.getViewModelFactory(this)
         )[SearchViewModel::class.java]
 
         viewModel.observeState().observe(this) {
@@ -108,7 +107,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         refreshSearchButton.setOnClickListener {
-            viewModel.onRefreshSearchButtonPressed(lastUnsuccessfulSearch)
+            viewModel.onRefreshSearchButtonPressed()
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -226,7 +225,6 @@ class SearchActivity : AppCompatActivity() {
                 R.drawable.no_internet_connection
             )
         )
-        lastUnsuccessfulSearch = searchEditText.text.toString()
     }
 
     private fun showProgressBar() {

@@ -6,11 +6,13 @@ import com.practicum.playlistmaker.player.data.Player
 import com.practicum.playlistmaker.player.domain.PlayerInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerApi
 import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
+import com.practicum.playlistmaker.search.data.api.ResourceProvider
 import com.practicum.playlistmaker.search.data.impl.SearchRepositoryImpl
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.sharedprefs.LocalStorage
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.data.api.SearchRepository
+import com.practicum.playlistmaker.search.data.impl.ResourceProviderImpl
 import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
 import com.practicum.playlistmaker.settings.data.impl.SettingsRepositoryImpl
@@ -30,6 +32,7 @@ object Creator {
     }
 
     fun provideSearchInteractor(context: Context): SearchInteractor {
+
         return SearchInteractorImpl(provideSearchRepository(context))
     }
 
@@ -52,6 +55,10 @@ object Creator {
                 Context.MODE_PRIVATE
             )
         )
+    }
+
+    fun provideResourceProvider(context: Context): ResourceProvider {
+        return ResourceProviderImpl(context)
     }
 
     private fun provideSearchRepository(context: Context): SearchRepository {

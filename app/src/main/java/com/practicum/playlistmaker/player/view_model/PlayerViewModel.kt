@@ -1,27 +1,26 @@
 package com.practicum.playlistmaker.player.view_model
 
-import android.app.Application
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
+import com.practicum.playlistmaker.search.data.api.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 
 class PlayerViewModel(
     private val track: Track,
+    private val resourceProvider: ResourceProvider,
     private val interactor: PlayerInteractorApi,
-    application: App
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val handler = Handler(Looper.getMainLooper())
     private val playbackTimerRunnable = runPlaybackTimer()
@@ -80,7 +79,7 @@ class PlayerViewModel(
 
     private fun showToast() {
         toastStateLive.value =
-            ToastState.Show(getApplication<Application>().getString(R.string.no_preview_url))
+            ToastState.Show(resourceProvider.getString(R.string.no_preview_url))
     }
 
     private fun setPlaybackTime(playbackTime: String) {
@@ -115,10 +114,11 @@ class PlayerViewModel(
     companion object {
         private const val PLAYBACK_TIME_REFRESH = 500L
 
-        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(track: Track, context: Context): ViewModelProvider.Factory = viewModelFactory {
             initializer {
+                val resourceProvider = Creator.provideResourceProvider(context)
                 val interactor = Creator.providePlayerInteractor()
-                PlayerViewModel(track, interactor, this[APPLICATION_KEY] as App)
+                PlayerViewModel(track, resourceProvider, interactor)
             }
         }
     }

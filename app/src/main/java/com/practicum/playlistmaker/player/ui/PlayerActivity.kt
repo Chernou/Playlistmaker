@@ -34,7 +34,11 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
-        track = intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
+        track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(Track::class.java.simpleName, Track::class.java) as Track
+        } else {
+            intent.getParcelableExtra<Track>(Track::class.java.simpleName) as Track
+        }
         val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
         val coverImageView: ImageView = findViewById(R.id.cover_image)
         val trackName: TextView = findViewById(R.id.track_name)
@@ -86,7 +90,7 @@ class PlayerActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(
             this,
-            PlayerViewModel.getViewModelFactory(track)
+            PlayerViewModel.getViewModelFactory(track, this)
         )[PlayerViewModel::class.java]
         viewModel.observeState().observe(this) {
             render(it)

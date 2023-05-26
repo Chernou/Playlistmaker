@@ -1,21 +1,19 @@
 package com.practicum.playlistmaker.settings.view_model
 
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.settings.domain.ThemeSettings
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractor
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.utils.Creator
 
 class SettingsViewModel(
-    private val application: App,
     private val sharingInteractor: SharingInteractor,
     private val settingsInteractor: SettingsInteractor,
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     fun onShareAppPressed() {
         sharingInteractor.shareApp()
@@ -30,7 +28,6 @@ class SettingsViewModel(
     }
 
     fun onThemeSwitched(isChecked: Boolean) {
-        application.switchTheme(isChecked)
         settingsInteractor.updateThemeSetting(ThemeSettings(isChecked))
     }
 
@@ -39,14 +36,13 @@ class SettingsViewModel(
     }
 
     companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(context: Context): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = this[APPLICATION_KEY] as App
                 val sharingInteractor =
-                    Creator.provideSharingInteractor(application.applicationContext)
+                    Creator.provideSharingInteractor(context)
                 val settingsInteractor =
-                    Creator.provideSettingsInteractor(application.applicationContext)
-                SettingsViewModel(application, sharingInteractor, settingsInteractor)
+                    Creator.provideSettingsInteractor(context)
+                SettingsViewModel(sharingInteractor, settingsInteractor)
             }
         }
     }
