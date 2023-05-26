@@ -59,28 +59,23 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_tags="currentTime" />
 
-    <ImageView
-        android:id="@+id/back_arrow"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/player_toolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_20"
-        android:layout_marginTop="@dimen/size_20"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
+        app:navigationIcon="@drawable/ic_arrow_back" />
 
     <ImageView
         android:id="@+id/cover_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/size_16"
         android:contentDescription="@string/media_album"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@id/track_name"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toStartOf="@id/right_top_guideline"
         app:layout_constraintStart_toEndOf="@id/left_top_guideline"
-        app:layout_constraintTop_toBottomOf="@id/back_arrow"
+        app:layout_constraintTop_toBottomOf="@id/player_toolbar"
         app:srcCompat="@drawable/ic_track_placeholder_large" />
 
     <TextView

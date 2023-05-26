@@ -1,6 +1,6 @@
-package com.practicum.playlistmaker.player.domain.api
+package com.practicum.playlistmaker.player.view_model.api
 
-interface PlayerApi {
+interface PlayerInteractorApi {
 
     fun preparePlayer(trackUri: String, onPrepared: () -> Unit, onCompletion: () -> Unit)
     fun startPlayer()
@@ -8,4 +8,5 @@ interface PlayerApi {
     fun releasePlayer()
     fun getPlayerPosition(): Int
     fun isPlaying(): Boolean
+
 }
