@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -30,25 +29,25 @@ import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.utils.NavigationRouter
-import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
 
-    private var mainThreadHandler = Handler(Looper.getMainLooper())
+    private val mainThreadHandler: Handler by inject()
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
     private val viewModel: SearchViewModel by viewModel()
+    private val router: NavigationRouter by inject {
+        parametersOf(this)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
-            val playerIntent =
-                Intent(this, PlayerActivity::class.java) //todo move intent to router?
-            playerIntent.putExtra(Track::class.java.simpleName, it)
-            startActivity(playerIntent)
+            router.openTrack(it)
         }
     }
 
@@ -85,9 +84,6 @@ class SearchActivity : AppCompatActivity() {
         }
 
         val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
-        val router: NavigationRouter = getKoin().get {
-            parametersOf(this)
-        }
         toolbar.setNavigationOnClickListener {
             router.goBack()
         }

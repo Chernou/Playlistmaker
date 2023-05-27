@@ -2,11 +2,8 @@ package com.practicum.playlistmaker.utils
 
 object TextUtils {
 
-    fun removeLastChar(str: String?): String? {
-        return str?.replaceFirst(".$".toRegex(), "")
-    }
+    fun removeLastChar(str: String?): String? = str?.replaceFirst(".$".toRegex(), "")
 
-    fun getHighResArtwork(lowResArtworkUri: String): String {
-        return lowResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
-    }
+    fun getHighResArtwork(lowResArtworkUri: String) =
+        lowResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
 }

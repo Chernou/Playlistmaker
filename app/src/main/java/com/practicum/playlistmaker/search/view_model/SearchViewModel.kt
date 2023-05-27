@@ -2,25 +2,26 @@ package com.practicum.playlistmaker.search.view_model
 
 import android.os.Build
 import android.os.Handler
-import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.search.data.api.ResourceProvider
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class SearchViewModel(
     private val resourceProvider: ResourceProvider,
     private val interactor: SearchInteractor
-) : ViewModel() {
+) : ViewModel(), KoinComponent {
 
     //todo save search state when rotate screen
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val handler: Handler by inject()
     private var lastUnsuccessfulSearch: String = ""
 
     private val stateLiveData = MutableLiveData<SearchState>()

@@ -1,23 +1,24 @@
 package com.practicum.playlistmaker.player.view_model
 
 import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.player.view_model.api.PlayerInteractor
-import com.practicum.playlistmaker.search.data.api.ResourceProvider
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class PlayerViewModel(
     private val track: Track,
     private val resourceProvider: ResourceProvider,
     private val interactor: PlayerInteractor,
-) : ViewModel() {
+) : ViewModel(), KoinComponent {
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val handler: Handler by inject()
     private val playbackTimerRunnable = runPlaybackTimer()
     private val stateLiveData = MutableLiveData<PlayerState>()
     private val toastStateLive = MutableLiveData<ToastState>()

@@ -1,12 +1,16 @@
 package com.practicum.playlistmaker.sharing.domain.impl
 
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.sharing.data.ExternalNavigator
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.sharing.domain.model.EmailData
 
 class SharingInteractorImpl(
     private val externalNavigator: ExternalNavigator,
+    private val resourceProvider: ResourceProvider
 ) : SharingInteractor {
+
     override fun shareApp() {
         externalNavigator.shareLink(getShareAppLink())
     }
@@ -19,27 +23,13 @@ class SharingInteractorImpl(
         externalNavigator.openEmail(getSupportEmailData())
     }
 
-    private fun getShareAppLink(): String {
-        return APP_LINK
-    }
+    private fun getShareAppLink() = resourceProvider.getString(R.string.practicum_android_link)
 
-    private fun getSupportEmailData(): EmailData {
-        return EmailData(
-            email = EMAIL,
-            subject = SUBJECT,
-            textMessage = TEXT_MESSAGE
-        )
-    }
+    private fun getSupportEmailData() = EmailData(
+        email = resourceProvider.getString(R.string.feedback_addressee_mail),
+        subject = resourceProvider.getString(R.string.feedback_subject),
+        textMessage = resourceProvider.getString(R.string.feedback_message_text)
+    )
 
-    private fun getTermsLink(): String {
-        return TERMS_LINK
-    }
-
-    companion object {
-        private const val EMAIL = "chernov.i.u@gmail.com"
-        private const val SUBJECT = "Сообщение разработчикам и разработчицам приложения Playlist Maker"
-        private const val TEXT_MESSAGE = "Спасибо разработчикам и разработчицам за крутое приложение!"
-        private const val APP_LINK = "https://practicum.yandex.ru/android-developer/"
-        private const val TERMS_LINK = "https://yandex.ru/legal/practicum_offer/"
-    }
+    private fun getTermsLink() = resourceProvider.getString(R.string.practicum_term_link)
 }

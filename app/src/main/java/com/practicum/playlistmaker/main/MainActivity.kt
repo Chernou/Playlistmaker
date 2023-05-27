@@ -9,6 +9,8 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media.MediaActivity
 import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
+import org.koin.android.ext.android.getKoin
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onButtonClick(targetClass: Class<out Activity>) {
-        val intent = Intent(this, targetClass)
+        val intent: Intent = getKoin().get{
+            parametersOf(this, targetClass)
+        }
         startActivity(intent)
     }
 

@@ -17,15 +17,11 @@ class PlayerInteractorImpl(private val player: Player) : PlayerInteractor {
         player.pausePlayer()
     }
 
-    override fun getPlayerPosition(): Int {
-        return player.getPlayerPosition()
-    }
+    override fun getPlayerPosition() = player.getPlayerPosition()
 
     override fun releasePlayer() {
         player.releasePlayer()
     }
 
-    override fun isPlaying(): Boolean {
-        return player.isPlaying()
-    }
+    override fun isPlaying() = player.isPlaying()
 }
