@@ -39,11 +39,13 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+
         track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(SearchActivity.OPEN_TRACK_INTENT, Track::class.java)
+            intent.getParcelableExtra(OPEN_TRACK_INTENT, Track::class.java)
         } else {
-            intent.getParcelableExtra(SearchActivity.OPEN_TRACK_INTENT)
+            intent.getParcelableExtra(OPEN_TRACK_INTENT)
         } as Track
+
         val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
         val coverImageView: ImageView = findViewById(R.id.cover_image)
         val trackName: TextView = findViewById(R.id.track_name)
@@ -188,5 +190,6 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         const val ZERO_TIMER = "00:00"
+        const val OPEN_TRACK_INTENT = "TRACK INTENT"
     }
 }

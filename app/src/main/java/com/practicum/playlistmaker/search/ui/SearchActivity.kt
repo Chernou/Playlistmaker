@@ -120,6 +120,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        router.onDestroy()
         viewModel.onCleared()
     }
 
