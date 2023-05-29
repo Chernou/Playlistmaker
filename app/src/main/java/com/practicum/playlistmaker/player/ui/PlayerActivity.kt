@@ -17,7 +17,6 @@ import com.practicum.playlistmaker.player.view_model.PlayerState
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
 import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.utils.NavigationRouter
 import org.koin.android.ext.android.getKoin
 import org.koin.androidx.viewmodel.ext.android.viewModel
