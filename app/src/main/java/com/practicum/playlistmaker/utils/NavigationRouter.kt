@@ -15,11 +15,11 @@ class NavigationRouter(
         activity.onBackPressedDispatcher.onBackPressed()
     }
 
-    fun openTrack(track: Track) {
+    fun openTrack(name: String, track: Track) {
         val playerIntent: Intent = getKoin().get {
             parametersOf(activity, PlayerActivity::class.java)
         }
-        playerIntent.putExtra(Track::class.java.simpleName, track)
+        playerIntent.putExtra(name, track)
         activity.startActivity(playerIntent)
     }
 }

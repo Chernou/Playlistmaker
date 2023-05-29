@@ -22,19 +22,19 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<Button>(R.id.main_settings)
 
         settingsButton.setOnClickListener {
-            onButtonClick(SettingsActivity::class.java)
+            openScreen(SettingsActivity::class.java)
         }
 
         mediaButton.setOnClickListener {
-            onButtonClick(MediaActivity::class.java)
+            openScreen(MediaActivity::class.java)
         }
 
         searchButton.setOnClickListener {
-            onButtonClick(SearchActivity::class.java)
+            openScreen(SearchActivity::class.java)
         }
     }
 
-    private fun onButtonClick(targetClass: Class<out Activity>) {
+    private fun openScreen(targetClass: Class<out Activity>) {
         val intent: Intent = getKoin().get{
             parametersOf(this, targetClass)
         }

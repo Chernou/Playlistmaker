@@ -2,7 +2,6 @@ package com.practicum.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -23,7 +22,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchState
@@ -47,7 +45,7 @@ class SearchActivity : AppCompatActivity() {
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
-            router.openTrack(it)
+            router.openTrack(OPEN_TRACK_INTENT, it)
         }
     }
 
@@ -123,6 +121,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         viewModel.onCleared()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
     }
 
     private fun render(state: SearchState) {
@@ -241,10 +244,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val playerIntent =
-                    Intent(this, PlayerActivity::class.java) //todo move intent to router?
-                playerIntent.putExtra(Track::class.java.simpleName, it)
-                startActivity(playerIntent)
+                router.openTrack(OPEN_TRACK_INTENT, it)
             }
         }
         searchEditText = findViewById(R.id.search_edit_text)
@@ -268,5 +268,6 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val CLICK_DEBOUNCE_DELAY = 1_000L
+        const val OPEN_TRACK_INTENT = "TRACK INTENT"
     }
 }

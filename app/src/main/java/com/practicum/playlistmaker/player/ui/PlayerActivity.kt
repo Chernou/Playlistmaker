@@ -17,6 +17,7 @@ import com.practicum.playlistmaker.player.view_model.PlayerState
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
 import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.utils.NavigationRouter
 import org.koin.android.ext.android.getKoin
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,7 +25,7 @@ import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
-    private val viewModel: PlayerViewModel  by viewModel {
+    private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
     private lateinit var currentPlaybackTime: TextView
@@ -39,9 +40,9 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(Track::class.java.simpleName, Track::class.java)
+            intent.getParcelableExtra(SearchActivity.OPEN_TRACK_INTENT, Track::class.java)
         } else {
-            intent.getParcelableExtra(Track::class.java.simpleName)
+            intent.getParcelableExtra(SearchActivity.OPEN_TRACK_INTENT)
         } as Track
         val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
         val coverImageView: ImageView = findViewById(R.id.cover_image)

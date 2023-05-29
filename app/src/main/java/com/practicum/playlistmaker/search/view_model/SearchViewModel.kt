@@ -76,6 +76,14 @@ class SearchViewModel(
         }
     }
 
+    fun onResume() {
+        if (stateLiveData.value is SearchState.HistoryContent) renderState(
+            SearchState.HistoryContent(
+                interactor.getSearchHistory()
+            )
+        )
+    }
+
     private fun searchDebounce(changedText: String) {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(changedText) }
