@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.data.network
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -8,20 +7,13 @@ import androidx.annotation.RequiresApi
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import org.koin.core.component.KoinComponent
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val itunesService = retrofit.create(ItunesService::class.java)
+class RetrofitNetworkClient() : NetworkClient, KoinComponent {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun doRequest(dto: Any): Response {
+        val itunesService: ItunesService = getKoin().get()
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTIVITY_ERROR }
         }
@@ -37,8 +29,7 @@ class RetrofitNetworkClient(private val context: Context) : NetworkClient {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun isConnected(): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager: ConnectivityManager = getKoin().get()
         val capabilities =
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {

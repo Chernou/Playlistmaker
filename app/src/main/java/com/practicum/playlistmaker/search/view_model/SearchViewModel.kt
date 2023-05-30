@@ -1,30 +1,28 @@
 package com.practicum.playlistmaker.search.view_model
 
-import android.app.Application
 import android.os.Build
 import android.os.Handler
-import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.App
+import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
-import com.practicum.playlistmaker.utils.Creator
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class SearchViewModel(
-    application: App
-) : AndroidViewModel(application) {
+    private val resourceProvider: ResourceProvider,
+    private val interactor: SearchInteractor
+) : ViewModel(), KoinComponent {
 
-    private val interactor = Creator.provideSearchInteractor(application)
-    private val handler = Handler(Looper.getMainLooper())
+    //todo save search state when rotate screen
+
+    private val handler: Handler by inject()
+    private var lastUnsuccessfulSearch: String = ""
 
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
@@ -64,8 +62,8 @@ class SearchViewModel(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onRefreshSearchButtonPressed(searchRequest: String) {
-        searchRequest(searchRequest)
+    fun onRefreshSearchButtonPressed() {
+        searchRequest(lastUnsuccessfulSearch)
     }
 
     fun onTrackPressed(track: Track) {
@@ -76,6 +74,14 @@ class SearchViewModel(
         if (hasFocus && searchText.isEmpty() && interactor.getSearchHistory().isNotEmpty()) {
             renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
         }
+    }
+
+    fun onResume() {
+        if (stateLiveData.value is SearchState.HistoryContent) renderState(
+            SearchState.HistoryContent(
+                interactor.getSearchHistory()
+            )
+        )
     }
 
     private fun searchDebounce(changedText: String) {
@@ -101,7 +107,7 @@ class SearchViewModel(
                         } else {
                             renderState(
                                 SearchState.EmptySearch(
-                                    getApplication<Application>().getString(
+                                    resourceProvider.getString(
                                         R.string.nothing_is_found
                                     )
                                 )
@@ -109,6 +115,7 @@ class SearchViewModel(
                         }
                     }
                     if (errorMessage != null) {
+                        lastUnsuccessfulSearch = searchText
                         renderState(SearchState.Error(errorMessage))
                     }
                 }
@@ -119,11 +126,5 @@ class SearchViewModel(
     companion object {
         const val SEARCH_DEBOUNCE_DELAY = 2_000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as App)
-            }
-        }
     }
 }

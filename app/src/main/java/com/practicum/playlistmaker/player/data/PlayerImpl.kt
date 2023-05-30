@@ -1,11 +1,9 @@
 package com.practicum.playlistmaker.player.data
 
 import android.media.MediaPlayer
-import com.practicum.playlistmaker.player.domain.api.PlayerApi
+import com.practicum.playlistmaker.player.domain.api.Player
 
-class Player : PlayerApi {
-
-    private val mediaPlayer = MediaPlayer()
+class PlayerImpl(private val mediaPlayer: MediaPlayer) : Player {
 
     override fun preparePlayer(trackUri: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         mediaPlayer.setDataSource(trackUri)
@@ -18,9 +16,7 @@ class Player : PlayerApi {
         }
     }
 
-    override fun getPlayerPosition(): Int {
-        return mediaPlayer.currentPosition
-    }
+    override fun getPlayerPosition() = mediaPlayer.currentPosition
 
     override fun startPlayer() {
         mediaPlayer.start()
@@ -34,7 +30,5 @@ class Player : PlayerApi {
         mediaPlayer.release()
     }
 
-    override fun isPlaying(): Boolean {
-        return mediaPlayer.isPlaying
-    }
+    override fun isPlaying() = mediaPlayer.isPlaying
 }

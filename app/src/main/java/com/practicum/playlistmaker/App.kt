@@ -1,27 +1,36 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.di.dataModule
+import com.practicum.playlistmaker.di.interactorModule
+import com.practicum.playlistmaker.di.navigatorModule
+import com.practicum.playlistmaker.di.repositoryModule
+import com.practicum.playlistmaker.di.resourceProviderModule
+import com.practicum.playlistmaker.di.threadsModule
+import com.practicum.playlistmaker.di.viewModelModule
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
-import com.practicum.playlistmaker.utils.Creator
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class App : Application() {
 
-    private lateinit var repository: SettingsRepository
+    private val repository: SettingsRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
-        repository = Creator.provideSettingsRepository(this.applicationContext)
-        switchTheme(repository.getThemeSettings().darkThemeEnabled)
-    }
-
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+        startKoin {
+            androidContext(this@App)
+            modules(
+                repositoryModule,
+                dataModule,
+                interactorModule,
+                resourceProviderModule,
+                navigatorModule,
+                viewModelModule,
+                threadsModule
+            )
+        }
+        repository.applyAppTheme()
     }
 }

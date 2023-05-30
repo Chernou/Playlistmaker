@@ -2,28 +2,36 @@ package com.practicum.playlistmaker.search.data.impl
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient
+import com.practicum.playlistmaker.utils.ResourceProvider
+import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
-import com.practicum.playlistmaker.search.data.sharedprefs.LocalStorage
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.TextUtils
+import org.koin.core.component.KoinComponent
+import org.koin.core.parameter.parametersOf
 
 class SearchRepositoryImpl(
-    private val networkClient: NetworkClient,
     private val localStorage: LocalStorage
-) : SearchRepository {
+) : SearchRepository, KoinComponent {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun searchTracks(query: String): Resource<List<Track>> {
-        val response = networkClient.doRequest(SearchRequest(query))
+        val resourceProvider: ResourceProvider = getKoin().get()
+        val networkClient: NetworkClient = getKoin().get()
+        val searchRequest: SearchRequest = getKoin().get {
+            parametersOf(query)
+        }
+        val response = networkClient.doRequest(searchRequest)
         return when (response.resultCode) {
             NO_CONNECTIVITY_ERROR -> {
-                Resource.Error(NO_CONNECTIVITY_MESSAGE)
+                Resource.Error(resourceProvider.getString(R.string.no_internet_connection))
             }
             SUCCESSFUL_SEARCH_CODE -> {
                 Resource.Success((response as SearchResponse).trackList.map {
@@ -44,7 +52,7 @@ class SearchRepositoryImpl(
                 })
             }
             else -> {
-                Resource.Error(SERVER_ERROR_MESSAGE)
+                Resource.Error(resourceProvider.getString(R.string.server_error))
             }
         }
     }
@@ -64,8 +72,5 @@ class SearchRepositoryImpl(
     companion object {
         const val SUCCESSFUL_SEARCH_CODE = 200
         const val NO_CONNECTIVITY_ERROR = -1
-        const val NO_CONNECTIVITY_MESSAGE =
-            "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
-        const val SERVER_ERROR_MESSAGE = "Ошибка сервера"
     }
 }

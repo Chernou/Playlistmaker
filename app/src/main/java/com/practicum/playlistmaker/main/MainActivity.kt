@@ -2,13 +2,15 @@ package com.practicum.playlistmaker.main
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.practicum.playlistmaker.media.MediaActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.media.MediaActivity
 import com.practicum.playlistmaker.search.ui.SearchActivity
 import com.practicum.playlistmaker.settings.ui.SettingsActivity
+import org.koin.android.ext.android.getKoin
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,21 +22,22 @@ class MainActivity : AppCompatActivity() {
         val settingsButton = findViewById<Button>(R.id.main_settings)
 
         settingsButton.setOnClickListener {
-            onButtonClick(SettingsActivity::class.java)
+            openScreen(SettingsActivity::class.java)
         }
 
         mediaButton.setOnClickListener {
-            onButtonClick(MediaActivity::class.java)
+            openScreen(MediaActivity::class.java)
         }
 
         searchButton.setOnClickListener {
-            onButtonClick(SearchActivity::class.java)
+            openScreen(SearchActivity::class.java)
         }
     }
 
-    private fun onButtonClick(targetClass: Class<out Activity>) {
-        val intent = Intent(this, targetClass)
+    private fun openScreen(targetClass: Class<out Activity>) {
+        val intent: Intent = getKoin().get{
+            parametersOf(this, targetClass)
+        }
         startActivity(intent)
     }
-
 }

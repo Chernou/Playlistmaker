@@ -5,5 +5,4 @@ sealed interface PlayerState {
     object PreparedState: PlayerState
     object PlayingState: PlayerState
     object PauseState: PlayerState
-
 }

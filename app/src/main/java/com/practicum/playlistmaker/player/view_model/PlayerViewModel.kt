@@ -1,29 +1,24 @@
 package com.practicum.playlistmaker.player.view_model
 
-import android.app.Application
 import android.os.Handler
-import android.os.Looper
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.App
+import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
+import com.practicum.playlistmaker.player.view_model.api.PlayerInteractor
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
-import com.practicum.playlistmaker.utils.Creator
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class PlayerViewModel(
     private val track: Track,
-    private val interactor: PlayerInteractorApi,
-    application: App
-) : AndroidViewModel(application) {
+    private val resourceProvider: ResourceProvider,
+    private val interactor: PlayerInteractor,
+) : ViewModel(), KoinComponent {
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val handler: Handler by inject()
     private val playbackTimerRunnable = runPlaybackTimer()
     private val stateLiveData = MutableLiveData<PlayerState>()
     private val toastStateLive = MutableLiveData<ToastState>()
@@ -31,7 +26,7 @@ class PlayerViewModel(
 
     public override fun onCleared() {
         interactor.releasePlayer()
-        handler.removeCallbacks(playbackTimerRunnable)
+        handler.removeCallbacksAndMessages(PLAYER_REQUEST_TOKEN)
     }
 
     fun preparePlayer() {
@@ -67,7 +62,7 @@ class PlayerViewModel(
     fun onPaused() {
         interactor.pausePlayer()
         renderState(PlayerState.PauseState)
-        handler.removeCallbacks(playbackTimerRunnable)
+        handler.removeCallbacksAndMessages(PLAYER_REQUEST_TOKEN)
     }
 
     fun toastWasShown() {
@@ -80,7 +75,7 @@ class PlayerViewModel(
 
     private fun showToast() {
         toastStateLive.value =
-            ToastState.Show(getApplication<Application>().getString(R.string.no_preview_url))
+            ToastState.Show(resourceProvider.getString(R.string.no_preview_url))
     }
 
     private fun setPlaybackTime(playbackTime: String) {
@@ -98,7 +93,7 @@ class PlayerViewModel(
     private fun startPlayer() {
         interactor.startPlayer()
         renderState(PlayerState.PlayingState)
-        handler.post(runPlaybackTimer())
+        handler.postAtTime(runPlaybackTimer(), PLAYER_REQUEST_TOKEN, ZERO_MILLIS)
     }
 
     private fun runPlaybackTimer(): Runnable {
@@ -114,12 +109,7 @@ class PlayerViewModel(
 
     companion object {
         private const val PLAYBACK_TIME_REFRESH = 500L
-
-        fun getViewModelFactory(track: Track): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val interactor = Creator.providePlayerInteractor()
-                PlayerViewModel(track, interactor, this[APPLICATION_KEY] as App)
-            }
-        }
+        private const val ZERO_MILLIS = 500L
+        private val PLAYER_REQUEST_TOKEN = Any()
     }
 }

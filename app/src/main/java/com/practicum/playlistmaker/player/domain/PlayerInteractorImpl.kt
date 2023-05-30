@@ -1,9 +1,9 @@
 package com.practicum.playlistmaker.player.domain
 
-import com.practicum.playlistmaker.player.domain.api.PlayerApi
-import com.practicum.playlistmaker.player.view_model.api.PlayerInteractorApi
+import com.practicum.playlistmaker.player.domain.api.Player
+import com.practicum.playlistmaker.player.view_model.api.PlayerInteractor
 
-class PlayerInteractor(private val player: PlayerApi) : PlayerInteractorApi {
+class PlayerInteractorImpl(private val player: Player) : PlayerInteractor {
 
     override fun preparePlayer(trackUri: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
         player.preparePlayer(trackUri, onPrepared, onCompletion)
@@ -17,15 +17,11 @@ class PlayerInteractor(private val player: PlayerApi) : PlayerInteractorApi {
         player.pausePlayer()
     }
 
-    override fun getPlayerPosition(): Int {
-        return player.getPlayerPosition()
-    }
+    override fun getPlayerPosition() = player.getPlayerPosition()
 
     override fun releasePlayer() {
         player.releasePlayer()
     }
 
-    override fun isPlaying(): Boolean {
-        return player.isPlaying()
-    }
+    override fun isPlaying() = player.isPlaying()
 }

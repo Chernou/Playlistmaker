@@ -2,11 +2,9 @@ package com.practicum.playlistmaker.search.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -21,37 +19,36 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.ui.PlayerActivity
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
-import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.search.view_model.SearchState
-import com.practicum.playlistmaker.utils.Creator
+import com.practicum.playlistmaker.search.view_model.SearchViewModel
+import com.practicum.playlistmaker.utils.NavigationRouter
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
 
-    private var lastUnsuccessfulSearch: String = ""
-    private var mainThreadHandler = Handler(Looper.getMainLooper())
+    private val mainThreadHandler: Handler by inject()
     private var isClickAllowed = true
     private var trackList = ArrayList<Track>()
-    private val router = Creator.provideNavigationRouter(this)
+    private val viewModel: SearchViewModel by viewModel()
+    private val router: NavigationRouter by inject {
+        parametersOf(this)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
-            val playerIntent =
-                Intent(this, PlayerActivity::class.java) //todo move intent to router?
-            playerIntent.putExtra(Track::class.java.simpleName, it)
-            startActivity(playerIntent)
+            router.openTrack(OPEN_TRACK_INTENT, it)
         }
     }
 
-    private lateinit var viewModel: SearchViewModel
     private lateinit var clearSearchTextImage: ImageView
     private lateinit var searchHistoryAdapter: TrackAdapter
     private lateinit var searchEditText: EditText
@@ -71,10 +68,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         initializeLateinitItems()
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModel.getViewModelFactory()
-        )[SearchViewModel::class.java]
 
         viewModel.observeState().observe(this) {
             render(it)
@@ -108,7 +101,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         refreshSearchButton.setOnClickListener {
-            viewModel.onRefreshSearchButtonPressed(lastUnsuccessfulSearch)
+            viewModel.onRefreshSearchButtonPressed()
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
@@ -127,7 +120,13 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        router.onDestroy()
         viewModel.onCleared()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
     }
 
     private fun render(state: SearchState) {
@@ -226,7 +225,6 @@ class SearchActivity : AppCompatActivity() {
                 R.drawable.no_internet_connection
             )
         )
-        lastUnsuccessfulSearch = searchEditText.text.toString()
     }
 
     private fun showProgressBar() {
@@ -247,10 +245,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
-                val playerIntent =
-                    Intent(this, PlayerActivity::class.java) //todo move intent to router?
-                playerIntent.putExtra(Track::class.java.simpleName, it)
-                startActivity(playerIntent)
+                router.openTrack(OPEN_TRACK_INTENT, it)
             }
         }
         searchEditText = findViewById(R.id.search_edit_text)
@@ -274,5 +269,6 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val CLICK_DEBOUNCE_DELAY = 1_000L
+        const val OPEN_TRACK_INTENT = "TRACK INTENT"
     }
 }

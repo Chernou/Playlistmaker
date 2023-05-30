@@ -12,7 +12,7 @@
     <string name="feedback_addressee_mail">chernov.i.u@gmail.com</string>
     <string name="feedback_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="feedback_message_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
-    <string name="practicum_offer_link">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="practicum_term_link">https://yandex.ru/legal/practicum_offer/</string>
     <string name="clear_button">Кнопка удаления введенного текста поиска</string>
     <string name="artwork_content_description">artwork</string>
     <string name="unsuccessful_search_image">unsuccessful search image</string>
