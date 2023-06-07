@@ -17,7 +17,7 @@ val interactorModule = module {
     }
 
     single<SearchInteractor> {
-        SearchInteractorImpl(get())
+        SearchInteractorImpl(get(), get())
     }
 
     single<SharingInteractor> {

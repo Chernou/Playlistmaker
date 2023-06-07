@@ -55,7 +55,7 @@
             tools:ignore="RtlSymmetry,TouchTargetSizeCheck" />
 
         <ImageView
-            android:id="@+id/clear_image"
+            android:id="@+id/clear_text_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
@@ -86,7 +86,7 @@
             app:fontFamily="@font/ys_display_medium">
 
             <ImageView
-                android:id="@+id/search_result_image"
+                android:id="@+id/search_error_image"
                 android:layout_width="@dimen/size_120"
                 android:layout_height="@dimen/size_120"
                 android:layout_gravity="center_horizontal"
@@ -94,7 +94,7 @@
                 android:contentDescription="@string/unsuccessful_search_image" />
 
             <TextView
-                android:id="@+id/search_result_text"
+                android:id="@+id/search_error_text"
                 android:layout_width="@dimen/size_312"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

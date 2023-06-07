@@ -6,7 +6,8 @@ import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.domain.Track
 
-class LocalStorageImpl(private val sharedPreferences: SharedPreferences, private val gson: Gson) : LocalStorage {
+class LocalStorageImpl(private val sharedPreferences: SharedPreferences, private val gson: Gson) :
+    LocalStorage {
 
     override fun getSearchHistory(): ArrayList<Track> {
         val json = sharedPreferences.getString(SEARCH_HISTORY, null)

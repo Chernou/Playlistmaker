@@ -8,13 +8,7 @@ import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -22,6 +16,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchState
@@ -49,31 +44,23 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var clearSearchTextImage: ImageView
+    private lateinit var binding: ActivitySearchBinding
     private lateinit var searchHistoryAdapter: TrackAdapter
-    private lateinit var searchEditText: EditText
-    private lateinit var searchErrorImageView: ImageView
-    private lateinit var searchErrorTextView: TextView
-    private lateinit var refreshSearchButton: Button
-    private lateinit var searchHistoryTextView: TextView
-    private lateinit var clearSearchHistoryButton: Button
-    private lateinit var searchErrorLayout: ViewGroup
-    private lateinit var searchHistoryLayout: ViewGroup
-    private lateinit var progressBar: ProgressBar
     private lateinit var searchRecyclerView: RecyclerView
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initializeLateinitItems()
 
         viewModel.observeState().observe(this) {
             render(it)
         }
         if (savedInstanceState != null) {
-            searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+            binding.searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
         }
 
         findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
@@ -86,7 +73,7 @@ class SearchActivity : AppCompatActivity() {
             router.goBack()
         }
 
-        searchEditText.addTextChangedListener(searchTextWatcher)
+        binding.searchEditText.addTextChangedListener(searchTextWatcher)
 
         viewModel.observeClearTextState().observe(this) { clearTextState ->
             if (clearTextState is ClearTextState.ClearText) {
@@ -96,26 +83,26 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        clearSearchTextImage.setOnClickListener {
+        binding.clearTextImage.setOnClickListener {
             viewModel.onClearTextPressed()
         }
 
-        refreshSearchButton.setOnClickListener {
+        binding.refreshSearchButton.setOnClickListener {
             viewModel.onRefreshSearchButtonPressed()
         }
 
-        searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            viewModel.onFocusChanged(hasFocus, searchEditText.text.toString())
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            viewModel.onFocusChanged(hasFocus, binding.searchEditText.text.toString())
         }
 
-        clearSearchHistoryButton.setOnClickListener {
+        binding.clearSearchHistoryButton.setOnClickListener {
             viewModel.onClearSearchHistoryPressed()
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putCharSequence(SEARCH_TEXT, searchEditText.text)
+        outState.putCharSequence(SEARCH_TEXT, binding.searchEditText.text)
     }
 
     override fun onDestroy() {
@@ -141,14 +128,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearSearchText() {
-        searchEditText.text.clear()
-        clearSearchTextImage.visibility = View.GONE
+        binding.searchEditText.text.clear()
+        binding.clearTextImage.visibility = View.GONE
     }
 
     private fun hideKeyboard() {
         val inputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+        inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
     private val searchTextWatcher = object : TextWatcher {
@@ -161,25 +148,25 @@ class SearchActivity : AppCompatActivity() {
 
         override fun afterTextChanged(editable: Editable?) {
             if (editable?.isNotEmpty() == true) {
-                clearSearchTextImage.visibility = View.VISIBLE
+                binding.clearTextImage.visibility = View.VISIBLE
             } else {
-                clearSearchTextImage.visibility = View.GONE
+                binding.clearTextImage.visibility = View.GONE
             }
         }
     }
 
     private fun showEmptyScreen() {
         searchRecyclerView.visibility = View.GONE
-        progressBar.visibility = View.GONE
-        searchErrorLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.searchErrorLayout.visibility = View.GONE
+        binding.searchHistoryLayout.visibility = View.GONE
     }
 
     private fun showSearchResult(tracks: List<Track>) {
         searchRecyclerView.visibility = View.VISIBLE
-        progressBar.visibility = View.GONE
-        searchErrorLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.searchErrorLayout.visibility = View.GONE
+        binding.searchHistoryLayout.visibility = View.GONE
         trackList.clear()
         trackList.addAll(tracks)
         searchResultAdapter.trackList = trackList
@@ -188,22 +175,22 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showSearchHistoryLayout(searchHistory: List<Track>) {
         searchRecyclerView.visibility = View.GONE
-        progressBar.visibility = View.GONE
-        searchErrorLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+        binding.searchErrorLayout.visibility = View.GONE
+        binding.searchHistoryLayout.visibility = View.VISIBLE
         searchHistoryAdapter.trackList = searchHistory as ArrayList<Track>
         searchHistoryAdapter.notifyDataSetChanged()
     }
 
     private fun showEmptySearch(emptySearchMessage: String) {
         searchRecyclerView.visibility = View.GONE
-        progressBar.visibility = View.GONE
-        searchErrorLayout.visibility = View.VISIBLE
-        searchHistoryLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.searchErrorLayout.visibility = View.VISIBLE
+        binding.searchHistoryLayout.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
-        searchErrorTextView.text = emptySearchMessage
-        searchErrorImageView.setImageDrawable(
+        binding.searchErrorText.text = emptySearchMessage
+        binding.searchErrorImage.setImageDrawable(
             AppCompatResources.getDrawable(
                 this,
                 R.drawable.nothing_is_found
@@ -213,13 +200,13 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showSearchError(errorMessage: String) {
         searchRecyclerView.visibility = View.GONE
-        progressBar.visibility = View.GONE
-        searchErrorLayout.visibility = View.VISIBLE
-        searchHistoryLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.searchErrorLayout.visibility = View.VISIBLE
+        binding.searchHistoryLayout.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
-        searchErrorTextView.text = errorMessage
-        searchErrorImageView.setImageDrawable(
+        binding.searchErrorText.text = errorMessage
+        binding.searchErrorImage.setImageDrawable(
             AppCompatResources.getDrawable(
                 this,
                 R.drawable.no_internet_connection
@@ -229,28 +216,18 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showProgressBar() {
         searchRecyclerView.visibility = View.GONE
-        progressBar.visibility = View.VISIBLE
-        searchErrorLayout.visibility = View.GONE
-        searchHistoryLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+        binding.searchErrorLayout.visibility = View.GONE
+        binding.searchHistoryLayout.visibility = View.GONE
     }
 
     private fun initializeLateinitItems() {
-        searchErrorTextView = findViewById(R.id.search_result_text)
-        searchErrorImageView = findViewById(R.id.search_result_image)
-        refreshSearchButton = findViewById(R.id.refresh_search_button)
-        searchHistoryTextView = findViewById(R.id.search_history_text_view)
-        clearSearchHistoryButton = findViewById(R.id.clear_search_history_button)
-        searchErrorLayout = findViewById(R.id.search_error_layout)
-        searchHistoryLayout = findViewById(R.id.search_history_layout)
         searchHistoryAdapter = TrackAdapter {
             if (clickDebounce()) {
                 viewModel.onTrackPressed(it)
                 router.openTrack(OPEN_TRACK_INTENT, it)
             }
         }
-        searchEditText = findViewById(R.id.search_edit_text)
-        clearSearchTextImage = findViewById(R.id.clear_image)
-        progressBar = findViewById(R.id.progress_bar)
         searchRecyclerView = findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = searchResultAdapter
