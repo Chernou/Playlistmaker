@@ -9,12 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.media.view_model.FavoritesViewModel
 import com.practicum.playlistmaker.utils.ResourceProvider
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class FavoritesFragment : Fragment() {
 
-    private val resourceProvider: ResourceProvider by inject()
+    private val viewModel: FavoritesViewModel by activityViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,6 +28,10 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.observeText().observe(viewLifecycleOwner) {
+            view.findViewById<TextView>(R.id.empty_media_text).text = it
+        }
+
         view.findViewById<ImageView>(R.id.empty_media_image)
             .setImageDrawable(
                 AppCompatResources.getDrawable(
@@ -33,8 +39,9 @@ class FavoritesFragment : Fragment() {
                     R.drawable.nothing_is_found
                 )
             )
+    }
 
-        view.findViewById<TextView>(R.id.empty_media_text).text =
-            resourceProvider.getString(R.string.empty_media)
+    companion object {
+        fun newInstance() = FavoritesFragment()
     }
 }
