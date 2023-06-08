@@ -29,6 +29,9 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        imageView = view.findViewById<ImageView>(R.id.empty_media_image)
+        textView = view.findViewById<TextView>(R.id.empty_media_text)
+
         viewModel.observeText().observe(viewLifecycleOwner) {
             textView.text = it
         }
