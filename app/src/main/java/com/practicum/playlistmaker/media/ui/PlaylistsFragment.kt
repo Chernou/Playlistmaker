@@ -15,6 +15,8 @@ import org.koin.androidx.viewmodel.ext.android.activityViewModel
 class PlaylistsFragment : Fragment() {
 
     private val viewModel: PlaylistsViewModel by activityViewModel()
+    private lateinit var imageView: ImageView
+    private lateinit var textView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,16 +29,15 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.observeText().observe(viewLifecycleOwner) {
-            view.findViewById<TextView>(R.id.no_playlists_text).text = it
+            textView.text = it
         }
 
-        view.findViewById<ImageView>(R.id.no_playlists_image)
-            .setImageDrawable(
-                AppCompatResources.getDrawable(
-                    requireContext(),
-                    R.drawable.nothing_is_found
-                )
+        imageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                requireContext(),
+                R.drawable.nothing_is_found
             )
+        )
     }
 
     companion object {

@@ -8,8 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class MediaPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle
-) :
-    FragmentStateAdapter(fragmentManager, lifecycle) {
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int = 2
 

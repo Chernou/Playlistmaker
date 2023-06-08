@@ -8,12 +8,12 @@ import com.practicum.playlistmaker.utils.ResourceProvider
 
 class PlaylistsViewModel(resourceProvider: ResourceProvider) : ViewModel() {
 
-    private val textLiveData = MutableLiveData<String>()
+    private val emptyTextLiveData = MutableLiveData<String>()
 
     init {
-        textLiveData.postValue(resourceProvider.getString(R.string.no_playlists))
+        emptyTextLiveData.postValue(resourceProvider.getString(R.string.no_playlists))
     }
 
-    fun observeText(): LiveData<String> = textLiveData
+    fun observeText(): LiveData<String> = emptyTextLiveData
 
 }
