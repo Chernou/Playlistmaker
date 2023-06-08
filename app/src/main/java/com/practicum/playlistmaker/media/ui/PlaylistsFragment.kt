@@ -9,10 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.media.view_model.FavoritesViewModel
 import com.practicum.playlistmaker.media.view_model.PlaylistsViewModel
-import com.practicum.playlistmaker.utils.ResourceProvider
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class PlaylistsFragment : Fragment() {
