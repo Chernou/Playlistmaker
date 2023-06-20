@@ -45,7 +45,17 @@ class SearchViewModel(
     }
 
     fun onTextChanged(changedText: String) {
-        searchDebounce(changedText)
+        if (changedText == "") {
+            handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+            if (interactor.getSearchHistory().isNotEmpty()) renderState(
+                SearchState.HistoryContent(
+                    interactor.getSearchHistory()
+                )
+            ) else renderState(SearchState.EmptyScreen)
+        } else {
+            searchDebounce(changedText)
+        }
+
     }
 
     fun onClearSearchHistoryPressed() {
@@ -77,22 +87,14 @@ class SearchViewModel(
     }
 
     private fun searchDebounce(searchText: String) {
-        if (searchText == "") {
-            if (interactor.getSearchHistory().isNotEmpty()) renderState(
-                SearchState.HistoryContent(
-                    interactor.getSearchHistory()
-                )
-            ) else renderState(SearchState.EmptyScreen)
-        } else {
-            handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-            val searchRunnable = Runnable { searchRequest(searchText) }
-            val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-            handler.postAtTime(
-                searchRunnable,
-                SEARCH_REQUEST_TOKEN,
-                postTime,
-            )
-        }
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        val searchRunnable = Runnable { searchRequest(searchText) }
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        handler.postAtTime(
+            searchRunnable,
+            SEARCH_REQUEST_TOKEN,
+            postTime,
+        )
     }
 
     private fun searchRequest(searchText: String) {
