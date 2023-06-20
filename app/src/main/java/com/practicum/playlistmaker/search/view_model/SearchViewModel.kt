@@ -37,11 +37,13 @@ class SearchViewModel(
 
     fun onClearTextPressed() {
         clearTextState.value = ClearTextState.ClearText
+        Log.d("!@#", "${interactor.getSearchHistory().isNotEmpty()}")
         if (interactor.getSearchHistory().isNotEmpty()) renderState(
             SearchState.HistoryContent(
                 interactor.getSearchHistory()
             )
         )
+        Log.d("!@#", interactor.getSearchHistory()[0].trackName)
     }
 
     fun onTextChanged(changedText: String) {
