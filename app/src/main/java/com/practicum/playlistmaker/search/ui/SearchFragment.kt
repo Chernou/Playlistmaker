@@ -30,7 +30,6 @@ class SearchFragment : Fragment() {
 
     private val mainThreadHandler: Handler by inject()
     private var isClickAllowed = true
-    private var trackList = ArrayList<Track>()
     private val viewModel: SearchViewModel by viewModel()
 
     private val router: NavigationRouter by inject {
@@ -184,9 +183,8 @@ class SearchFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
-        trackList.clear()
-        trackList.addAll(tracks)
-        searchResultAdapter.trackList = trackList
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.trackList.addAll(tracks)
         searchResultAdapter.notifyDataSetChanged()
     }
 
@@ -195,9 +193,8 @@ class SearchFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.VISIBLE
-        trackList.clear()
-        trackList.addAll(searchHistory)
-        searchHistoryAdapter.trackList = trackList
+        searchHistoryAdapter.trackList.clear()
+        searchHistoryAdapter.trackList.addAll(searchHistory)
         searchHistoryAdapter.notifyDataSetChanged()
     }
 
