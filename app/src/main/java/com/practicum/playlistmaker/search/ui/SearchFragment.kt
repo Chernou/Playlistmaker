@@ -41,7 +41,6 @@ class SearchFragment : Fragment() {
     private val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
-            //(requireActivity() as MainActivity).router.openTrack(OPEN_TRACK_INTENT, it)
             router.openTrack(OPEN_TRACK_INTENT, it)
         }
     }
@@ -49,7 +48,6 @@ class SearchFragment : Fragment() {
     private val searchHistoryAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.onTrackPressed(it)
-            //(requireActivity() as MainActivity).router.openTrack(OPEN_TRACK_INTENT, it)
             router.openTrack(OPEN_TRACK_INTENT, it)
         }
     }
