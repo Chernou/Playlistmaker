@@ -76,6 +76,17 @@ class PlayerViewModel(
             ToastState.Show(resourceProvider.getString(R.string.no_preview_url))
     }
 
+    private fun runPlaybackTimer(): Runnable {
+        return object : Runnable {
+            override fun run() {
+                if (interactor.isPlaying()) {
+                    setPlaybackTime(formatTime(interactor.getPlayerPosition()))
+                    handler.postDelayed(this, PLAYBACK_TIME_REFRESH)
+                }
+            }
+        }
+    }
+
     private fun setPlaybackTime(playbackTime: String) {
         playbackTimeLive.value = playbackTime
     }
@@ -92,17 +103,6 @@ class PlayerViewModel(
         interactor.startPlayer()
         renderState(PlayerState.PlayingState)
         handler.postAtTime(runPlaybackTimer(), PLAYER_REQUEST_TOKEN, ZERO_MILLIS)
-    }
-
-    private fun runPlaybackTimer(): Runnable {
-        return object : Runnable {
-            override fun run() {
-                if (interactor.isPlaying()) {
-                    setPlaybackTime(formatTime(interactor.getPlayerPosition()))
-                    handler.postDelayed(this, PLAYBACK_TIME_REFRESH)
-                }
-            }
-        }
     }
 
     companion object {

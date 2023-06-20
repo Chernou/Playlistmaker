@@ -138,6 +138,14 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun noPreviewUrlMessage(additionalMessage: String) {
+        Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setPlaybackTime(time: String) {
+        currentPlaybackTime.text = time
+    }
+
     private fun setDefaultScreen() {
         playImageView.setImageDrawable(
             AppCompatResources.getDrawable(
@@ -177,14 +185,6 @@ class PlayerActivity : AppCompatActivity() {
             )
         )
         playImageView.isEnabled = true
-    }
-
-    private fun setPlaybackTime(time: String) {
-        currentPlaybackTime.text = time
-    }
-
-    private fun noPreviewUrlMessage(additionalMessage: String) {
-        Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
     }
 
     companion object {
