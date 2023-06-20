@@ -3,7 +3,6 @@ package com.practicum.playlistmaker.search.view_model
 import android.os.Build
 import android.os.Handler
 import android.os.SystemClock
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -37,27 +36,16 @@ class SearchViewModel(
 
     fun onClearTextPressed() {
         clearTextState.value = ClearTextState.ClearText
-        Log.d("!@#", "${interactor.getSearchHistory().isNotEmpty()}")
-        if (interactor.getSearchHistory().isNotEmpty()) renderState(
-            SearchState.HistoryContent(
-                interactor.getSearchHistory()
-            )
-        )
-        Log.d("!@#", interactor.getSearchHistory()[0].trackName)
+        showSearchHistory()
     }
 
     fun onTextChanged(changedText: String) {
         if (changedText == "") {
             handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-            if (interactor.getSearchHistory().isNotEmpty()) renderState(
-                SearchState.HistoryContent(
-                    interactor.getSearchHistory()
-                )
-            ) else renderState(SearchState.EmptyScreen)
+            showSearchHistory()
         } else {
             searchDebounce(changedText)
         }
-
     }
 
     fun onClearSearchHistoryPressed() {
@@ -88,6 +76,15 @@ class SearchViewModel(
         )
     }
 
+    private fun showSearchHistory() {
+        if (interactor.getSearchHistory().isNotEmpty()) renderState(
+            SearchState.HistoryContent(
+                interactor.getSearchHistory()
+            )
+        ) else renderState(SearchState.EmptyScreen)
+    }
+
+
     private fun searchDebounce(searchText: String) {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(searchText) }
@@ -107,7 +104,6 @@ class SearchViewModel(
                     if (foundTracks != null) {
                         if (foundTracks.isNotEmpty()) {
                             renderState(SearchState.SearchContent(foundTracks))
-                            Log.d("!@#", foundTracks[0].trackName)
                         } else {
                             renderState(
                                 SearchState.EmptySearch(

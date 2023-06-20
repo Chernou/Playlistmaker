@@ -23,14 +23,14 @@ import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.utils.NavigationRouter
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import org.koin.core.parameter.parametersOf
 
 class SearchFragment : Fragment() {
 
     private val mainThreadHandler: Handler by inject()
     private var isClickAllowed = true
-    private val viewModel: SearchViewModel by viewModel()
+    private val viewModel: SearchViewModel by activityViewModel()
 
     private val router: NavigationRouter by inject {
         parametersOf(requireActivity())
@@ -39,7 +39,7 @@ class SearchFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
-            viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
+            viewModel.onTrackPressed(it)
             router.openTrack(OPEN_TRACK_INTENT, it)
         }
     }
@@ -65,13 +65,21 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (savedInstanceState != null) {
+            binding.searchEditText.text =
+                savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+        }
+
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
 
-        if (savedInstanceState != null) {
-            binding.searchEditText.text =
-                savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+        viewModel.observeClearTextState().observe(viewLifecycleOwner) { clearTextState ->
+            if (clearTextState is ClearTextState.ClearText) {
+                clearSearchText()
+                hideKeyboard()
+                viewModel.textCleared()
+            }
         }
 
         binding.searchHistoryRecyclerView.apply {
@@ -86,12 +94,8 @@ class SearchFragment : Fragment() {
 
         binding.searchEditText.addTextChangedListener(searchTextWatcher)
 
-        viewModel.observeClearTextState().observe(viewLifecycleOwner) { clearTextState ->
-            if (clearTextState is ClearTextState.ClearText) {
-                clearSearchText()
-                hideKeyboard()
-                viewModel.textCleared()
-            }
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            viewModel.onFocusChanged(hasFocus, binding.searchEditText.text.toString())
         }
 
         binding.clearTextImage.setOnClickListener {
@@ -100,10 +104,6 @@ class SearchFragment : Fragment() {
 
         binding.refreshSearchButton.setOnClickListener {
             viewModel.onRefreshSearchButtonPressed()
-        }
-
-        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            viewModel.onFocusChanged(hasFocus, binding.searchEditText.text.toString())
         }
 
         binding.clearSearchHistoryButton.setOnClickListener {
@@ -172,7 +172,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun showEmptyScreen() {
-        binding.searchHistoryRecyclerView.visibility = View.GONE
+        binding.searchRecyclerView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
