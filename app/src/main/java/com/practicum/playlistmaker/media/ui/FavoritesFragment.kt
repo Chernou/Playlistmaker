@@ -18,7 +18,6 @@ class FavoritesFragment : Fragment() {
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,10 +30,6 @@ class FavoritesFragment : Fragment() {
 
         imageView = view.findViewById<ImageView>(R.id.empty_media_image)
         textView = view.findViewById<TextView>(R.id.empty_media_text)
-
-        viewModel.observeText().observe(viewLifecycleOwner) {
-            textView.text = it
-        }
 
         imageView.setImageDrawable(
             AppCompatResources.getDrawable(

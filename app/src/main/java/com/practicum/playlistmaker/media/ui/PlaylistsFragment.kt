@@ -28,12 +28,8 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        imageView = view.findViewById<ImageView>(R.id.no_playlists_image)
-        textView = view.findViewById<TextView>(R.id.no_playlists_text)
-
-        viewModel.observeText().observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        imageView = view.findViewById(R.id.no_playlists_image)
+        textView = view.findViewById(R.id.no_playlists_text)
 
         imageView.setImageDrawable(
             AppCompatResources.getDrawable(

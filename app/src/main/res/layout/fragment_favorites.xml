@@ -19,13 +19,13 @@
             android:layout_width="@dimen/size_120"
             android:layout_height="@dimen/size_120"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/size_86"
-            android:contentDescription="@string/empty_media_image" />
+            android:layout_marginTop="@dimen/size_86" />
 
         <TextView
             android:id="@+id/empty_media_text"
             android:layout_width="@dimen/size_312"
             android:layout_height="wrap_content"
+            android:text="@string/empty_media_image"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/size_224"
             android:fontFamily="@font/ys_display_medium"

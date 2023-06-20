@@ -17,7 +17,7 @@ class NavigationRouter(
 
     fun openTrack(name: String, track: Track) {
         val playerIntent: Intent = getKoin().get {
-            parametersOf(activity, PlayerActivity::class.java)
+            parametersOf(PlayerActivity::class.java)
         }
         playerIntent.putExtra(name, track)
         activity!!.startActivity(playerIntent)

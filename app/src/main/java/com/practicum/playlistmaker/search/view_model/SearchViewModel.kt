@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.search.view_model
 import android.os.Build
 import android.os.Handler
 import android.os.SystemClock
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,14 +22,14 @@ class SearchViewModel(
     //todo save search state when rotate screen
 
     private var lastUnsuccessfulSearch: String = ""
-
     private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
-    private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+    private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+
+    public override fun onCleared() {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
-    private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+    fun observeState(): LiveData<SearchState> = stateLiveData
     fun observeClearTextState(): LiveData<ClearTextState> = clearTextState
     fun textCleared() {
         clearTextState.value = ClearTextState.None
@@ -36,10 +37,11 @@ class SearchViewModel(
 
     fun onClearTextPressed() {
         clearTextState.value = ClearTextState.ClearText
-    }
-
-    public override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        if (interactor.getSearchHistory().isNotEmpty()) renderState(
+            SearchState.HistoryContent(
+                interactor.getSearchHistory()
+            )
+        )
     }
 
     fun onTextChanged(searchText: String?) {
@@ -102,6 +104,7 @@ class SearchViewModel(
                     if (foundTracks != null) {
                         if (foundTracks.isNotEmpty()) {
                             renderState(SearchState.SearchContent(foundTracks))
+                            Log.d("!@#", foundTracks[0].trackName)
                         } else {
                             renderState(
                                 SearchState.EmptySearch(
@@ -119,6 +122,10 @@ class SearchViewModel(
                 }
             })
         }
+    }
+
+    private fun renderState(state: SearchState) {
+        stateLiveData.postValue(state)
     }
 
     companion object {
