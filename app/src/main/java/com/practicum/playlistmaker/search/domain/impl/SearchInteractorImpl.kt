@@ -4,13 +4,12 @@ import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.utils.Resource
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import java.util.concurrent.ExecutorService
 
-class SearchInteractorImpl(private val repository: SearchRepository) : SearchInteractor, KoinComponent {
-
-    private val executor: ExecutorService by inject()
+class SearchInteractorImpl(
+    private val repository: SearchRepository,
+    private val executor: ExecutorService
+) : SearchInteractor {
 
     override fun searchTracks(query: String, consumer: SearchInteractor.TracksConsumer) {
         executor.execute {

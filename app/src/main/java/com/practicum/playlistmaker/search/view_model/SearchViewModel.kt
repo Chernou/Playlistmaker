@@ -11,17 +11,15 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class SearchViewModel(
     private val resourceProvider: ResourceProvider,
-    private val interactor: SearchInteractor
-) : ViewModel(), KoinComponent {
+    private val interactor: SearchInteractor,
+    private val handler: Handler
+) : ViewModel() {
 
     //todo save search state when rotate screen
 
-    private val handler: Handler by inject()
     private var lastUnsuccessfulSearch: String = ""
 
     private val stateLiveData = MutableLiveData<SearchState>()

@@ -9,7 +9,7 @@ import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import org.koin.core.component.KoinComponent
 
-class RetrofitNetworkClient() : NetworkClient, KoinComponent {
+class RetrofitNetworkClient : NetworkClient, KoinComponent {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun doRequest(dto: Any): Response {
