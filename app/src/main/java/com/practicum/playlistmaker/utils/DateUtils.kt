@@ -1,17 +1,20 @@
 package com.practicum.playlistmaker.utils
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
+import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 object DateUtils {
 
     fun formatTime(trackTimeMillis: Int): String = SimpleDateFormat("mm:ss", Locale.getDefault())
         .format(trackTimeMillis)
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getYear(str: String?) =
-        LocalDateTime.parse(str).year.toString() //todo seek for solution applicable for API 21
+    fun getYear(str: String): String {
+        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(str)
+        val calendar = Calendar.getInstance(TimeZone.getDefault()).apply {
+            time = date
+        }
+        return calendar.get(Calendar.YEAR).toString()
+    }
 }

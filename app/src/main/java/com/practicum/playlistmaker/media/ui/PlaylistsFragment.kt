@@ -10,11 +10,11 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media.view_model.PlaylistsViewModel
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
-    private val viewModel: PlaylistsViewModel by activityViewModel()
+    private val viewModel: PlaylistsViewModel by viewModel()
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
 

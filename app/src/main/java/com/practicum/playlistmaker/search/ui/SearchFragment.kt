@@ -23,14 +23,14 @@ import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.utils.NavigationRouter
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class SearchFragment : Fragment() {
 
     private val mainThreadHandler: Handler by inject()
     private var isClickAllowed = true
-    private val viewModel: SearchViewModel by activityViewModel()
+    private val viewModel: SearchViewModel by viewModel()
 
     private val router: NavigationRouter by inject {
         parametersOf(requireActivity())

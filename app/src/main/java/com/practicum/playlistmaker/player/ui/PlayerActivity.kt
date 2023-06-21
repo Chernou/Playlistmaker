@@ -147,44 +147,33 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setDefaultScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_play_button
-            )
-        )
+        setPlayOrPauseImage(R.drawable.ic_play_button)
         playImageView.isEnabled = false
     }
 
     private fun setPreparedScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_play_button
-            )
-        )
+        setPlayOrPauseImage(R.drawable.ic_play_button)
         playImageView.isEnabled = true
         currentPlaybackTime.text = ZERO_TIMER
     }
 
     private fun setPlayingScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_pause_button
-            )
-        )
+        setPlayOrPauseImage(R.drawable.ic_pause_button)
         playImageView.isEnabled = true
     }
 
     private fun setPauseScreen() {
+        setPlayOrPauseImage(R.drawable.ic_play_button)
+        playImageView.isEnabled = true
+    }
+
+    private fun setPlayOrPauseImage(resId: Int) {
         playImageView.setImageDrawable(
             AppCompatResources.getDrawable(
                 this,
-                R.drawable.ic_play_button
+                resId
             )
         )
-        playImageView.isEnabled = true
     }
 
     companion object {
