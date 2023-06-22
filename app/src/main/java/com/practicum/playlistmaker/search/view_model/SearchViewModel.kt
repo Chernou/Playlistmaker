@@ -21,14 +21,14 @@ class SearchViewModel(
     //todo save search state when rotate screen
 
     private var lastUnsuccessfulSearch: String = ""
-
     private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
-    private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+    private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+
+    public override fun onCleared() {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
-    private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+    fun observeState(): LiveData<SearchState> = stateLiveData
     fun observeClearTextState(): LiveData<ClearTextState> = clearTextState
     fun textCleared() {
         clearTextState.value = ClearTextState.None
@@ -36,21 +36,15 @@ class SearchViewModel(
 
     fun onClearTextPressed() {
         clearTextState.value = ClearTextState.ClearText
+        showSearchHistory()
     }
 
-    public override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
-
-    fun onTextChanged(searchText: String?) {
-        if (searchText.isNullOrEmpty()) {
-            if (interactor.getSearchHistory().isNotEmpty()) renderState(
-                SearchState.HistoryContent(
-                    interactor.getSearchHistory()
-                )
-            ) else renderState(SearchState.EmptyScreen)
+    fun onTextChanged(changedText: String) {
+        if (changedText == "") {
+            handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+            showSearchHistory()
         } else {
-            searchDebounce(searchText)
+            searchDebounce(changedText)
         }
     }
 
@@ -82,10 +76,18 @@ class SearchViewModel(
         )
     }
 
-    private fun searchDebounce(changedText: String) {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { searchRequest(changedText) }
+    private fun showSearchHistory() {
+        if (interactor.getSearchHistory().isNotEmpty()) renderState(
+            SearchState.HistoryContent(
+                interactor.getSearchHistory()
+            )
+        ) else renderState(SearchState.EmptyScreen)
+    }
 
+
+    private fun searchDebounce(searchText: String) {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+        val searchRunnable = Runnable { searchRequest(searchText) }
         val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
         handler.postAtTime(
             searchRunnable,
@@ -119,6 +121,10 @@ class SearchViewModel(
                 }
             })
         }
+    }
+
+    private fun renderState(state: SearchState) {
+        stateLiveData.postValue(state)
     }
 
     companion object {

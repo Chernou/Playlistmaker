@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.search.data.impl
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.util.Log
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient
@@ -21,7 +20,6 @@ class SearchRepositoryImpl(
     private val localStorage: LocalStorage
 ) : SearchRepository, KoinComponent {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun searchTracks(query: String): Resource<List<Track>> {
         val resourceProvider: ResourceProvider = getKoin().get()
         val networkClient: NetworkClient = getKoin().get()
@@ -41,7 +39,7 @@ class SearchRepositoryImpl(
                         it.artistName,
                         it.country,
                         it.releaseDate,
-                        getYear(TextUtils.removeLastChar(it.releaseDate)),
+                        getYear(it.releaseDate),
                         formatTime(it.duration),
                         it.artworkUri,
                         TextUtils.getHighResArtwork(it.artworkUri),

@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.di
 
-import android.content.Context
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.practicum.playlistmaker.sharing.data.ExternalNavigator
@@ -19,8 +18,7 @@ val navigatorModule = module {
         ExternalNavigatorImpl(androidContext())
     }
 
-    factory {(packageContext: Context,
-        cls: Class<*>) ->
-        Intent(packageContext, cls)
+    factory {(cls: Class<*>) ->
+        Intent(androidContext(), cls)
     }
 }

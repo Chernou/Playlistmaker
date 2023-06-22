@@ -138,53 +138,42 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun setDefaultScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_play_button
-            )
-        )
-        playImageView.isEnabled = false
-    }
-
-    private fun setPreparedScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_play_button
-            )
-        )
-        playImageView.isEnabled = true
-        currentPlaybackTime.text = ZERO_TIMER
-    }
-
-    private fun setPlayingScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_pause_button
-            )
-        )
-        playImageView.isEnabled = true
-    }
-
-    private fun setPauseScreen() {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                R.drawable.ic_play_button
-            )
-        )
-        playImageView.isEnabled = true
+    private fun noPreviewUrlMessage(additionalMessage: String) {
+        Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
     }
 
     private fun setPlaybackTime(time: String) {
         currentPlaybackTime.text = time
     }
 
-    private fun noPreviewUrlMessage(additionalMessage: String) {
-        Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
+    private fun setDefaultScreen() {
+        setPlayOrPauseImage(R.drawable.ic_play_button)
+        playImageView.isEnabled = false
+    }
+
+    private fun setPreparedScreen() {
+        setPlayOrPauseImage(R.drawable.ic_play_button)
+        playImageView.isEnabled = true
+        currentPlaybackTime.text = ZERO_TIMER
+    }
+
+    private fun setPlayingScreen() {
+        setPlayOrPauseImage(R.drawable.ic_pause_button)
+        playImageView.isEnabled = true
+    }
+
+    private fun setPauseScreen() {
+        setPlayOrPauseImage(R.drawable.ic_play_button)
+        playImageView.isEnabled = true
+    }
+
+    private fun setPlayOrPauseImage(resId: Int) {
+        playImageView.setImageDrawable(
+            AppCompatResources.getDrawable(
+                this,
+                resId
+            )
+        )
     }
 
     companion object {

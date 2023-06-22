@@ -10,11 +10,11 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.media.view_model.PlaylistsViewModel
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
-    private val viewModel: PlaylistsViewModel by activityViewModel()
+    private val viewModel: PlaylistsViewModel by viewModel()
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
 
@@ -28,12 +28,8 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        imageView = view.findViewById<ImageView>(R.id.no_playlists_image)
-        textView = view.findViewById<TextView>(R.id.no_playlists_text)
-
-        viewModel.observeText().observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        imageView = view.findViewById(R.id.no_playlists_image)
+        textView = view.findViewById(R.id.no_playlists_text)
 
         imageView.setImageDrawable(
             AppCompatResources.getDrawable(

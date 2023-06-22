@@ -7,16 +7,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchState
@@ -26,61 +26,76 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     private val mainThreadHandler: Handler by inject()
     private var isClickAllowed = true
-    private var trackList = ArrayList<Track>()
     private val viewModel: SearchViewModel by viewModel()
+
     private val router: NavigationRouter by inject {
-        parametersOf(this)
+        parametersOf(requireActivity())
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    val searchResultAdapter = TrackAdapter {
+    private val searchResultAdapter = TrackAdapter {
         if (clickDebounce()) {
-            viewModel.onTrackPressed(it) //todo notifyItemInserted when appropriate
+            viewModel.onTrackPressed(it)
             router.openTrack(OPEN_TRACK_INTENT, it)
         }
     }
 
-    private lateinit var binding: ActivitySearchBinding
-    private lateinit var searchHistoryAdapter: TrackAdapter
-    private lateinit var searchRecyclerView: RecyclerView
+    private val searchHistoryAdapter = TrackAdapter {
+        if (clickDebounce()) {
+            viewModel.onTrackPressed(it)
+            router.openTrack(OPEN_TRACK_INTENT, it)
+        }
+    }
+
+    private lateinit var binding: FragmentSearchBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        initializeLateinitItems()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observeState().observe(this) {
+        if (savedInstanceState != null) {
+            binding.searchEditText.text =
+                savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+        }
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
         }
-        if (savedInstanceState != null) {
-            binding.searchEditText.text = savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
-        }
 
-        findViewById<RecyclerView?>(R.id.search_history_recycler_view).apply {
-            layoutManager = LinearLayoutManager(this.context)
-            adapter = searchHistoryAdapter
-        }
-
-        val toolbar = findViewById<Toolbar>(R.id.search_toolbar)
-        toolbar.setNavigationOnClickListener {
-            router.goBack()
-        }
-
-        binding.searchEditText.addTextChangedListener(searchTextWatcher)
-
-        viewModel.observeClearTextState().observe(this) { clearTextState ->
+        viewModel.observeClearTextState().observe(viewLifecycleOwner) { clearTextState ->
             if (clearTextState is ClearTextState.ClearText) {
                 clearSearchText()
                 hideKeyboard()
                 viewModel.textCleared()
             }
+        }
+
+        binding.searchHistoryRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = searchHistoryAdapter
+        }
+
+        binding.searchRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = searchResultAdapter
+        }
+
+        binding.searchEditText.addTextChangedListener(searchTextWatcher)
+
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            viewModel.onFocusChanged(hasFocus, binding.searchEditText.text.toString())
         }
 
         binding.clearTextImage.setOnClickListener {
@@ -89,10 +104,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding.refreshSearchButton.setOnClickListener {
             viewModel.onRefreshSearchButtonPressed()
-        }
-
-        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            viewModel.onFocusChanged(hasFocus, binding.searchEditText.text.toString())
         }
 
         binding.clearSearchHistoryButton.setOnClickListener {
@@ -105,10 +116,15 @@ class SearchActivity : AppCompatActivity() {
         outState.putCharSequence(SEARCH_TEXT, binding.searchEditText.text)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.searchEditText.removeTextChangedListener(searchTextWatcher)
+        viewModel.onCleared()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         router.onDestroy()
-        viewModel.onCleared()
     }
 
     override fun onResume() {
@@ -134,7 +150,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun hideKeyboard() {
         val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
@@ -156,34 +172,34 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showEmptyScreen() {
-        searchRecyclerView.visibility = View.GONE
+        binding.searchRecyclerView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
     }
 
     private fun showSearchResult(tracks: List<Track>) {
-        searchRecyclerView.visibility = View.VISIBLE
+        binding.searchRecyclerView.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
-        trackList.clear()
-        trackList.addAll(tracks)
-        searchResultAdapter.trackList = trackList
+        searchResultAdapter.trackList.clear()
+        searchResultAdapter.trackList.addAll(tracks)
         searchResultAdapter.notifyDataSetChanged()
     }
 
     private fun showSearchHistoryLayout(searchHistory: List<Track>) {
-        searchRecyclerView.visibility = View.GONE
+        binding.searchRecyclerView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.VISIBLE
-        searchHistoryAdapter.trackList = searchHistory as ArrayList<Track>
+        searchHistoryAdapter.trackList.clear()
+        searchHistoryAdapter.trackList.addAll(searchHistory)
         searchHistoryAdapter.notifyDataSetChanged()
     }
 
     private fun showEmptySearch(emptySearchMessage: String) {
-        searchRecyclerView.visibility = View.GONE
+        binding.searchRecyclerView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.VISIBLE
         binding.searchHistoryLayout.visibility = View.GONE
@@ -192,14 +208,14 @@ class SearchActivity : AppCompatActivity() {
         binding.searchErrorText.text = emptySearchMessage
         binding.searchErrorImage.setImageDrawable(
             AppCompatResources.getDrawable(
-                this,
+                requireContext(),
                 R.drawable.nothing_is_found
             )
         )
     }
 
     private fun showSearchError(errorMessage: String) {
-        searchRecyclerView.visibility = View.GONE
+        binding.searchRecyclerView.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.VISIBLE
         binding.searchHistoryLayout.visibility = View.GONE
@@ -208,30 +224,17 @@ class SearchActivity : AppCompatActivity() {
         binding.searchErrorText.text = errorMessage
         binding.searchErrorImage.setImageDrawable(
             AppCompatResources.getDrawable(
-                this,
+                requireContext(),
                 R.drawable.no_internet_connection
             )
         )
     }
 
     private fun showProgressBar() {
-        searchRecyclerView.visibility = View.GONE
+        binding.searchRecyclerView.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
-    }
-
-    private fun initializeLateinitItems() {
-        searchHistoryAdapter = TrackAdapter {
-            if (clickDebounce()) {
-                viewModel.onTrackPressed(it)
-                router.openTrack(OPEN_TRACK_INTENT, it)
-            }
-        }
-        searchRecyclerView = findViewById<RecyclerView?>(R.id.search_recycler_view).apply {
-            layoutManager = LinearLayoutManager(this.context)
-            adapter = searchResultAdapter
-        }
     }
 
     private fun clickDebounce(): Boolean {
