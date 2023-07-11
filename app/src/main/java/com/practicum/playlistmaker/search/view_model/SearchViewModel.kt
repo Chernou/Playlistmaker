@@ -1,21 +1,22 @@
 package com.practicum.playlistmaker.search.view_model
 
 import android.os.Build
-import android.os.Handler
-import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.domain.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val resourceProvider: ResourceProvider,
     private val interactor: SearchInteractor,
-    private val handler: Handler
 ) : ViewModel() {
 
     //todo save search state when rotate screen
@@ -24,10 +25,7 @@ class SearchViewModel(
     private val stateLiveData = MutableLiveData<SearchState>()
     private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
     private var latestSearchText: String? = null
-
-    public override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
+    private var searchJob: Job? = null
 
     fun observeState(): LiveData<SearchState> = stateLiveData
     fun observeClearTextState(): LiveData<ClearTextState> = clearTextState
@@ -42,7 +40,7 @@ class SearchViewModel(
 
     fun onTextChanged(changedText: String) {
         if (changedText == "") {
-            handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+            searchJob?.cancel()
             showSearchHistory()
         } else {
             searchDebounce(changedText)
@@ -91,40 +89,41 @@ class SearchViewModel(
             return
         }
         latestSearchText = searchText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { searchRequest(searchText) }
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(searchText)
+        }
     }
 
     private fun searchRequest(searchText: String) {
         if (searchText.isNotEmpty()) {
             renderState(SearchState.Loading)
-            interactor.searchTracks(searchText, object : SearchInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    if (foundTracks != null) {
-                        if (foundTracks.isNotEmpty()) {
-                            renderState(SearchState.SearchContent(foundTracks))
-                        } else {
-                            renderState(
-                                SearchState.EmptySearch(
-                                    resourceProvider.getString(
-                                        R.string.nothing_is_found
+            viewModelScope.launch {
+                interactor
+                    .searchTracks(searchText)
+                    .collect { pair ->
+                        val tracks = ArrayList<Track>()
+                        if (pair.first != null) {
+                            tracks.addAll(pair.first!!)
+                            if (tracks.isNotEmpty()) {
+                                renderState(SearchState.SearchContent(tracks))
+                            } else {
+                                renderState(
+                                    SearchState.EmptySearch(
+                                        resourceProvider.getString(
+                                            R.string.nothing_is_found
+                                        )
                                     )
                                 )
-                            )
+                            }
+                        }
+                        if (pair.second != null) {
+                            lastUnsuccessfulSearch = searchText
+                            renderState(SearchState.Error(pair.second!!))
                         }
                     }
-                    if (errorMessage != null) {
-                        lastUnsuccessfulSearch = searchText
-                        renderState(SearchState.Error(errorMessage))
-                    }
-                }
-            })
+            }
         }
     }
 
@@ -134,6 +133,5 @@ class SearchViewModel(
 
     companion object {
         const val SEARCH_DEBOUNCE_DELAY = 2_000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 }
