@@ -23,6 +23,7 @@ class SearchViewModel(
     private var lastUnsuccessfulSearch: String = ""
     private val stateLiveData = MutableLiveData<SearchState>()
     private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+    private var latestSearchText: String? = null
 
     public override fun onCleared() {
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
@@ -86,6 +87,10 @@ class SearchViewModel(
 
 
     private fun searchDebounce(searchText: String) {
+        if (latestSearchText == searchText) {
+            return
+        }
+        latestSearchText = searchText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
         val searchRunnable = Runnable { searchRequest(searchText) }
         val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY

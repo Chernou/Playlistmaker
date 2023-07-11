@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.data.impl
 
-import android.util.Log
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient

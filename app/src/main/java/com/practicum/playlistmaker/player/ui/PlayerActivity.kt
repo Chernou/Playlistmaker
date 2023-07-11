@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.view_model.PlayerState
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
 import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.search.domain.Track
@@ -95,16 +94,15 @@ class PlayerActivity : AppCompatActivity() {
             .into(coverImageView)
 
         viewModel.observeState().observe(this) {
-            render(it)
+            playImageView.isEnabled = it.isPlayButtonEnabled
+            currentPlaybackTime.text = it.progress
+            setPlayOrPauseImage(it.buttonText)
         }
         viewModel.observeToastState().observe(this) { toastState ->
             if (toastState is ToastState.Show) {
                 noPreviewUrlMessage(toastState.additionalMessage)
                 viewModel.toastWasShown()
             }
-        }
-        viewModel.observePlaybackTime().observe(this) { playbackTime ->
-            setPlaybackTime(playbackTime)
         }
         viewModel.preparePlayer()
         playImageView.setOnClickListener {
@@ -121,7 +119,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPaused()
+        viewModel.onPause()
     }
 
     override fun onDestroy() {
@@ -129,55 +127,31 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.onCleared()
     }
 
-    private fun render(state: PlayerState) {
-        when (state) {
-            is PlayerState.DefaultState -> setDefaultScreen()
-            is PlayerState.PreparedState -> setPreparedScreen()
-            is PlayerState.PlayingState -> setPlayingScreen()
-            is PlayerState.PauseState -> setPauseScreen()
-        }
-    }
-
     private fun noPreviewUrlMessage(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setPlaybackTime(time: String) {
-        currentPlaybackTime.text = time
-    }
-
-    private fun setDefaultScreen() {
-        setPlayOrPauseImage(R.drawable.ic_play_button)
-        playImageView.isEnabled = false
-    }
-
-    private fun setPreparedScreen() {
-        setPlayOrPauseImage(R.drawable.ic_play_button)
-        playImageView.isEnabled = true
-        currentPlaybackTime.text = ZERO_TIMER
-    }
-
-    private fun setPlayingScreen() {
-        setPlayOrPauseImage(R.drawable.ic_pause_button)
-        playImageView.isEnabled = true
-    }
-
-    private fun setPauseScreen() {
-        setPlayOrPauseImage(R.drawable.ic_play_button)
-        playImageView.isEnabled = true
-    }
-
-    private fun setPlayOrPauseImage(resId: Int) {
-        playImageView.setImageDrawable(
-            AppCompatResources.getDrawable(
-                this,
-                resId
-            )
-        )
+    private fun setPlayOrPauseImage(buttonText: String) {
+        when (buttonText) {
+            PLAY_BUTTON ->
+                playImageView.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.ic_play_button
+                    )
+                )
+            else ->
+                playImageView.setImageDrawable(
+                    AppCompatResources.getDrawable(
+                        this,
+                        R.drawable.ic_pause_button
+                    )
+                )
+        }
     }
 
     companion object {
-        const val ZERO_TIMER = "00:00"
         const val OPEN_TRACK_INTENT = "TRACK INTENT"
+        const val PLAY_BUTTON = "PLAY_BUTTON"
     }
 }
