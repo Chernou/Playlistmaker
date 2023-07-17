@@ -60,8 +60,8 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState != null) {
-            binding.searchEditText.text =
-                savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+            binding.searchEditText.setText(savedInstanceState.getString(SEARCH_TEXT))
+
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -116,7 +116,7 @@ class SearchFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putCharSequence(SEARCH_TEXT, binding.searchEditText.text)
+        outState.putString(SEARCH_TEXT, binding.searchEditText.text.toString())
     }
 
     override fun onDestroyView() {

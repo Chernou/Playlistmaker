@@ -1,7 +1,5 @@
 package com.practicum.playlistmaker.search.view_model
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -52,7 +50,6 @@ class SearchViewModel(
         renderState(SearchState.EmptyScreen)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun onRefreshSearchButtonPressed() {
         searchRequest(lastUnsuccessfulSearch)
     }

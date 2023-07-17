@@ -122,11 +122,6 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.onCleared()
-    }
-
     private fun noPreviewUrlMessage(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
     }
@@ -140,6 +135,7 @@ class PlayerActivity : AppCompatActivity() {
                         R.drawable.ic_play_button
                     )
                 )
+
             else ->
                 playImageView.setImageDrawable(
                     AppCompatResources.getDrawable(
