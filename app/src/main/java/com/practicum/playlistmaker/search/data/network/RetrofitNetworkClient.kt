@@ -2,17 +2,16 @@ package com.practicum.playlistmaker.search.data.network
 
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 
 class RetrofitNetworkClient : NetworkClient, KoinComponent {
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         val itunesService: ItunesService = getKoin().get()
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTIVITY_ERROR }
@@ -20,14 +19,16 @@ class RetrofitNetworkClient : NetworkClient, KoinComponent {
         if (dto !is SearchRequest) {
             return Response().apply { resultCode = BAD_REQUEST_ERROR }
         }
-        val response = itunesService.search(dto.query).execute()
-        val body = response.body()
-        return body?.apply { resultCode = response.code() } ?: Response().apply {
-            resultCode = response.code()
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = itunesService.search(dto.query)
+                response.apply { resultCode = SUCCESSFUL_REQUEST }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = SERVER_ERROR }
+            }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun isConnected(): Boolean {
         val connectivityManager: ConnectivityManager = getKoin().get()
         val capabilities =
@@ -45,6 +46,8 @@ class RetrofitNetworkClient : NetworkClient, KoinComponent {
     companion object {
         const val BASE_URL = "https://itunes.apple.com"
         const val BAD_REQUEST_ERROR = 400
+        const val SERVER_ERROR = 500
+        const val SUCCESSFUL_REQUEST = 200
         const val NO_CONNECTIVITY_ERROR = -1
     }
 }

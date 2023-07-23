@@ -6,6 +6,7 @@ import com.practicum.playlistmaker.player.domain.api.Player
 class PlayerImpl(private val mediaPlayer: MediaPlayer) : Player {
 
     override fun preparePlayer(trackUri: String, onPrepared: () -> Unit, onCompletion: () -> Unit) {
+        mediaPlayer.reset()
         mediaPlayer.setDataSource(trackUri)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
@@ -27,7 +28,10 @@ class PlayerImpl(private val mediaPlayer: MediaPlayer) : Player {
     }
 
     override fun releasePlayer() {
-        mediaPlayer.release()
+        mediaPlayer.stop()
+        mediaPlayer.reset()
+        mediaPlayer.setOnCompletionListener(null)
+        mediaPlayer.setOnPreparedListener(null)
     }
 
     override fun isPlaying() = mediaPlayer.isPlaying

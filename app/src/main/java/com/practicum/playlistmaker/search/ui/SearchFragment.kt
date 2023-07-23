@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -14,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
@@ -22,14 +22,13 @@ import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
 import com.practicum.playlistmaker.utils.NavigationRouter
+import com.practicum.playlistmaker.utils.debounce
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 class SearchFragment : Fragment() {
 
-    private val mainThreadHandler: Handler by inject()
-    private var isClickAllowed = true
     private val viewModel: SearchViewModel by viewModel()
 
     private val router: NavigationRouter by inject {
@@ -38,20 +37,15 @@ class SearchFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private val searchResultAdapter = TrackAdapter {
-        if (clickDebounce()) {
-            viewModel.onTrackPressed(it)
-            router.openTrack(OPEN_TRACK_INTENT, it)
-        }
+        onCLickDebounce(it)
     }
 
     private val searchHistoryAdapter = TrackAdapter {
-        if (clickDebounce()) {
-            viewModel.onTrackPressed(it)
-            router.openTrack(OPEN_TRACK_INTENT, it)
-        }
+        onCLickDebounce(it)
     }
 
     private lateinit var binding: FragmentSearchBinding
+    private lateinit var onCLickDebounce: (Track) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,12 +60,21 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (savedInstanceState != null) {
-            binding.searchEditText.text =
-                savedInstanceState.getCharSequence(SEARCH_TEXT) as Editable
+            binding.searchEditText.setText(savedInstanceState.getString(SEARCH_TEXT))
+
         }
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
+        }
+
+        onCLickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
+            viewModel.onTrackPressed(track)
+            router.openTrack(OPEN_TRACK_INTENT, track)
         }
 
         viewModel.observeClearTextState().observe(viewLifecycleOwner) { clearTextState ->
@@ -113,13 +116,12 @@ class SearchFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putCharSequence(SEARCH_TEXT, binding.searchEditText.text)
+        outState.putString(SEARCH_TEXT, binding.searchEditText.text.toString())
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.removeTextChangedListener(searchTextWatcher)
-        viewModel.onCleared()
     }
 
     override fun onDestroy() {
@@ -159,7 +161,6 @@ class SearchFragment : Fragment() {
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             viewModel.onTextChanged(p0.toString() ?: "")
-            //todo hide search result when editText is empty
         }
 
         override fun afterTextChanged(editable: Editable?) {
@@ -235,15 +236,6 @@ class SearchFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
         binding.searchErrorLayout.visibility = View.GONE
         binding.searchHistoryLayout.visibility = View.GONE
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            mainThreadHandler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     companion object {

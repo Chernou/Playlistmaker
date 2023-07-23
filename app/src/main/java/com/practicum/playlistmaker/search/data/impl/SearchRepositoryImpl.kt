@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.data.impl
 
-import android.util.Log
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient
@@ -13,6 +12,8 @@ import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.TextUtils
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
 
@@ -20,19 +21,19 @@ class SearchRepositoryImpl(
     private val localStorage: LocalStorage
 ) : SearchRepository, KoinComponent {
 
-    override fun searchTracks(query: String): Resource<List<Track>> {
+    override fun searchTracks(query: String): Flow<Resource<List<Track>>> = flow {
         val resourceProvider: ResourceProvider = getKoin().get()
         val networkClient: NetworkClient = getKoin().get()
         val searchRequest: SearchRequest = getKoin().get {
             parametersOf(query)
         }
         val response = networkClient.doRequest(searchRequest)
-        return when (response.resultCode) {
+        when (response.resultCode) {
             NO_CONNECTIVITY_ERROR -> {
-                Resource.Error(resourceProvider.getString(R.string.no_internet_connection))
+                emit(Resource.Error(resourceProvider.getString(R.string.no_internet_connection)))
             }
             SUCCESSFUL_SEARCH_CODE -> {
-                Resource.Success((response as SearchResponse).trackList.map {
+                emit(Resource.Success((response as SearchResponse).trackList.map {
                     Track(
                         it.trackId,
                         it.trackName,
@@ -47,10 +48,10 @@ class SearchRepositoryImpl(
                         it.album,
                         it.previewUrl
                     )
-                })
+                }))
             }
             else -> {
-                Resource.Error(resourceProvider.getString(R.string.server_error))
+                emit(Resource.Error(resourceProvider.getString(R.string.server_error)))
             }
         }
     }
