@@ -65,13 +65,9 @@ class SearchRepositoryImpl(
     override fun getSearchHistory(): Flow<List<Track>> = flow {
         val searchHistory = localStorage.getSearchHistory()
         val favoritesIds = appDatabase.favoritesDao().getFavoritesIds()
-        val searchHistoryAdjusted = ArrayList<Track>()
-        // todo any better way to map?
-        for (track in searchHistory) {
-            track.isFavorite = favoritesIds.contains(track.trackId)
-            searchHistoryAdjusted.add(track)
-        }
-        emit(searchHistoryAdjusted)
+        emit(searchHistory.map {
+            it.copy(isFavorite = favoritesIds.contains(it.trackId))
+        })
     }
 
     override fun clearSearchHistory() {
