@@ -63,8 +63,8 @@ class SearchRepositoryImpl(
     }
 
     override fun getSearchHistory(): Flow<List<Track>> = flow {
-        val favoritesIds = appDatabase.favoritesDao().getFavoritesIds()
         val searchHistory = localStorage.getSearchHistory()
+        val favoritesIds = appDatabase.favoritesDao().getFavoritesIds()
         emit(searchHistory.map {
             it.copy(isFavorite = favoritesIds.contains(it.trackId))
         })
