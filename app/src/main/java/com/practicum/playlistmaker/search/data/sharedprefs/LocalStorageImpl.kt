@@ -17,8 +17,7 @@ class LocalStorageImpl(private val sharedPreferences: SharedPreferences, private
 
     override fun addTrackToSearchHistory(track: Track) {
         val searchHistory = getSearchHistory()
-        if (searchHistory.contains(track)) {
-            searchHistory.remove(track)
+        if (historyContainsId(searchHistory, track)) {
             searchHistory.add(0, track)
         } else {
             if (searchHistory.size == 10) {
@@ -33,6 +32,15 @@ class LocalStorageImpl(private val sharedPreferences: SharedPreferences, private
 
     override fun clearSearchHistory() {
         saveSearchHistory(ArrayList())
+    }
+
+    private fun historyContainsId(searchHistory: ArrayList<Track>, trackToCompare: Track): Boolean {
+        for (track in searchHistory) {
+            if (track.trackId == trackToCompare.trackId) {
+                return searchHistory.remove(track)
+            }
+        }
+        return false
     }
 
     private fun saveSearchHistory(searchHistory: List<Track>) {

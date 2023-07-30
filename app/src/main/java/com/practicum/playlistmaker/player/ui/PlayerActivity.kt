@@ -23,7 +23,7 @@ import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
-    private val viewModel: PlayerViewModel by viewModel {
+    private val playerViewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
     private lateinit var currentPlaybackTime: TextView
@@ -31,7 +31,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var track: Track
 
     //private lateinit var queueImageView: ImageView
-    //private lateinit var likeImageView: ImageView
+    private lateinit var favoriteImageView: ImageView
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +64,7 @@ class PlayerActivity : AppCompatActivity() {
             )
         )
         //val queueImageView: ImageView = findViewById(R.id.queue_image)
-        //val likeImageView: ImageView = findViewById(R.id.like_image)
+        favoriteImageView = findViewById(R.id.favorite_image)
 
         trackName.text = track.trackName
         artistName.text = track.artistName
@@ -80,6 +80,8 @@ class PlayerActivity : AppCompatActivity() {
             trackAlbum.text = track.album
         }
 
+        setFavoriteButton(track.isFavorite)
+
         val artworkUriHighRes = track.highResArtworkUri
         Glide.with(coverImageView)
             .load(artworkUriHighRes)
@@ -93,20 +95,23 @@ class PlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        viewModel.observeState().observe(this) {
+        playerViewModel.observeState().observe(this) {
             playImageView.isEnabled = it.isPlayButtonEnabled
             currentPlaybackTime.text = it.progress
             setPlayOrPauseImage(it.buttonText)
         }
-        viewModel.observeToastState().observe(this) { toastState ->
+        playerViewModel.observeToastState().observe(this) { toastState ->
             if (toastState is ToastState.Show) {
                 noPreviewUrlMessage(toastState.additionalMessage)
-                viewModel.toastWasShown()
+                playerViewModel.toastWasShown()
             }
         }
-        viewModel.preparePlayer()
+        playerViewModel.observeIsFavorite().observe(this) { isFavorite ->
+            setFavoriteButton(isFavorite)
+        }
+        playerViewModel.preparePlayer()
         playImageView.setOnClickListener {
-            viewModel.onPlayPressed()
+            playerViewModel.onPlayPressed()
         }
 
         val router: NavigationRouter = getKoin().get {
@@ -115,11 +120,14 @@ class PlayerActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             router.goBack()
         }
+        favoriteImageView.setOnClickListener {
+            playerViewModel.onFavoriteClicked()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        playerViewModel.onPause()
     }
 
     private fun noPreviewUrlMessage(additionalMessage: String) {
@@ -143,6 +151,24 @@ class PlayerActivity : AppCompatActivity() {
                         R.drawable.ic_pause_button
                     )
                 )
+        }
+    }
+
+    private fun setFavoriteButton(isFavorite: Boolean) {
+        if (isFavorite) {
+            favoriteImageView.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_remove_from_favorites
+                )
+            )
+        } else {
+            favoriteImageView.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.ic_add_to_favorites
+                )
+            )
         }
     }
 

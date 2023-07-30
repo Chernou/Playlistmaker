@@ -123,20 +123,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:tag="playButton"
-        app:layout_constraintEnd_toStartOf="@id/like_image"
+        app:layout_constraintEnd_toStartOf="@id/favorite_image"
         app:layout_constraintStart_toEndOf="@id/queue_image"
         app:layout_constraintTop_toBottomOf="@id/top_barrier"
         app:srcCompat="@drawable/ic_play_button" />
 
     <ImageView
-        android:id="@+id/like_image"
+        android:id="@+id/favorite_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:tag="likeButton"
         app:layout_constraintBottom_toTopOf="@id/current_playback_time"
         app:layout_constraintEnd_toStartOf="@id/right_top_guideline"
         app:layout_constraintTop_toBottomOf="@id/top_barrier"
-        app:srcCompat="@drawable/ic_like_button" />
+        app:srcCompat="@drawable/ic_add_to_favorites" />
 
     <TextView
         android:id="@+id/current_playback_time"

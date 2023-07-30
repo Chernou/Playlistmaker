@@ -3,7 +3,9 @@ package com.practicum.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.ConnectivityManager
+import androidx.room.Room
 import com.google.gson.Gson
+import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.player.data.PlayerImpl
 import com.practicum.playlistmaker.player.domain.api.Player
 import com.practicum.playlistmaker.search.data.LocalStorage
@@ -58,6 +60,10 @@ val dataModule = module {
 
     single {
         androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
     }
 
 }
