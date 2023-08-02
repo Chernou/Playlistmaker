@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.view_model.FavoritesState
 import com.practicum.playlistmaker.favorites.view_model.FavoritesViewModel
-import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.utils.NavigationRouter
 import com.practicum.playlistmaker.utils.debounce

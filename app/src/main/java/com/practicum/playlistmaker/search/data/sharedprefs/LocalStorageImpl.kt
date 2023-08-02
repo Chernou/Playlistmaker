@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.search.data.LocalStorage
-import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 
 class LocalStorageImpl(private val sharedPreferences: SharedPreferences, private val gson: Gson) :
     LocalStorage {

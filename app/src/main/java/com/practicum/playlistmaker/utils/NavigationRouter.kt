@@ -3,7 +3,7 @@ package com.practicum.playlistmaker.utils
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import com.practicum.playlistmaker.player.ui.PlayerActivity
-import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
 
