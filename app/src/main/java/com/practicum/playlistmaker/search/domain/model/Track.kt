@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.search.domain
+package com.practicum.playlistmaker.search.domain.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
@@ -16,6 +16,6 @@ data class Track(
     val highResArtworkUri: String,
     val genre: String,
     val album: String,
-    val previewUrl: String?
+    val previewUrl: String?,
+    var isFavorite: Boolean = false
 ) : Parcelable
-

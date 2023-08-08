@@ -7,9 +7,13 @@
 
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.practicum.playlistmaker.media.ui.FavoritesFragment"
+        android:name="com.practicum.playlistmaker.favorites.ui.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_playerActivity"
+            app:destination="@id/playerActivity" />
+    </fragment>
     <fragment
         android:id="@+id/playlistsFragment"
         android:name="com.practicum.playlistmaker.media.ui.PlaylistsFragment"

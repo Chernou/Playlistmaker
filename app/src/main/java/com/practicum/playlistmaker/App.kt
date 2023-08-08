@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
+import com.markodevcic.peko.PermissionRequester
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.navigatorModule
@@ -30,5 +31,6 @@ class App : Application() {
             )
         }
         repository.applyAppTheme()
+        PermissionRequester.initialize(applicationContext)
     }
 }

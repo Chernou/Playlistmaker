@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.utils.ResourceProvider
-import com.practicum.playlistmaker.search.domain.Track
+import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -59,27 +59,24 @@ class SearchViewModel(
     }
 
     fun onFocusChanged(hasFocus: Boolean, searchText: String) {
-        if (hasFocus && searchText.isEmpty() && interactor.getSearchHistory().isNotEmpty()) {
-            renderState(SearchState.HistoryContent(interactor.getSearchHistory()))
+        if (hasFocus && searchText.isEmpty()) {
+            showSearchHistory()
         }
     }
 
     fun onResume() {
-        if (stateLiveData.value is SearchState.HistoryContent) renderState(
-            SearchState.HistoryContent(
-                interactor.getSearchHistory()
-            )
-        )
+        if (stateLiveData.value is SearchState.HistoryContent) showSearchHistory()
+        else if (stateLiveData.value is SearchState.SearchContent) searchRequest(latestSearchText!!)
     }
 
     private fun showSearchHistory() {
-        if (interactor.getSearchHistory().isNotEmpty()) renderState(
-            SearchState.HistoryContent(
-                interactor.getSearchHistory()
-            )
-        ) else renderState(SearchState.EmptyScreen)
+        viewModelScope.launch {
+            interactor.getSearchHistory().collect {
+                if (it.isNotEmpty()) renderState(SearchState.HistoryContent(it))
+                else renderState(SearchState.EmptyScreen)
+            }
+        }
     }
-
 
     private fun searchDebounce(searchText: String) {
         if (latestSearchText == searchText) {
