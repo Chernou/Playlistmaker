@@ -31,5 +31,4 @@ class FavoritesRepositoryImpl(
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> =
         tracks.sortedByDescending { it.addingTime }.map { track -> trackDbConverter.map(track) }
-
 }
