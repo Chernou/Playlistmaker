@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.media.view_model.PlaylistsViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
-    private val viewModel: PlaylistsViewModel by viewModel()
     private lateinit var imageView: ImageView
     private lateinit var textView: TextView
 
@@ -37,6 +36,10 @@ class PlaylistsFragment : Fragment() {
                 R.drawable.nothing_is_found
             )
         )
+
+        view.findViewById<MaterialButton>(R.id.new_playlist_button).setOnClickListener {
+            findNavController().navigate(R.id.action_mediaFragment_to_playlistCreationFragment)
+        }
     }
 
     companion object {

@@ -10,22 +10,22 @@ import kotlinx.coroutines.flow.flow
 import java.util.Calendar
 
 class FavoritesRepositoryImpl(
-    private val appDatabase: AppDatabase,
+    private val database: AppDatabase,
     private val trackDbConverter: TrackDbConverter
 ) : FavoritesRepository {
 
     override suspend fun addFavorite(track: Track) {
-        appDatabase.favoritesDao()
+        database.favoritesDao()
             .insertFavorite(trackDbConverter.map(track, Calendar.getInstance().time.time))
     }
 
     override suspend fun deleteFavorite(track: Track) {
-        appDatabase.favoritesDao()
+        database.favoritesDao()
             .deleteFavorite(trackDbConverter.map(track, Calendar.getInstance().time.time))
     }
 
     override fun getFavorites(): Flow<List<Track>> = flow {
-        val tracks = appDatabase.favoritesDao().getFavorites()
+        val tracks = database.favoritesDao().getFavorites()
         emit(convertFromTrackEntity(tracks))
     }
 

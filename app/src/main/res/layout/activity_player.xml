@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="@id/current_playback_time"
         app:layout_constraintGuide_begin="@dimen/size_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/cover_image" />
+        app:layout_constraintTop_toTopOf="@id/pl_cover" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_bottom_guideline"
@@ -35,7 +35,7 @@
         app:layout_constraintBottom_toBottomOf="@id/current_playback_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintGuide_end="@dimen/size_24"
-        app:layout_constraintTop_toTopOf="@id/cover_image" />
+        app:layout_constraintTop_toTopOf="@id/pl_cover" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/right_bottom_guideline"
@@ -68,7 +68,7 @@
         app:navigationIcon="@drawable/ic_arrow_back" />
 
     <ImageView
-        android:id="@+id/cover_image"
+        android:id="@+id/pl_cover"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/media_album"
@@ -92,7 +92,7 @@
         app:layout_constraintEnd_toStartOf="@id/right_top_guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/left_top_guideline"
-        app:layout_constraintTop_toBottomOf="@id/cover_image" />
+        app:layout_constraintTop_toBottomOf="@id/pl_cover" />
 
     <TextView
         android:id="@+id/artist_name"
