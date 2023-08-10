@@ -155,7 +155,7 @@
 
     <TextView
         android:id="@+id/duration"
-        style="@style/media_subtitles"
+        style="@style/MediaSubtitles"
         android:layout_marginTop="@dimen/size_40"
         android:text="@string/media_duration"
         app:layout_constraintBottom_toTopOf="@id/album"
@@ -164,7 +164,7 @@
 
     <TextView
         android:id="@+id/album"
-        style="@style/media_subtitles"
+        style="@style/MediaSubtitles"
         android:text="@string/media_album"
         app:layout_constraintBottom_toTopOf="@id/year"
         app:layout_constraintStart_toEndOf="@id/left_bottom_guideline"
@@ -172,7 +172,7 @@
 
     <TextView
         android:id="@+id/year"
-        style="@style/media_subtitles"
+        style="@style/MediaSubtitles"
         android:text="@string/media_year"
         app:layout_constraintBottom_toTopOf="@id/genre"
         app:layout_constraintStart_toEndOf="@id/left_bottom_guideline"
@@ -180,7 +180,7 @@
 
     <TextView
         android:id="@+id/genre"
-        style="@style/media_subtitles"
+        style="@style/MediaSubtitles"
         android:text="@string/media_genre"
         app:layout_constraintBottom_toTopOf="@id/country"
         app:layout_constraintStart_toEndOf="@id/left_bottom_guideline"
@@ -188,14 +188,14 @@
 
     <TextView
         android:id="@+id/country"
-        style="@style/media_subtitles"
+        style="@style/MediaSubtitles"
         android:text="@string/media_country"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/left_bottom_guideline" />
 
     <TextView
         android:id="@+id/track_duration"
-        style="@style/media_features"
+        style="@style/MediaFeatures"
         android:layout_marginTop="@dimen/size_40"
         app:layout_constraintBottom_toTopOf="@id/track_album"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline"
@@ -203,7 +203,7 @@
 
     <TextView
         android:id="@+id/track_album"
-        style="@style/media_features"
+        style="@style/MediaFeatures"
         android:ellipsize="end"
         app:layout_constraintBottom_toTopOf="@id/track_year"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline"
@@ -211,21 +211,21 @@
 
     <TextView
         android:id="@+id/track_year"
-        style="@style/media_features"
+        style="@style/MediaFeatures"
         app:layout_constraintBottom_toTopOf="@id/track_genre"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline"
         app:layout_constraintTop_toBottomOf="@id/track_album" />
 
     <TextView
         android:id="@+id/track_genre"
-        style="@style/media_features"
+        style="@style/MediaFeatures"
         app:layout_constraintBottom_toTopOf="@id/track_country"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline"
         app:layout_constraintTop_toBottomOf="@id/track_year" />
 
     <TextView
         android:id="@+id/track_country"
-        style="@style/media_features"
+        style="@style/MediaFeatures"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline" />
 

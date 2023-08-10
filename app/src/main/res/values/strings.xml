@@ -40,11 +40,14 @@
     <string name="no_playlists_image">Не создано ни одного плейлиста</string>
     <string name="favorite_tracks">Избранные треки</string>
     <string name="playlists">Плейлисты</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="playlist_name">Название*</string>
     <string name="playlist_description">Описание</string>
     <string name="create_playlist">Создать</string>
     <string name="permission_required">Для выбора обложки необходимо разрешение на чтение\nизображений из внешнего хранилища</string>
+    <string name="cancel">Отмена</string>
+    <string name="finish">Завершить</string>
+    <string name="save_pl_dialog_title">Завершить создание плейлиста?</string>
+    <string name="save_pl_dialog_message">Все несохраненные данные будут потеряны</string>
 
 </resources>

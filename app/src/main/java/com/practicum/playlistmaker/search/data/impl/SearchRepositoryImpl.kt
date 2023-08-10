@@ -4,7 +4,6 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient
-import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
@@ -12,6 +11,7 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.utils.TextUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

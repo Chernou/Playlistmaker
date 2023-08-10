@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val navigatorModule = module {
 
-    factory {(activity: ComponentActivity) ->
+    factory { (activity: ComponentActivity) ->
         NavigationRouter(activity)
     }
 
@@ -18,7 +18,7 @@ val navigatorModule = module {
         ExternalNavigatorImpl(androidContext())
     }
 
-    factory {(cls: Class<*>) ->
+    factory { (cls: Class<*>) ->
         Intent(androidContext(), cls)
     }
 }

@@ -1,10 +1,10 @@
 package com.practicum.playlistmaker.favorites.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,14 +25,14 @@ class FavoritesFragment : Fragment() {
     private lateinit var favoritesRecyclerView: RecyclerView
     private lateinit var emptyFavoritesLayout: ViewGroup
     private val favoritesAdapter = TrackAdapter {
-        onCLickDebounce(it)
+        onClickDebounce(it)
     }
 
     private val router: NavigationRouter by inject {
         parametersOf(requireActivity())
     }
 
-    private lateinit var onCLickDebounce: (Track) -> Unit
+    private lateinit var onClickDebounce: (Track) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +55,7 @@ class FavoritesFragment : Fragment() {
             render(it)
         }
 
-        onCLickDebounce = debounce<Track>(
+        onClickDebounce = debounce<Track>(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
@@ -91,7 +91,7 @@ class FavoritesFragment : Fragment() {
 
     companion object {
         fun newInstance() = FavoritesFragment()
-        const val CLICK_DEBOUNCE_DELAY = 1_000L
+        private const val CLICK_DEBOUNCE_DELAY = 1_000L
         const val OPEN_TRACK_INTENT = "TRACK INTENT"
     }
 }
