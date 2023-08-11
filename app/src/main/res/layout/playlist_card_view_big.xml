@@ -18,14 +18,12 @@
         style="@style/PlaylistCardViewText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_4"
-        android:text="Название альбома" />
+        android:layout_marginTop="@dimen/size_4" />
 
     <TextView
         android:id="@+id/number_of_tracks"
         style="@style/PlaylistCardViewText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="56 треков" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

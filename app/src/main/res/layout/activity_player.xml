@@ -229,4 +229,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/right_bottom_guideline" />
 
+    <LinearLayout
+        android:id="@+id/add_to_pl_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="@dimen/size_204"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

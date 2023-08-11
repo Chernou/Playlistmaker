@@ -58,5 +58,9 @@
     <dimen name="size_32">32dp</dimen>
     <dimen name="size_32dp">32dp</dimen>
     <dimen name="size_18">18dp</dimen>
+    <dimen name="size_14">14dp</dimen>
+    <dimen name="size_15">15dp</dimen>
+    <dimen name="size_45">45dp</dimen>
+    <dimen name="size_204">204</dimen>
 
 </resources>
