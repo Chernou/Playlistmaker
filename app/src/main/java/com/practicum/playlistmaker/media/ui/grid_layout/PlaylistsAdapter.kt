@@ -12,7 +12,7 @@ class PlaylistsAdapter(private val clickListener: PlaylistClickListener) :
     val playlists = ArrayList<Playlist>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder =
         PlaylistViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.playlist_card_view, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.playlist_card_view_big, parent, false)
         )
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
