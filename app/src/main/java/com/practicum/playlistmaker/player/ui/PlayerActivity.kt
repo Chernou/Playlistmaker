@@ -39,10 +39,9 @@ class PlayerActivity : AppCompatActivity() {
         //todo implement
     }
 
-    private val playerViewModel: PlayerViewModel by viewModel {
+    private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,10 +66,23 @@ class PlayerActivity : AppCompatActivity() {
         val addToPlaylist: ImageView = findViewById(R.id.add_to_playlist)
         val createPlaylist: TextView = findViewById(R.id.create_playlist)
         val bottomSheetContainer: ViewGroup = findViewById(R.id.bottom_sheet_container)
+        val grayOverlay: View = findViewById(R.id.overlay)
 
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> grayOverlay.visibility = View.GONE
+                    else -> grayOverlay.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
 
         currentPlaybackTime = findViewById(R.id.current_playback_time)
         favoriteImageView = findViewById(R.id.favorite_image)
@@ -116,21 +128,21 @@ class PlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImageView)
 
-        playerViewModel.observeState().observe(this) {
+        viewModel.observeState().observe(this) {
             playImageView.isEnabled = it.isPlayButtonEnabled
             currentPlaybackTime.text = it.progress
             setPlayOrPauseImage(it.buttonText)
         }
-        playerViewModel.observeToastState().observe(this) { toastState ->
+        viewModel.observeToastState().observe(this) { toastState ->
             if (toastState is ToastState.Show) {
                 noPreviewUrlMessage(toastState.additionalMessage)
-                playerViewModel.toastWasShown()
+                viewModel.toastWasShown()
             }
         }
-        playerViewModel.observeIsFavorite().observe(this) { isFavorite ->
+        viewModel.observeIsFavorite().observe(this) { isFavorite ->
             setFavoriteButton(isFavorite)
         }
-        playerViewModel.observePlaylists().observe(this) {
+        viewModel.observePlaylists().observe(this) {
             when (it) {
                 is PlaylistsState.DisplayPlaylists -> {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -141,9 +153,9 @@ class PlayerActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_HIDDEN
             }
         }
-        playerViewModel.preparePlayer()
+        viewModel.preparePlayer()
         playImageView.setOnClickListener {
-            playerViewModel.onPlayPressed()
+            viewModel.onPlayPressed()
         }
 
         val router: NavigationRouter = getKoin().get {
@@ -154,17 +166,20 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         favoriteImageView.setOnClickListener {
-            playerViewModel.onFavoriteClicked()
+            viewModel.onFavoriteClicked()
         }
 
         addToPlaylist.setOnClickListener {
-            playerViewModel.addToPlaylistClicked()
+            viewModel.addToPlaylistClicked()
+        }
+
+        createPlaylist.setOnClickListener {
         }
     }
 
     override fun onPause() {
         super.onPause()
-        playerViewModel.onPause()
+        viewModel.onPause()
     }
 
     private fun noPreviewUrlMessage(additionalMessage: String) {
