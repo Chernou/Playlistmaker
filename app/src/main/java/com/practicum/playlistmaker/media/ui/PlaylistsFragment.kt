@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.view_model.PlaylistsState
 import com.practicum.playlistmaker.media.ui.grid_layout.PlaylistsAdapter
@@ -39,6 +39,7 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         emptyPlaylistsLayout = view.findViewById(R.id.empty_playlists_layout)
+        val createPlTextView = view.findViewById<TextView>(R.id.new_playlist_button)
         recyclerView = view.findViewById<RecyclerView>(R.id.playlists_recycler_view).apply {
             layoutManager = GridLayoutManager(requireContext(), NUMBER_OF_COLUMNS)
             adapter = playlistsAdapter
@@ -49,7 +50,7 @@ class PlaylistsFragment : Fragment() {
             render(it)
         }
 
-        view.findViewById<MaterialButton>(R.id.new_playlist_button).setOnClickListener {
+        createPlTextView.setOnClickListener {
             findNavController().navigate(R.id.action_mediaFragment_to_playlistCreationFragment)
         }
 

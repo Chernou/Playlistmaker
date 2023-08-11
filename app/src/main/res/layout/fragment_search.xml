@@ -157,17 +157,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/search_history_text_view" />
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/clear_search_history_button"
                 style="@style/SearchScreenSupportButtons"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginVertical="@dimen/size_16"
+                android:background="@drawable/bg_rounded_button"
+                android:layout_marginTop="@dimen/size_12"
                 android:text="@string/clear_search_history"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_history_recycler_view"
-                app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent" />
+                app:layout_constraintTop_toBottomOf="@id/search_history_recycler_view" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

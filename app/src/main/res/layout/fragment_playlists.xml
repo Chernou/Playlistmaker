@@ -13,12 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.google.android.material.button.MaterialButton
+    <TextView
         android:id="@+id/new_playlist_button"
         style="@style/SearchScreenSupportButtons"
+        android:background="@drawable/bg_rounded_button"
         android:layout_marginTop="@dimen/size_12"
-        android:text="@string/new_playlist"
-        app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent" />
+        android:text="@string/new_playlist" />
 
     <FrameLayout
         android:id="@+id/empty_playlists_layout"

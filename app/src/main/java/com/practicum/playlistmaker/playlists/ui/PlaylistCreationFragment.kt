@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +47,7 @@ class PlaylistCreationFragment : Fragment() {
         descriptionEditText = view.findViewById(R.id.playlist_description)
         coverImageView = view.findViewById(R.id.pl_cover)
 
+        var coverPickedFlag = false
         var pickedImageUri: Uri? = null
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -55,6 +57,7 @@ class PlaylistCreationFragment : Fragment() {
                         .load(uri.toString())
                         .centerCrop()
                         .into(coverImageView)
+                    coverPickedFlag = true
                 }
             }
 
@@ -83,7 +86,7 @@ class PlaylistCreationFragment : Fragment() {
                 }
 
         toolbar.setNavigationOnClickListener {
-            if (!nameEditText.text.isNullOrEmpty() || !descriptionEditText.text.isNullOrEmpty() || coverImageView.drawable != null) {
+            if (!nameEditText.text.isNullOrEmpty() || !descriptionEditText.text.isNullOrEmpty() || coverPickedFlag) {
                 confirmDialog.show()
 
             } else {

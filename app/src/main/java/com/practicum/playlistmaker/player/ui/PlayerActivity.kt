@@ -43,7 +43,7 @@ class PlayerActivity : AppCompatActivity() {
         } as Track
 
         val toolbar = findViewById<Toolbar>(R.id.player_toolbar)
-        val coverImageView: ImageView = findViewById(R.id.pl_cover)
+        val coverImageView: ImageView = findViewById(R.id.cover_image)
         val trackName: TextView = findViewById(R.id.track_name)
         val artistName: TextView = findViewById(R.id.artist_name)
         val trackDuration: TextView = findViewById(R.id.track_duration)
