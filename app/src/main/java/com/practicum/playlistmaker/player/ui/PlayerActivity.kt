@@ -3,17 +3,24 @@ package com.practicum.playlistmaker.player.ui
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.player.ui.add_to_pl_rv.PlaylistsSmallAdapter
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
+import com.practicum.playlistmaker.player.view_model.PlaylistsState
 import com.practicum.playlistmaker.player.view_model.ToastState
+import com.practicum.playlistmaker.playlists.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.NavigationRouter
 import org.koin.android.ext.android.getKoin
@@ -22,15 +29,20 @@ import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
-    private val playerViewModel: PlayerViewModel by viewModel {
-        parametersOf(track)
-    }
     private lateinit var currentPlaybackTime: TextView
     private lateinit var playImageView: ImageView
     private lateinit var track: Track
-
-    //private lateinit var queueImageView: ImageView
     private lateinit var favoriteImageView: ImageView
+    private lateinit var playlistsRecyclerView: RecyclerView
+
+    private var playlistsAdapter = PlaylistsSmallAdapter {
+        //todo implement
+    }
+
+    private val playerViewModel: PlayerViewModel by viewModel {
+        parametersOf(track)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +64,21 @@ class PlayerActivity : AppCompatActivity() {
         val trackYear: TextView = findViewById(R.id.track_year)
         val trackGenre: TextView = findViewById(R.id.track_genre)
         val trackCountry: TextView = findViewById(R.id.track_country)
+        val addToPlaylist: ImageView = findViewById(R.id.add_to_playlist)
+        val createPlaylist: TextView = findViewById(R.id.create_playlist)
+        val bottomSheetContainer: ViewGroup = findViewById(R.id.bottom_sheet_container)
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
         currentPlaybackTime = findViewById(R.id.current_playback_time)
+        favoriteImageView = findViewById(R.id.favorite_image)
         playImageView = findViewById(R.id.play_image)
+        playlistsRecyclerView = findViewById<RecyclerView>(R.id.playlists_recycler_view).apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = playlistsAdapter
+        }
         playImageView.isEnabled = false
         playImageView.setImageDrawable(
             AppCompatResources.getDrawable(
@@ -61,8 +86,6 @@ class PlayerActivity : AppCompatActivity() {
                 R.drawable.ic_play_button
             )
         )
-        //val queueImageView: ImageView = findViewById(R.id.queue_image)
-        favoriteImageView = findViewById(R.id.favorite_image)
 
         trackName.text = track.trackName
         artistName.text = track.artistName
@@ -107,6 +130,17 @@ class PlayerActivity : AppCompatActivity() {
         playerViewModel.observeIsFavorite().observe(this) { isFavorite ->
             setFavoriteButton(isFavorite)
         }
+        playerViewModel.observePlaylists().observe(this) {
+            when (it) {
+                is PlaylistsState.DisplayPlaylists -> {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    displayPlaylists(it.playlists)
+                }
+
+                is PlaylistsState.HidePlaylists -> bottomSheetBehavior.state =
+                    BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
         playerViewModel.preparePlayer()
         playImageView.setOnClickListener {
             playerViewModel.onPlayPressed()
@@ -118,8 +152,13 @@ class PlayerActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             router.goBack()
         }
+
         favoriteImageView.setOnClickListener {
             playerViewModel.onFavoriteClicked()
+        }
+
+        addToPlaylist.setOnClickListener {
+            playerViewModel.addToPlaylistClicked()
         }
     }
 
@@ -168,6 +207,12 @@ class PlayerActivity : AppCompatActivity() {
                 )
             )
         }
+    }
+
+    private fun displayPlaylists(playlists: List<Playlist>) {
+        playlistsAdapter.playlists.clear()
+        playlistsAdapter.playlists.addAll(playlists)
+        playlistsAdapter.notifyDataSetChanged()
     }
 
     companion object {

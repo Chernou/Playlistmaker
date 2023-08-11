@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.domain.api.FavoritesInteractor
-import com.practicum.playlistmaker.player.view_model.api.PlayerInteractor
+import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
+import com.practicum.playlistmaker.playlists.domain.api.db.PlaylistsDbInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.ResourceProvider
@@ -19,6 +20,7 @@ class PlayerViewModel(
     private val resourceProvider: ResourceProvider,
     private val playerInteractor: PlayerInteractor,
     private val favoritesInteractor: FavoritesInteractor,
+    private val playlistsDbInteractor: PlaylistsDbInteractor
 ) : ViewModel() {
 
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
@@ -28,7 +30,8 @@ class PlayerViewModel(
     }
 
     private val stateLiveData = MutableLiveData<PlayerState>()
-    private val toastStateLive = MutableLiveData<ToastState>()
+    private val toastStateLiveData = MutableLiveData<ToastState>()
+    private val playlistsLiveData = MutableLiveData<PlaylistsState>()
     private var timerJob: Job? = null
 
     public override fun onCleared() {
@@ -56,8 +59,9 @@ class PlayerViewModel(
     }
 
     fun observeState(): LiveData<PlayerState> = stateLiveData
-    fun observeToastState(): LiveData<ToastState> = toastStateLive
+    fun observeToastState(): LiveData<ToastState> = toastStateLiveData
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
+    fun observePlaylists(): LiveData<PlaylistsState> = playlistsLiveData
 
     fun onPlayPressed() {
         if (track.previewUrl == null) {
@@ -68,7 +72,7 @@ class PlayerViewModel(
     }
 
     fun toastWasShown() {
-        toastStateLive.value = ToastState.None
+        toastStateLiveData.value = ToastState.None
     }
 
     fun onPause() {
@@ -88,13 +92,20 @@ class PlayerViewModel(
         }
     }
 
+    fun addToPlaylistClicked() {
+        viewModelScope.launch {
+            playlistsDbInteractor.getPlaylists().collect {
+                playlistsLiveData.postValue(PlaylistsState.DisplayPlaylists(it))
+            }
+        }
+    }
 
     private fun renderState(playerState: PlayerState) {
         stateLiveData.postValue(playerState)
     }
 
     private fun showToast() {
-        toastStateLive.value =
+        toastStateLiveData.value =
             ToastState.Show(resourceProvider.getString(R.string.no_preview_url))
     }
 
@@ -126,7 +137,6 @@ class PlayerViewModel(
             }
         }
     }
-
 
     private fun getCurrentPlayerPosition(): String {
         return formatTime(playerInteractor.getPlayerPosition())

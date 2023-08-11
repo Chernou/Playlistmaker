@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.view_model.PlaylistsState
-import com.practicum.playlistmaker.media.ui.grid_layout.PlaylistsAdapter
+import com.practicum.playlistmaker.media.ui.pl_recycler_view.PlaylistsLargeAdapter
 import com.practicum.playlistmaker.media.view_model.PlaylistsViewModel
 import com.practicum.playlistmaker.playlists.domain.model.Playlist
 import com.practicum.playlistmaker.utils.debounce
@@ -23,7 +23,7 @@ class PlaylistsFragment : Fragment() {
     private lateinit var emptyPlaylistsLayout: ViewGroup
     private lateinit var recyclerView: RecyclerView
     private val viewModel: PlaylistsViewModel by viewModel()
-    private val playlistsAdapter = PlaylistsAdapter {
+    private val playlistsLargeAdapter = PlaylistsLargeAdapter {
         onClickDebounce(it)
     }
     private lateinit var onClickDebounce: (Playlist) -> Unit
@@ -42,7 +42,7 @@ class PlaylistsFragment : Fragment() {
         val createPlTextView = view.findViewById<TextView>(R.id.new_playlist_button)
         recyclerView = view.findViewById<RecyclerView>(R.id.playlists_recycler_view).apply {
             layoutManager = GridLayoutManager(requireContext(), NUMBER_OF_COLUMNS)
-            adapter = playlistsAdapter
+            adapter = playlistsLargeAdapter
         }
 
         viewModel.displayState()
@@ -84,9 +84,9 @@ class PlaylistsFragment : Fragment() {
     private fun displayPlaylists(playlists: List<Playlist>) {
         emptyPlaylistsLayout.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
-        playlistsAdapter.playlists.clear()
-        playlistsAdapter.playlists.addAll(playlists)
-        playlistsAdapter.notifyDataSetChanged()
+        playlistsLargeAdapter.playlists.clear()
+        playlistsLargeAdapter.playlists.addAll(playlists)
+        playlistsLargeAdapter.notifyDataSetChanged()
     }
 
     companion object {

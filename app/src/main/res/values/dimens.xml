@@ -6,6 +6,7 @@
     <dimen name="rounded_corners_album">8dp</dimen>
     <dimen name="main_text_size">24sp</dimen>
     <dimen name="pl_card_text_size">12sp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
     <dimen name="media_track_text_size">22sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="support_search_buttons_text_size">14sp</dimen>
@@ -61,6 +62,6 @@
     <dimen name="size_14">14dp</dimen>
     <dimen name="size_15">15dp</dimen>
     <dimen name="size_45">45dp</dimen>
-    <dimen name="size_204">204</dimen>
+    <dimen name="size_204">204dp</dimen>
 
 </resources>

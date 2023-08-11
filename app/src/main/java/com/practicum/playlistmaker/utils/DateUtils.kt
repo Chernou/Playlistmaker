@@ -11,7 +11,7 @@ object DateUtils {
         .format(trackTimeMillis) ?: ""
 
     fun getYear(str: String?): String? = str?.let {
-        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(str)
+        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).parse(it)
         val calendar = Calendar.getInstance(TimeZone.getDefault()).apply {
             time = date
         }

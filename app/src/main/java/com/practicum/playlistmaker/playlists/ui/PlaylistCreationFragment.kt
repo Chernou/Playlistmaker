@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +42,7 @@ class PlaylistCreationFragment : Fragment() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         createPlTextView = view.findViewById(R.id.create_playlist)
-        nameEditText = view.findViewById(R.id.playlist_name)
+        nameEditText = view.findViewById(R.id.playlist_name_large)
         descriptionEditText = view.findViewById(R.id.playlist_description)
         coverImageView = view.findViewById(R.id.pl_cover)
 

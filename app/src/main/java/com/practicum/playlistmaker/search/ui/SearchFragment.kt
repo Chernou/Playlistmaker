@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -35,7 +34,6 @@ SearchFragment : Fragment() {
         parametersOf(requireActivity())
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private val searchResultAdapter = TrackAdapter {
         onCLickDebounce(it)
     }
@@ -50,7 +48,7 @@ SearchFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
