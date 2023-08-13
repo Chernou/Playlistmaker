@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.playlists.domain.impl
 import com.practicum.playlistmaker.playlists.domain.api.db.PlaylistsDbInteractor
 import com.practicum.playlistmaker.playlists.domain.api.db.PlaylistsDbRepository
 import com.practicum.playlistmaker.playlists.domain.model.Playlist
+import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistsDbInteractorImpl(private val repository: PlaylistsDbRepository) :
@@ -16,4 +17,8 @@ class PlaylistsDbInteractorImpl(private val repository: PlaylistsDbRepository) :
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> = repository.getPlaylists()
+
+    override suspend fun addTrackToPl(track: Track, playlist: Playlist) {
+        repository.addTrackToPl(track, playlist)
+    }
 }

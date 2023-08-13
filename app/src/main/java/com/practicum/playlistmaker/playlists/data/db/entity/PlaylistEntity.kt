@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlists.data.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -20,5 +21,4 @@ data class PlaylistEntity(
         tracks: String,
         numberOfTracks: Int
     ) : this(0, name, description, coverPath, tracks, numberOfTracks)
-
 }

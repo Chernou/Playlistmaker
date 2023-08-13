@@ -50,5 +50,7 @@
     <string name="save_pl_dialog_title">Завершить создание плейлиста?</string>
     <string name="save_pl_dialog_message">Все несохраненные данные будут потеряны</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="track_is_in_pl_already">Трек уже добавлен в плейлист</string>
+    <string name="track_added_to_pl">Добавлено в плейлист</string>
 
 </resources>

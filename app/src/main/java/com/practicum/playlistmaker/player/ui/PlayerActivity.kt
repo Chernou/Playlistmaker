@@ -36,7 +36,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var playlistsRecyclerView: RecyclerView
 
     private var playlistsAdapter = PlaylistsSmallAdapter {
-        //todo implement
+        viewModel.onPlaylistClicked(it)
     }
 
     private val viewModel: PlayerViewModel by viewModel {
@@ -66,7 +66,7 @@ class PlayerActivity : AppCompatActivity() {
         val addToPlaylist: ImageView = findViewById(R.id.add_to_playlist)
         val createPlaylist: TextView = findViewById(R.id.create_playlist)
         val bottomSheetContainer: ViewGroup = findViewById(R.id.bottom_sheet_container)
-        val grayOverlay: View = findViewById(R.id.overlay)
+        val greyOverlay: View = findViewById(R.id.overlay)
 
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
@@ -76,12 +76,14 @@ class PlayerActivity : AppCompatActivity() {
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> grayOverlay.visibility = View.GONE
-                    else -> grayOverlay.visibility = View.VISIBLE
+                    BottomSheetBehavior.STATE_HIDDEN -> greyOverlay.visibility = View.GONE
+                    else -> greyOverlay.visibility = View.VISIBLE
                 }
             }
 
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                greyOverlay.alpha = slideOffset
+            }
         })
 
         currentPlaybackTime = findViewById(R.id.current_playback_time)

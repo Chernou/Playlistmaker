@@ -8,6 +8,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.domain.api.FavoritesInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.playlists.domain.api.db.PlaylistsDbInteractor
+import com.practicum.playlistmaker.playlists.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.ResourceProvider
@@ -30,7 +31,7 @@ class PlayerViewModel(
     }
 
     private val stateLiveData = MutableLiveData<PlayerState>()
-    private val toastStateLiveData = MutableLiveData<ToastState>()
+    private val toastLiveData = MutableLiveData<ToastState>()
     private val playlistsLiveData = MutableLiveData<PlaylistsState>()
     private var timerJob: Job? = null
 
@@ -53,26 +54,26 @@ class PlayerViewModel(
                 }
             )
         } else {
-            showToast()
+            showToast(resourceProvider.getString(R.string.no_preview_url))
             renderState(PlayerState.PreparedState())
         }
     }
 
     fun observeState(): LiveData<PlayerState> = stateLiveData
-    fun observeToastState(): LiveData<ToastState> = toastStateLiveData
+    fun observeToastState(): LiveData<ToastState> = toastLiveData
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
     fun observePlaylists(): LiveData<PlaylistsState> = playlistsLiveData
 
     fun onPlayPressed() {
         if (track.previewUrl == null) {
-            showToast()
+            showToast(resourceProvider.getString(R.string.no_preview_url))
         } else {
             playbackControl()
         }
     }
 
     fun toastWasShown() {
-        toastStateLiveData.value = ToastState.None
+        toastLiveData.value = ToastState.None
     }
 
     fun onPause() {
@@ -100,13 +101,27 @@ class PlayerViewModel(
         }
     }
 
+    fun onPlaylistClicked(playlist: Playlist) {
+        if (playlist.tracks.contains(track.trackId)) {
+            showToast("${resourceProvider.getString(R.string.track_is_in_pl_already)} ${playlist.name}")
+        } else {
+            viewModelScope.launch {
+                playlist.tracks.add(track.trackId)
+                val updatedPlaylist = playlist.copy(numberOfTracks = playlist.numberOfTracks + 1)
+                playlistsDbInteractor.addTrackToPl(track, updatedPlaylist)
+            }
+            showToast("${resourceProvider.getString(R.string.track_added_to_pl)} ${playlist.name}")
+        }
+        playlistsLiveData.postValue(PlaylistsState.HidePlaylists)
+    }
+
     private fun renderState(playerState: PlayerState) {
         stateLiveData.postValue(playerState)
     }
 
-    private fun showToast() {
-        toastStateLiveData.value =
-            ToastState.Show(resourceProvider.getString(R.string.no_preview_url))
+    private fun showToast(message: String) {
+        toastLiveData.value =
+            ToastState.Show(message)
     }
 
     private fun playbackControl() {
