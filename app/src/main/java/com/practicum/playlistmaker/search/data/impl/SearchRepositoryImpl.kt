@@ -20,12 +20,12 @@ import org.koin.core.parameter.parametersOf
 
 class SearchRepositoryImpl(
     private val localStorage: LocalStorage,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val networkClient: NetworkClient,
+    private val resourceProvider: ResourceProvider
 ) : SearchRepository, KoinComponent {
 
     override fun searchTracks(query: String): Flow<Resource<List<Track>>> = flow {
-        val resourceProvider: ResourceProvider = getKoin().get()
-        val networkClient: NetworkClient = getKoin().get()
         val searchRequest: SearchRequest = getKoin().get {
             parametersOf(query)
         }

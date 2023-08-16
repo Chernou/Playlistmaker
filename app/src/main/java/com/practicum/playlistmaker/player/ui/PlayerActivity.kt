@@ -147,7 +147,7 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.observePlaylists().observe(this) {
             when (it) {
                 is PlaylistsState.DisplayPlaylists -> {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
                     displayPlaylists(it.playlists)
                 }
 
