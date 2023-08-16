@@ -11,28 +11,23 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.view_model.ClearTextState
 import com.practicum.playlistmaker.search.view_model.SearchState
 import com.practicum.playlistmaker.search.view_model.SearchViewModel
-import com.practicum.playlistmaker.utils.NavigationRouter
 import com.practicum.playlistmaker.utils.debounce
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class
 
 SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
-
-    private val router: NavigationRouter by inject {
-        parametersOf(requireActivity())
-    }
 
     private val searchResultAdapter = TrackAdapter {
         onCLickDebounce(it)
@@ -56,13 +51,12 @@ SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (savedInstanceState != null) {
-            binding.searchEditText.setText(savedInstanceState.getString(SEARCH_TEXT))
-
-        }
-
         viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
+        }
+
+        viewModel.observeSearchText().observe(viewLifecycleOwner) {
+            binding.searchEditText.setText(it)
         }
 
         onCLickDebounce = debounce<Track>(
@@ -71,7 +65,10 @@ SearchFragment : Fragment() {
             false
         ) { track ->
             viewModel.onTrackPressed(track)
-            router.openTrack(OPEN_TRACK_INTENT, track)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(track.toString())
+            )
         }
 
         viewModel.observeClearTextState().observe(viewLifecycleOwner) { clearTextState ->
@@ -111,11 +108,6 @@ SearchFragment : Fragment() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_TEXT, binding.searchEditText.text.toString())
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.removeTextChangedListener(searchTextWatcher)
@@ -123,7 +115,7 @@ SearchFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        router.onDestroy()
+        viewModel.onDestroy()
     }
 
     override fun onResume() {
@@ -236,8 +228,6 @@ SearchFragment : Fragment() {
     }
 
     companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
         const val CLICK_DEBOUNCE_DELAY = 1_000L
-        const val OPEN_TRACK_INTENT = "TRACK INTENT"
     }
 }

@@ -115,6 +115,10 @@ class PlayerViewModel(
         playlistsLiveData.postValue(PlaylistsState.HidePlaylists)
     }
 
+    fun onResume() {
+        if (playlistsLiveData.value is PlaylistsState.DisplayPlaylists) addToPlaylistClicked()
+    }
+
     private fun renderState(playerState: PlayerState) {
         stateLiveData.postValue(playerState)
     }

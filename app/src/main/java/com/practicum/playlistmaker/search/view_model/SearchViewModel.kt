@@ -22,11 +22,14 @@ class SearchViewModel(
     private var lastUnsuccessfulSearch: String = ""
     private val stateLiveData = MutableLiveData<SearchState>()
     private val clearTextState = MutableLiveData<ClearTextState>(ClearTextState.None)
+    private val searchTextLiveData = MutableLiveData<String>()
     private var latestSearchText: String? = null
     private var searchJob: Job? = null
 
     fun observeState(): LiveData<SearchState> = stateLiveData
     fun observeClearTextState(): LiveData<ClearTextState> = clearTextState
+    fun observeSearchText(): LiveData<String> = searchTextLiveData
+
     fun textCleared() {
         clearTextState.value = ClearTextState.None
     }
@@ -67,6 +70,10 @@ class SearchViewModel(
     fun onResume() {
         if (stateLiveData.value is SearchState.HistoryContent) showSearchHistory()
         else if (stateLiveData.value is SearchState.SearchContent) searchRequest(latestSearchText!!)
+    }
+
+    fun onDestroy() {
+        searchTextLiveData.postValue(latestSearchText ?: "")
     }
 
     private fun showSearchHistory() {

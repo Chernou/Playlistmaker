@@ -6,18 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.view_model.FavoritesState
 import com.practicum.playlistmaker.favorites.view_model.FavoritesViewModel
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
-import com.practicum.playlistmaker.utils.NavigationRouter
 import com.practicum.playlistmaker.utils.debounce
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class FavoritesFragment : Fragment() {
 
@@ -26,10 +25,6 @@ class FavoritesFragment : Fragment() {
     private lateinit var emptyFavoritesLayout: ViewGroup
     private val favoritesAdapter = TrackAdapter {
         onClickDebounce(it)
-    }
-
-    private val router: NavigationRouter by inject {
-        parametersOf(requireActivity())
     }
 
     private lateinit var onClickDebounce: (Track) -> Unit
@@ -60,7 +55,10 @@ class FavoritesFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             false
         ) { track ->
-            router.openTrack(OPEN_TRACK_INTENT, track)
+            findNavController().navigate(
+                R.id.action_mediaFragment_to_playerFragment,
+                PlayerFragment.createArgs(track.toString())
+            )
         }
     }
 
@@ -92,6 +90,5 @@ class FavoritesFragment : Fragment() {
     companion object {
         fun newInstance() = FavoritesFragment()
         private const val CLICK_DEBOUNCE_DELAY = 1_000L
-        const val OPEN_TRACK_INTENT = "TRACK INTENT"
     }
 }

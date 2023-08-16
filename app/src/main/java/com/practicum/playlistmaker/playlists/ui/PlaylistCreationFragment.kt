@@ -15,6 +15,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
@@ -66,7 +67,7 @@ class PlaylistCreationFragment : Fragment() {
                 descriptionEditText.text.toString(),
                 pickedImageUri
             )
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            findNavController().navigateUp()
         }
 
         coverImageView.setOnClickListener {
@@ -81,7 +82,7 @@ class PlaylistCreationFragment : Fragment() {
                 .setMessage(resources.getString(R.string.save_pl_dialog_message))
                 .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                 }.setPositiveButton(resources.getString(R.string.finish)) { _, _ ->
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                    findNavController().navigateUp()
                 }
 
         toolbar.setNavigationOnClickListener {
@@ -89,7 +90,7 @@ class PlaylistCreationFragment : Fragment() {
                 confirmDialog.show()
 
             } else {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+                findNavController().navigateUp()
             }
         }
     }
