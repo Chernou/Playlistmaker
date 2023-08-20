@@ -104,6 +104,7 @@
         <item name="fontWeight">400</item>
     </style>
 
+    <!-- Dialog -->
     <style name="AppTheme_MyMaterialAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="materialAlertDialogTitleTextStyle">
             @style/AppTheme.MyMaterialAlertDialog.Title.Text
@@ -111,7 +112,7 @@
         <item name="materialAlertDialogBodyTextStyle">
             @style/AppTheme.MyMaterialAlertDialog.Body.Text
         </item>
-        <!-- Buttons -->
+
         <item name="buttonBarPositiveButtonStyle">@style/AppTheme.MyMaterialAlertDialog.Button
         </item>
         <item name="buttonBarNegativeButtonStyle">@style/AppTheme.MyMaterialAlertDialog.Button
@@ -130,7 +131,30 @@
     <style name="AppTheme.MyMaterialAlertDialog.Button" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textSize">@dimen/settings_text_size</item>
     </style>
+    <!-- Dialog Ends -->
 
-    <dimen name="size_6">6</dimen>
-    <dimen name="size_10">10dp</dimen>
+    <style name="FloatingHintStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/pl_card_text_size</item>
+        <item name="android:background">@color/background</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="fontWeight">400</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+    <style name="TextInputEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/black_light_white_night</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">@dimen/start_padding_settings_menu_items</item>
+        <item name="android:paddingTop">@dimen/vertical_padding_settings_menu_items</item>
+        <item name="android:paddingBottom">@dimen/vertical_padding_settings_menu_items</item>
+        <item name="android:textSize">@dimen/settings_text_size</item>
+        <item name="drawableTint">@color/settings_icons</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="fontWeight">400</item>
+    </style>
+
 </resources>

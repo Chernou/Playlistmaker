@@ -62,25 +62,41 @@
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <com.google.android.material.textfield.TextInputLayout
+    <RelativeLayout
         android:id="@+id/playlist_name_layout"
-        style="@style/FloatingHintStyle"
-        android:textColorHint="@color/black_light_white_night"
-        android:layout_marginTop="@dimen/size_32"
+        android:layout_width="@dimen/size_0"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_26"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/pl_cover">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/playlist_name"
-            style="@style/TextInputEditTextStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_pl_features_rounded"
-            android:hint="@string/playlist_name"
-            android:lines="1" />
+            android:layout_marginTop="@dimen/size_8">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <EditText
+                android:id="@+id/playlist_name"
+                style="@style/SettingsTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_pl_features_rounded"
+                android:hint="@string/playlist_name"
+                android:inputType="text"
+                android:lines="1"
+                android:padding="@dimen/size_16"
+                android:textColorHint="@color/black_light_white_night" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/playlist_name_hint"
+            style="@style/FloatingHintStyle"
+            android:text="@string/playlist_name"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/playlist_description_layout"

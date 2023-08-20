@@ -63,5 +63,7 @@
     <dimen name="size_15">15dp</dimen>
     <dimen name="size_45">45dp</dimen>
     <dimen name="size_204">204dp</dimen>
+    <dimen name="size_26">26dp</dimen>
+    <dimen name="size_10">10dp</dimen>
 
 </resources>

@@ -29,7 +29,8 @@ class PlaylistCreationFragment : Fragment() {
     private lateinit var descriptionEditText: EditText
     private lateinit var coverImageView: ImageView
     private lateinit var createPlTextView: TextView
-
+    private lateinit var nameHint: TextView
+    private lateinit var descriptionHint: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +44,11 @@ class PlaylistCreationFragment : Fragment() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         createPlTextView = view.findViewById(R.id.create_playlist)
-        nameEditText = view.findViewById(R.id.playlist_name_large)
+        nameEditText = view.findViewById(R.id.playlist_name)
         descriptionEditText = view.findViewById(R.id.playlist_description)
         coverImageView = view.findViewById(R.id.pl_cover)
+        nameHint = view.findViewById(R.id.playlist_name_hint)
+        descriptionHint = view.findViewById(R.id.playlist_description_hint)
 
         var coverPickedFlag = false
         var pickedImageUri: Uri? = null
@@ -75,6 +78,7 @@ class PlaylistCreationFragment : Fragment() {
         }
 
         nameEditText.addTextChangedListener(plNameTextWatcher)
+        descriptionEditText.addTextChangedListener(plDescriptionTextWatcher)
 
         val confirmDialog =
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
@@ -95,9 +99,18 @@ class PlaylistCreationFragment : Fragment() {
         }
     }
 
+    private fun displayView(view: View, displayed: Boolean) {
+        if (displayed) {
+            view.visibility = View.VISIBLE
+        } else {
+            view.visibility = View.GONE
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         nameEditText.removeTextChangedListener(plNameTextWatcher)
+        descriptionEditText.removeTextChangedListener(plDescriptionTextWatcher)
     }
 
     private val plNameTextWatcher = object : TextWatcher {
@@ -109,6 +122,19 @@ class PlaylistCreationFragment : Fragment() {
 
         override fun afterTextChanged(p0: Editable?) {
             createPlTextView.isEnabled = p0?.isNotEmpty() == true
+            displayView(nameHint, p0?.isNotEmpty() == true)
+        }
+    }
+
+    private val plDescriptionTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+            displayView(descriptionHint, p0?.isNotEmpty() == true)
         }
     }
 }
