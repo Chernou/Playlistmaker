@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
 
+
 class SearchRepositoryImpl(
     private val localStorage: LocalStorage,
     private val appDatabase: AppDatabase,
