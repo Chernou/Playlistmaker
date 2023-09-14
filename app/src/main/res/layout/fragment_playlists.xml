@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/size_12"
-    tools:context=".media.ui.PlaylistsFragment">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playlists_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    tools:context=".playlists.ui.PlaylistsFragment">
 
     <TextView
         android:id="@+id/new_playlist_button"
         style="@style/SearchScreenSupportButtons"
         android:background="@drawable/bg_rounded_button"
-        android:layout_marginTop="@dimen/size_12"
+        android:layout_marginTop="@dimen/size_24"
         android:text="@string/new_playlist" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/size_16"
+        android:id="@+id/playlists_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <FrameLayout
         android:id="@+id/empty_playlists_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/size_24"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_46"
         app:fontFamily="@font/ys_display_medium">
 
         <ImageView
@@ -32,7 +34,6 @@
             android:layout_width="@dimen/size_120"
             android:layout_height="@dimen/size_120"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/size_86"
             android:contentDescription="@string/no_playlists_image"
             android:src="@drawable/nothing_is_found" />
 
@@ -41,7 +42,7 @@
             android:layout_width="@dimen/size_312"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/size_224"
+            android:layout_marginTop="@dimen/size_166"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center_horizontal"
             android:text="@string/no_playlists"
@@ -50,4 +51,4 @@
 
     </FrameLayout>
 
-</FrameLayout>
+</LinearLayout>

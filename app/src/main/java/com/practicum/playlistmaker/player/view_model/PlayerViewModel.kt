@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.domain.api.FavoritesInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
-import com.practicum.playlistmaker.playlists.domain.api.db.PlaylistsDbInteractor
-import com.practicum.playlistmaker.playlists.domain.model.Playlist
+import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbInteractor
+import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.ResourceProvider
@@ -32,7 +32,7 @@ class PlayerViewModel(
 
     private val stateLiveData = MutableLiveData<PlayerState>()
     private val toastLiveData = MutableLiveData<ToastState>()
-    private val playlistsLiveData = MutableLiveData<PlaylistsState>()
+    private val playlistsLiveData = MutableLiveData<PlaylistsInPlayerState>()
     private var timerJob: Job? = null
 
     public override fun onCleared() {
@@ -62,7 +62,7 @@ class PlayerViewModel(
     fun observeState(): LiveData<PlayerState> = stateLiveData
     fun observeToastState(): LiveData<ToastState> = toastLiveData
     fun observeIsFavorite(): LiveData<Boolean> = isFavoriteLiveData
-    fun observePlaylists(): LiveData<PlaylistsState> = playlistsLiveData
+    fun observePlaylists(): LiveData<PlaylistsInPlayerState> = playlistsLiveData
 
     fun onPlayPressed() {
         if (track.previewUrl == null) {
@@ -96,7 +96,7 @@ class PlayerViewModel(
     fun addToPlaylistClicked() {
         viewModelScope.launch {
             playlistsDbInteractor.getPlaylists().collect {
-                playlistsLiveData.postValue(PlaylistsState.DisplayPlaylists(it))
+                playlistsLiveData.postValue(PlaylistsInPlayerState.DisplayPlaylists(it))
             }
         }
     }
@@ -112,11 +112,11 @@ class PlayerViewModel(
             }
             showToast("${resourceProvider.getString(R.string.track_added_to_pl)} ${playlist.name}")
         }
-        playlistsLiveData.postValue(PlaylistsState.HidePlaylists)
+        playlistsLiveData.postValue(PlaylistsInPlayerState.HidePlaylists)
     }
 
     fun onResume() {
-        if (playlistsLiveData.value is PlaylistsState.DisplayPlaylists) addToPlaylistClicked()
+        if (playlistsLiveData.value is PlaylistsInPlayerState.DisplayPlaylists) addToPlaylistClicked()
     }
 
     private fun renderState(playerState: PlayerState) {

@@ -20,11 +20,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.player.ui.add_to_pl_rv.PlaylistsSmallAdapter
+import com.practicum.playlistmaker.player.ui.playlists_adapter.PlaylistsSmallAdapter
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
-import com.practicum.playlistmaker.player.view_model.PlaylistsState
+import com.practicum.playlistmaker.player.view_model.PlaylistsInPlayerState
 import com.practicum.playlistmaker.player.view_model.ToastState
-import com.practicum.playlistmaker.playlists.domain.model.Playlist
+import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -154,12 +154,12 @@ class PlayerFragment : Fragment() {
         }
         viewModel.observePlaylists().observe(viewLifecycleOwner) {
             when (it) {
-                is PlaylistsState.DisplayPlaylists -> {
+                is PlaylistsInPlayerState.DisplayPlaylists -> {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
                     displayPlaylists(it.playlists)
                 }
 
-                is PlaylistsState.HidePlaylists -> bottomSheetBehavior.state =
+                is PlaylistsInPlayerState.HidePlaylists -> bottomSheetBehavior.state =
                     BottomSheetBehavior.STATE_HIDDEN
             }
         }

@@ -133,28 +133,24 @@
     </style>
     <!-- Dialog Ends -->
 
-    <style name="FloatingHintStyle">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="FloatingHintStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textSize">@dimen/pl_card_text_size</item>
-        <item name="android:background">@color/background</item>
         <item name="fontFamily">@font/ys_display_regular</item>
         <item name="fontWeight">400</item>
+        <item name="boxStrokeColor">@color/pl_creation_edit_text</item>
         <item name="android:letterSpacing">0.03</item>
-        <item name="android:textColor">@color/blue</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/edit_text_view_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/edit_text_view_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/edit_text_view_radius</item>
+        <item name="boxCornerRadiusTopStart">@dimen/edit_text_view_radius</item>
     </style>
 
     <style name="TextInputEditTextStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:textColor">@color/black_light_white_night</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">@dimen/start_padding_settings_menu_items</item>
-        <item name="android:paddingTop">@dimen/vertical_padding_settings_menu_items</item>
-        <item name="android:paddingBottom">@dimen/vertical_padding_settings_menu_items</item>
         <item name="android:textSize">@dimen/settings_text_size</item>
-        <item name="drawableTint">@color/settings_icons</item>
         <item name="fontFamily">@font/ys_display_regular</item>
-        <item name="fontWeight">400</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:imeOptions">actionDone|flagNoExtractUi</item>
     </style>
 
 </resources>

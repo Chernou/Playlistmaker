@@ -8,8 +8,8 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.player.data.PlayerImpl
 import com.practicum.playlistmaker.player.domain.api.Player
-import com.practicum.playlistmaker.playlists.data.local_files.PrivateStorage
-import com.practicum.playlistmaker.playlists.data.local_files.PrivateStorageImpl
+import com.practicum.playlistmaker.playlists_creation.data.local_files.PrivateStorage
+import com.practicum.playlistmaker.playlists_creation.data.local_files.PrivateStorageImpl
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.SearchRequest

@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    tools:context=".playlists.ui.PlaylistCreationFragment">
+    android:id="@+id/parent_layout"
+    tools:context=".playlists_creation.ui.PlaylistCreationFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/left_guideline"
@@ -65,8 +66,13 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlist_name_layout"
         style="@style/FloatingHintStyle"
-        android:textColorHint="@color/black_light_white_night"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_32"
+        android:textColorHint="@color/black_light_white_night"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:hintTextColor="@color/blue"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/pl_cover">
@@ -76,47 +82,40 @@
             style="@style/TextInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_pl_features_rounded"
             android:hint="@string/playlist_name"
-            android:lines="1" />
+            android:lines="1"
+            android:paddingStart="@dimen/start_padding_text_input_layout"
+            android:paddingTop="@dimen/vertical_padding_text_input_layout"
+            android:paddingBottom="@dimen/vertical_padding_text_input_layout" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <RelativeLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlist_description_layout"
-        android:layout_width="@dimen/size_0"
+        style="@style/FloatingHintStyle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_8"
+        android:textColorHint="@color/black_light_white_night"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="1dp"
+        app:hintTextColor="@color/blue"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"
         app:layout_constraintStart_toEndOf="@id/left_guideline"
         app:layout_constraintTop_toBottomOf="@id/playlist_name_layout">
 
-        <RelativeLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlist_description"
+            style="@style/TextInputEditTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_8">
+            android:hint="@string/playlist_description"
+            android:lines="1"
+            android:paddingStart="@dimen/start_padding_text_input_layout"
+            android:paddingTop="@dimen/vertical_padding_text_input_layout"
+            android:paddingBottom="@dimen/vertical_padding_text_input_layout" />
 
-            <EditText
-                android:id="@+id/playlist_description"
-                style="@style/SettingsTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_pl_features_rounded"
-                android:hint="@string/playlist_description"
-                android:inputType="text"
-                android:lines="1"
-                android:padding="@dimen/size_16"
-                android:textColorHint="@color/black_light_white_night" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/playlist_description_hint"
-            style="@style/FloatingHintStyle"
-            android:text="@string/playlist_description"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/create_playlist"

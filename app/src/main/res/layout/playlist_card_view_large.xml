@@ -10,6 +10,7 @@
         android:id="@+id/playlist_cover_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:background="@drawable/bg_pl_card_cover_rounded"
         android:src="@drawable/ic_track_placeholder_large" />
 
@@ -18,12 +19,16 @@
         style="@style/PlaylistCardViewText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_4" />
+        android:layout_marginTop="@dimen/size_4"
+        android:ellipsize="end"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/number_of_tracks_large"
         style="@style/PlaylistCardViewText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1" />
 
 </LinearLayout>
