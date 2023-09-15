@@ -29,6 +29,7 @@ import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistCreatio
 import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistsCreationViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 class PlaylistCreationFragment : Fragment() {
 
     private val viewModel: PlaylistsCreationViewModel by viewModel()
@@ -98,7 +99,6 @@ class PlaylistCreationFragment : Fragment() {
 
         createPlTextView.setOnClickListener {
             viewModel.onCreatePlClicked()
-            findNavController().navigateUp()
             playlistCreatedSnackbar(view.findViewById(R.id.parent_layout))
         }
 
@@ -118,6 +118,7 @@ class PlaylistCreationFragment : Fragment() {
         viewModel.observeScreenState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 PlaylistCreationState.EMPTY_STATE -> findNavController().navigateUp()
+                PlaylistCreationState.PLAYLIST_CREATED -> findNavController().navigateUp()
                 PlaylistCreationState.REQUEST_PERMISSION -> confirmDialog.show()
                 PlaylistCreationState.CREATE_BUTTON_DISABLED -> createPlTextView.isEnabled = false
                 PlaylistCreationState.CREATE_BUTTON_ENABLED -> createPlTextView.isEnabled = true

@@ -24,13 +24,13 @@ val repositoryModule = module {
         SettingsRepositoryImpl(get())
     }
 
-    factory { TrackDbConverter() }
+    single { TrackDbConverter() }
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
     }
 
-    factory { PlaylistDbConverter(get()) }
+    single { PlaylistDbConverter() }
 
     single<PlaylistsDbRepository> {
         PlaylistsDbRepositoryImpl(get(), get(), get())

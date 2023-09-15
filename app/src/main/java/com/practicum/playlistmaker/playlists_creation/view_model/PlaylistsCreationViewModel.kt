@@ -70,6 +70,7 @@ class PlaylistsCreationViewModel(
                 updatedUri = filesInteractor.addToPrivateStorage(Uri.parse(coverUri)).toString()
             }
             dbInteractor.addPlaylist(Playlist(name, description, updatedUri))
+            screenStateLiveData.value = PlaylistCreationState.PLAYLIST_CREATED
         }
     }
 
