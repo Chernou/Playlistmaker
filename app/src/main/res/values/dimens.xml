@@ -71,5 +71,7 @@
     <dimen name="edit_text_view_radius">4dp</dimen>
     <dimen name="size_30">30dp</dimen>
     <dimen name="size_166">166dp</dimen>
+    <dimen name="snackbar_text_size">5sp</dimen>
+    <dimen name="max_pl_cover_height">160dp</dimen>
 
 </resources>

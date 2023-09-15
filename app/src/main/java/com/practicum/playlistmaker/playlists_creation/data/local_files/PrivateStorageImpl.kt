@@ -5,12 +5,15 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
 
 class PrivateStorageImpl(private val context: Context) : PrivateStorage {
-    override suspend fun saveImage(uri: Uri): URI {
+
+    override suspend fun saveImage(uri: Uri): URI = withContext(Dispatchers.IO) {
         val filePath = File(
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
             PLAYLISTS_COVERS_FOLDER
@@ -25,7 +28,7 @@ class PrivateStorageImpl(private val context: Context) : PrivateStorage {
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, outputStream)
 
-        return file.toURI()
+        file.toURI()
     }
 
     companion object {

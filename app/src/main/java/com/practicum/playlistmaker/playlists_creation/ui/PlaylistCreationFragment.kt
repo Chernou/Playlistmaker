@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.playlists_creation.ui
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -123,12 +124,11 @@ class PlaylistCreationFragment : Fragment() {
                 PlaylistCreationState.CREATE_BUTTON_DISABLED -> createPlTextView.isEnabled = false
                 PlaylistCreationState.CREATE_BUTTON_ENABLED -> createPlTextView.isEnabled = true
             }
-
         }
     }
 
     private fun playlistCreatedSnackbar(view: View) {
-        Snackbar.make(
+        val snackbar = Snackbar.make(
             requireContext(),
             view,
             "${getString(R.string.playlist)} ${nameEditText.text} ${getString(R.string.created)}",
@@ -138,7 +138,13 @@ class PlaylistCreationFragment : Fragment() {
                 requireContext(),
                 R.color.black_light_white_night
             )
-        ).show()
+        )
+        snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
+            textSize = resources.getDimension(R.dimen.snackbar_text_size)
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            typeface = Typeface.DEFAULT
+        }
+        snackbar.show()
     }
 
     private fun displaySettings() {

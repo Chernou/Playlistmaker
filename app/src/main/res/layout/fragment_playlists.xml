@@ -3,24 +3,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="@dimen/size_12"
     tools:context=".playlists.ui.PlaylistsFragment">
 
     <TextView
         android:id="@+id/new_playlist_button"
         style="@style/SearchScreenSupportButtons"
+        android:layout_marginTop="@dimen/size_12"
         android:background="@drawable/bg_rounded_button"
-        android:layout_marginTop="@dimen/size_24"
         android:text="@string/new_playlist" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="@dimen/size_16"
         android:id="@+id/playlists_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/size_16" />
 
     <FrameLayout
         android:id="@+id/empty_playlists_layout"
