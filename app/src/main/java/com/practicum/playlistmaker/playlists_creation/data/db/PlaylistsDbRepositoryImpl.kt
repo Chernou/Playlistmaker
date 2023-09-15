@@ -25,6 +25,7 @@ class PlaylistsDbRepositoryImpl(
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = database.playlistsDao().getPlaylists()
+
         emit(convertFromPlaylistEntity(playlists))
     }
 

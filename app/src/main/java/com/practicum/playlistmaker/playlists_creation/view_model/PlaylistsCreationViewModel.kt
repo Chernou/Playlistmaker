@@ -56,6 +56,7 @@ class PlaylistsCreationViewModel(
         if (text.toString().isEmpty())
             screenStateLiveData.value = PlaylistCreationState.CREATE_BUTTON_DISABLED
         else screenStateLiveData.value = PlaylistCreationState.CREATE_BUTTON_ENABLED
+        name = text.toString()
     }
 
     fun onDescriptionChanged(text: CharSequence?) {
