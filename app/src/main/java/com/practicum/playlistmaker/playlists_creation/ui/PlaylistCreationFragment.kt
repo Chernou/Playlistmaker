@@ -25,6 +25,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.playlists_creation.view_model.PermissionState
+import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistCreationState
 import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistsCreationViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -56,7 +57,6 @@ class PlaylistCreationFragment : Fragment() {
         nameContainer = view.findViewById(R.id.playlist_name_layout)
         descriptionContainer = view.findViewById(R.id.playlist_description_layout)
 
-        var coverPickedFlag = false
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
@@ -64,7 +64,6 @@ class PlaylistCreationFragment : Fragment() {
                         .load(uri.toString())
                         .centerCrop()
                         .into(coverImageView)
-                    coverPickedFlag = true
                 }
                 viewModel.saveCoverUri(uri)
             }
@@ -113,12 +112,17 @@ class PlaylistCreationFragment : Fragment() {
                 }
 
         toolbar.setNavigationOnClickListener {
-            viewModel
-            if (!nameEditText.text.isNullOrEmpty() || !descriptionEditText.text.isNullOrEmpty() || coverPickedFlag) {
-                confirmDialog.show()
-            } else {
-                findNavController().navigateUp()
+            viewModel.onBackPressed()
+        }
+
+        viewModel.observeScreenState().observe(viewLifecycleOwner) { state ->
+            when (state) {
+                PlaylistCreationState.EMPTY_STATE -> findNavController().navigateUp()
+                PlaylistCreationState.REQUEST_PERMISSION -> confirmDialog.show()
+                PlaylistCreationState.CREATE_BUTTON_DISABLED -> createPlTextView.isEnabled = false
+                PlaylistCreationState.CREATE_BUTTON_ENABLED -> createPlTextView.isEnabled = true
             }
+
         }
     }
 

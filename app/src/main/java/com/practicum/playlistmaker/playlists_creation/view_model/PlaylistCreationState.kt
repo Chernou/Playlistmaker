@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.playlists_creation.view_model
 
-sealed interface PlaylistCreationState {
-    object EmptyState : PlaylistCreationState
-    class CreationInProgress(isButtonActive: Boolean) : PlaylistCreationState
+enum class PlaylistCreationState {
+    EMPTY_STATE, REQUEST_PERMISSION, CREATE_BUTTON_ENABLED, CREATE_BUTTON_DISABLED
 }

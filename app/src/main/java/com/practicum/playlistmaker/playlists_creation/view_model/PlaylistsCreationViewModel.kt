@@ -20,8 +20,8 @@ class PlaylistsCreationViewModel(
     private val requester: PermissionRequester
 ) : ViewModel() {
 
-    private val stateLiveDate = MutableLiveData<PlaylistCreationState>()
-    fun observeState(): LiveData<PlaylistCreationState> = stateLiveDate
+    private val screenStateLiveData = MutableLiveData<PlaylistCreationState>()
+    fun observeScreenState(): LiveData<PlaylistCreationState> = screenStateLiveData
 
     private val permissionStateLiveDate = MutableLiveData<PermissionState>()
     fun observePermissionState(): LiveData<PermissionState> = permissionStateLiveDate
@@ -43,7 +43,9 @@ class PlaylistsCreationViewModel(
             }.collect { result ->
                 when (result) {
                     is PermissionResult.Granted -> permissionStateLiveDate.postValue(PermissionState.GRANTED)
-                    is PermissionResult.Denied.DeniedPermanently -> permissionStateLiveDate.postValue(PermissionState.DENIED_PERMANENTLY)
+                    is PermissionResult.Denied.DeniedPermanently ->
+                        permissionStateLiveDate.postValue(PermissionState.DENIED_PERMANENTLY)
+
                     else -> permissionStateLiveDate.postValue(PermissionState.NEEDS_RATIONALE)
                 }
             }
@@ -51,19 +53,13 @@ class PlaylistsCreationViewModel(
     }
 
     fun onNameChanged(text: CharSequence?) {
-        name = text.toString()
+        if (text.toString().isEmpty())
+            screenStateLiveData.value = PlaylistCreationState.CREATE_BUTTON_DISABLED
+        else screenStateLiveData.value = PlaylistCreationState.CREATE_BUTTON_ENABLED
     }
 
     fun onDescriptionChanged(text: CharSequence?) {
         description = text.toString()
-    }
-
-    private fun renderState() {
-        if (coverUri.isNotEmpty() || name.isNotEmpty() || description.isNotEmpty()) {
-            stateLiveDate.postValue(PlaylistCreationState.CreationInProgress(name.isNotEmpty()))
-        } else {
-            stateLiveDate.postValue(PlaylistCreationState.EmptyState)
-        }
     }
 
     fun onCreatePlClicked() {
@@ -78,5 +74,13 @@ class PlaylistsCreationViewModel(
 
     fun saveCoverUri(uri: Uri?) {
         coverUri = uri.toString()
+    }
+
+    fun onBackPressed() {
+        if (coverUri.isNotEmpty() || name.isNotEmpty() || description.isNotEmpty()) {
+            screenStateLiveData.value = PlaylistCreationState.REQUEST_PERMISSION
+        } else {
+            screenStateLiveData.value = PlaylistCreationState.EMPTY_STATE
+        }
     }
 }
