@@ -66,8 +66,8 @@ class PlaylistCreationFragment : Fragment() {
                         .load(uri.toString())
                         .centerCrop()
                         .into(coverImageView)
+                    viewModel.saveCoverUri(uri)
                 }
-                viewModel.saveCoverUri(uri)
             }
 
         viewModel.observePermissionState().observe(viewLifecycleOwner) { state ->

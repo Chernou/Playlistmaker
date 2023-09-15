@@ -27,7 +27,6 @@ class PrivateStorageImpl(private val context: Context) : PrivateStorage {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, outputStream)
-
         file.toURI()
     }
 
