@@ -17,4 +17,7 @@ object DateUtils {
         }
         calendar.get(Calendar.YEAR).toString()
     }
+
+    fun getMinutesFromMillis(trackTimeMillis: Int?): String =
+        SimpleDateFormat("mm", Locale.getDefault()).format(trackTimeMillis) ?: ""
 }

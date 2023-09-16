@@ -26,6 +26,7 @@ import com.practicum.playlistmaker.player.view_model.PlaylistsInPlayerState
 import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -45,6 +46,8 @@ class PlayerFragment : Fragment() {
         parametersOf(track)
     }
 
+    private val gson: Gson by inject()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +58,7 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        track = Gson().fromJson(
+        track = gson.fromJson(
             requireArguments().getString(TRACK_ARG),
             object : TypeToken<Track>() {}.type
         )

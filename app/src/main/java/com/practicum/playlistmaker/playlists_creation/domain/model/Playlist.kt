@@ -1,5 +1,7 @@
 package com.practicum.playlistmaker.playlists_creation.domain.model
 
+import com.google.gson.Gson
+
 data class Playlist(
     val playlistId: Int,
     val name: String,
@@ -13,4 +15,8 @@ data class Playlist(
         description: String,
         coverPath: String,
     ) : this(0, name, description, coverPath, ArrayList<Int>(), 0)
+
+    override fun toString(): String {
+        return Gson().toJson(this)
+    }
 }

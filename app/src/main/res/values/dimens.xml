@@ -9,6 +9,7 @@
     <dimen name="pl_card_text_size">12sp</dimen>
     <dimen name="text_size_19">19sp</dimen>
     <dimen name="media_track_text_size">22sp</dimen>
+    <dimen name="playlist_name_text_size">24sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="support_search_buttons_text_size">14sp</dimen>
     <dimen name="small_text_size">11sp</dimen>
@@ -73,5 +74,7 @@
     <dimen name="size_166">166dp</dimen>
     <dimen name="snackbar_text_size">5sp</dimen>
     <dimen name="max_pl_cover_height">160dp</dimen>
+    <dimen name="font_weight_playlist_name">700</dimen>
+    <dimen name="playlist_details_text_size">18sp</dimen>
 
 </resources>

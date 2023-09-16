@@ -27,7 +27,8 @@
     <string name="looked_for">Вы искали</string>
     <string name="clear_search_history">Очистить историю</string>
     <string name="media_duration">Длительность</string>
-    <string name="media_album">Альбом</string>
+    <string name="track_cover">Обложка трека</string>
+    <string name="playlist_cover">Обложка плейлиста</string>
     <string name="back_arrow_description">Стрелка назад</string>
     <string name="media_year">Год</string>
     <string name="media_genre">Жанр</string>
@@ -55,5 +56,6 @@
     <string name="read_image_rationale">Необходимо разрешение для чтения файлов из общего хранилища</string>
     <string name="playlist">Плейлист</string>
     <string name="created">создан</string>
+    <string name="media_album">Альбом</string>
 
 </resources>

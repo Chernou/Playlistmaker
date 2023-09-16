@@ -11,8 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.playlists.view_model.PlaylistsState
+import com.practicum.playlistmaker.playlist_details.ui.PlaylistDetailsFragment
 import com.practicum.playlistmaker.playlists.ui.playlists_adapter.PlaylistsLargeAdapter
+import com.practicum.playlistmaker.playlists.view_model.PlaylistsState
 import com.practicum.playlistmaker.playlists.view_model.PlaylistsViewModel
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.utils.debounce
@@ -59,7 +60,10 @@ class PlaylistsFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             false
         ) { playlist ->
-            //todo implement onClick
+            findNavController().navigate(
+                R.id.action_mediaFragment_to_playlistDetailsFragment,
+                PlaylistDetailsFragment.createArgs(playlist.toString())
+            )
         }
     }
 
