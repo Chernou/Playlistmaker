@@ -62,7 +62,7 @@ class PlaylistsFragment : Fragment() {
         ) { playlist ->
             findNavController().navigate(
                 R.id.action_mediaFragment_to_playlistDetailsFragment,
-                PlaylistDetailsFragment.createArgs(playlist.toString())
+                PlaylistDetailsFragment.createArgs(playlist.playlistId)
             )
         }
     }

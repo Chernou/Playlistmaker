@@ -8,19 +8,27 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.launch
 
 class PlaylistDetailsViewModel(
-    private val playlist: Playlist,
+    private val playlistId: Int,
     private val interactor: PlaylistInteractor
 ) : ViewModel() {
 
     private var tracksDuration = ""
     private var numberOfTracks = ""
     private val tracks = ArrayList<Track>()
+    private lateinit var playlist: Playlist
 
     init {
-        initialiseTracks()
+        getPlaylistFromDb()
+        initialiseTrackList()
     }
 
-    private fun initialiseTracks() {
+    private fun getPlaylistFromDb() {
+        viewModelScope.launch {
+            playlist = interactor.getPlaylist(playlistId)
+        }
+    }
+
+    private fun initialiseTrackList() {
         viewModelScope.launch {
             tracks.addAll(interactor.getTracksInPlaylist(playlist))
         }

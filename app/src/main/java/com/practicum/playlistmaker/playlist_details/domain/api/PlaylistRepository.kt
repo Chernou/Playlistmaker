@@ -5,4 +5,5 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 interface PlaylistRepository {
     suspend fun getTracksInPlaylist(playlist: Playlist): List<Track>
+    suspend fun getPlaylist(playlistId: Int): Playlist
 }
