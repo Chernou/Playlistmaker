@@ -130,6 +130,7 @@
 
     <style name="AppTheme.MyMaterialAlertDialog.Button" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:textSize">@dimen/settings_text_size</item>
+        <item name="android:textColor">@color/blue</item>
     </style>
     <!-- Dialog Ends -->
 

@@ -48,6 +48,7 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/search_hint_color"
+            android:textCursorDrawable="@drawable/blue_cursor"
             android:textSize="@dimen/settings_text_size"
             android:visibility="visible"
             app:drawableTint="@color/search_hint_color"
@@ -119,7 +120,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/purple_500"
+            android:indeterminateTint="@color/blue"
             android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -160,8 +161,8 @@
             <TextView
                 android:id="@+id/clear_search_history_button"
                 style="@style/SearchScreenSupportButtons"
-                android:background="@drawable/bg_rounded_button"
                 android:layout_marginTop="@dimen/size_12"
+                android:background="@drawable/bg_rounded_button"
                 android:text="@string/clear_search_history"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

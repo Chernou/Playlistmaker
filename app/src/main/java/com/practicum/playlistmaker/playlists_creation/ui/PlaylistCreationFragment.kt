@@ -58,6 +58,7 @@ class PlaylistCreationFragment : Fragment() {
         coverImageView = view.findViewById(R.id.pl_cover)
         nameContainer = view.findViewById(R.id.playlist_name_layout)
         descriptionContainer = view.findViewById(R.id.playlist_description_layout)
+        val greyOverlay: View = view.findViewById(R.id.overlay)
 
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -107,10 +108,8 @@ class PlaylistCreationFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
                 .setTitle(resources.getString(R.string.save_pl_dialog_title))
                 .setMessage(resources.getString(R.string.save_pl_dialog_message))
-                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.finish)) { _, _ ->
-                    findNavController().navigateUp()
-                }
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ -> greyOverlay.visibility = View.GONE }
+                .setPositiveButton(resources.getString(R.string.finish)) { _, _ -> findNavController().navigateUp() }
 
         toolbar.setNavigationOnClickListener {
             viewModel.onBackPressed()
@@ -120,7 +119,11 @@ class PlaylistCreationFragment : Fragment() {
             when (state) {
                 PlaylistCreationState.EMPTY_STATE -> findNavController().navigateUp()
                 PlaylistCreationState.PLAYLIST_CREATED -> findNavController().navigateUp()
-                PlaylistCreationState.REQUEST_PERMISSION -> confirmDialog.show()
+                PlaylistCreationState.REQUEST_PERMISSION -> {
+                    confirmDialog.show()
+                    greyOverlay.visibility = View.VISIBLE
+                }
+
                 PlaylistCreationState.CREATE_BUTTON_DISABLED -> createPlTextView.isEnabled = false
                 PlaylistCreationState.CREATE_BUTTON_ENABLED -> createPlTextView.isEnabled = true
             }

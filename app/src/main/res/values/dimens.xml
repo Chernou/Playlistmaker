@@ -73,5 +73,6 @@
     <dimen name="size_166">166dp</dimen>
     <dimen name="snackbar_text_size">5sp</dimen>
     <dimen name="max_pl_cover_height">160dp</dimen>
+    <dimen name="cursor_width">2dp</dimen>
 
 </resources>

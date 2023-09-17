@@ -1,12 +1,12 @@
 package com.practicum.playlistmaker.playlists_creation.domain.impl
 
 import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbInteractor
-import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbRepository
+import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsRepository
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
-class PlaylistsDbInteractorImpl(private val repository: PlaylistsDbRepository) :
+class PlaylistsDbInteractorImpl(private val repository: PlaylistsRepository) :
     PlaylistsDbInteractor {
     override suspend fun addPlaylist(playlist: Playlist) {
         repository.addPlaylist(playlist)
