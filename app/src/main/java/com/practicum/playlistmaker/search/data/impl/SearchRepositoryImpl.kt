@@ -8,7 +8,6 @@ import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
 import com.practicum.playlistmaker.search.domain.model.Track
-import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.ResourceProvider
@@ -46,7 +45,7 @@ class SearchRepositoryImpl(
                         it.country,
                         it.releaseDate ?: "",
                         getYear(it.releaseDate) ?: "",
-                        formatTime(it.duration),
+                        it.duration ?: 0,
                         it.artworkUri,
                         TextUtils.getHighResArtwork(it.artworkUri),
                         it.genre,

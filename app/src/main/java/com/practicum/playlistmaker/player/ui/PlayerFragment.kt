@@ -26,6 +26,7 @@ import com.practicum.playlistmaker.player.view_model.PlaylistsInPlayerState
 import com.practicum.playlistmaker.player.view_model.ToastState
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.utils.DateUtils
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -114,7 +115,7 @@ class PlayerFragment : Fragment() {
 
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackDuration.text = track.duration
+        trackDuration.text = DateUtils.formatTime(track.duration)
         trackGenre.text = track.genre
         trackCountry.text = track.country
         trackYear.text = track.releaseYear

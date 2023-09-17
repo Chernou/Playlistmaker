@@ -28,7 +28,7 @@ class PlaylistLargeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
             )
             .into(cover)
         name.text = playlist.name
-        numberOfTracks.text = TextUtils.numberOfTracksString(playlist.numberOfTracks)
+        numberOfTracks.text = TextUtils.getNumberOfTracksString(playlist.numberOfTracks)
     }
 
 }

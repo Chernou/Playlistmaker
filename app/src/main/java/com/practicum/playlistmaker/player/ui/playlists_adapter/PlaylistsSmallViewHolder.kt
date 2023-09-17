@@ -35,6 +35,6 @@ class PlaylistsSmallViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(coverImage)
         name.text = playlist.name
-        numberOfTracks.text = TextUtils.numberOfTracksString(playlist.numberOfTracks)
+        numberOfTracks.text = TextUtils.getNumberOfTracksString(playlist.numberOfTracks)
     }
 }

@@ -12,7 +12,7 @@ class TrackEntity(
     val country: String,
     val releaseDate: String,
     val releaseYear: String,
-    val duration: String,
+    val duration: Int,
     val lowResArtworkUri: String,
     val highResArtworkUri: String,
     val genre: String,
