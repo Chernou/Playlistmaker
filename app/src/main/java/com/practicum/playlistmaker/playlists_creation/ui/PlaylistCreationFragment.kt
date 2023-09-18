@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.playlists_creation.view_model.CreateButtonState
 import com.practicum.playlistmaker.playlists_creation.view_model.PermissionState
 import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistCreationState
 import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistsCreationViewModel
@@ -90,7 +91,6 @@ class PlaylistCreationFragment : Fragment() {
 
         nameEditText.doOnTextChanged { text, _, _, _ ->
             viewModel.onNameChanged(text)
-            createPlTextView.isEnabled = text?.isNotEmpty() == true
             setHintAndBoxColor(text, nameContainer)
         }
 
@@ -119,16 +119,20 @@ class PlaylistCreationFragment : Fragment() {
             when (state) {
                 PlaylistCreationState.EMPTY_STATE -> findNavController().navigateUp()
                 PlaylistCreationState.PLAYLIST_CREATED -> findNavController().navigateUp()
-                PlaylistCreationState.REQUEST_PERMISSION -> {
+                PlaylistCreationState.SHOW_DIALOG -> {
                     confirmDialog.show()
                 }
-
-                PlaylistCreationState.CREATE_BUTTON_DISABLED -> createPlTextView.isEnabled = false
-                PlaylistCreationState.CREATE_BUTTON_ENABLED -> createPlTextView.isEnabled = true
             }
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback {
+        viewModel.observeCreateButtonState().observe(viewLifecycleOwner) { state ->
+            when (state) {
+                CreateButtonState.DISABLED -> createPlTextView.isEnabled = false
+                CreateButtonState.ENABLED -> createPlTextView.isEnabled = true
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
             viewModel.onBackPressed()
         }
     }

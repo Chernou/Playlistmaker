@@ -26,6 +26,9 @@ class PlaylistsCreationViewModel(
     private val permissionStateLiveDate = MutableLiveData<PermissionState>()
     fun observePermissionState(): LiveData<PermissionState> = permissionStateLiveDate
 
+    private val createButtonStateLiveData = MutableLiveData<CreateButtonState>()
+    fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonStateLiveData
+
     private var coverUri = ""
     private var name = ""
     private var description = ""
@@ -54,8 +57,8 @@ class PlaylistsCreationViewModel(
 
     fun onNameChanged(text: CharSequence?) {
         if (text.toString().isEmpty())
-            screenStateLiveData.value = PlaylistCreationState.CREATE_BUTTON_DISABLED
-        else screenStateLiveData.value = PlaylistCreationState.CREATE_BUTTON_ENABLED
+            createButtonStateLiveData.value = CreateButtonState.DISABLED
+        else createButtonStateLiveData.value = CreateButtonState.ENABLED
         name = text.toString()
     }
 
@@ -80,7 +83,7 @@ class PlaylistsCreationViewModel(
 
     fun onBackPressed() {
         if (coverUri.isNotEmpty() || name.isNotEmpty() || description.isNotEmpty()) {
-            screenStateLiveData.value = PlaylistCreationState.REQUEST_PERMISSION
+            screenStateLiveData.value = PlaylistCreationState.SHOW_DIALOG
         } else {
             screenStateLiveData.value = PlaylistCreationState.EMPTY_STATE
         }
