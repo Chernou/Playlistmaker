@@ -24,23 +24,20 @@ class PlaylistDetailsViewModel(
         renderScreen()
     }
 
-    private val playlistStateLiveData = MutableLiveData<PlaylistDetailsState>()
-    fun observePlaylistState(): LiveData<PlaylistDetailsState> = playlistStateLiveData
+    private var trackToDelete: Track? = null
 
-    private var trackIdToDelete: Int = 0
+    private val playlistLiveData = MutableLiveData<PlaylistDetails>()
+    fun observePlaylistData(): LiveData<PlaylistDetails> = playlistLiveData
+
+    private val tracksLiveData = MutableLiveData<TracksInPlaylistData>()
+    fun observeTracksLiveDate(): LiveData<TracksInPlaylistData> = tracksLiveData
 
     private fun renderScreen() {
         viewModelScope.launch {
             getPlaylistById()
             initTrackList()
-            playlistStateLiveData.value = PlaylistDetailsState.PlaylistScreen(
-                playlist.coverUri,
-                playlist.name,
-                playlist.description,
-                getDuration(),
-                getNumberOfTracks(),
-                tracks
-            )
+            renderPlaylistData()
+            renderTracksData()
         }
     }
 
@@ -50,6 +47,14 @@ class PlaylistDetailsViewModel(
 
     private suspend fun initTrackList() {
         tracks.addAll(interactor.getTracksInPlaylist(playlist))
+    }
+
+    private fun renderPlaylistData() {
+        playlistLiveData.value = PlaylistDetails(
+            playlist.coverUri,
+            playlist.name,
+            playlist.description,
+        )
     }
 
     private fun getDuration(): String {
@@ -64,13 +69,19 @@ class PlaylistDetailsViewModel(
         return getNumberOfTracksString(tracks.size)
     }
 
-    fun onTrackDeleteClicked() {
-        viewModelScope.launch {
-            interactor.deleteTrackFromPl(trackIdToDelete, playlistId)
-        }
+    private fun renderTracksData() {
+        tracksLiveData.value = TracksInPlaylistData(getDuration(), getNumberOfTracks(), tracks)
     }
 
-    fun onTrackLongClicked(trackId: Int) {
-        trackIdToDelete = trackId
+    fun onTrackLongClicked(track: Track) {
+        trackToDelete = track
+    }
+
+    fun onTrackDeleteConfirmed() {
+        viewModelScope.launch {
+            interactor.deleteTrackFromPl(trackToDelete!!.trackId, playlistId)
+        }
+        tracks.remove(trackToDelete)
+        renderTracksData()
     }
 }

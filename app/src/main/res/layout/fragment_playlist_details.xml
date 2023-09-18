@@ -147,7 +147,7 @@
         android:background="@drawable/bg_bottom_sheet"
         android:orientation="vertical"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="@dimen/size_152"
+        app:behavior_peekHeight="@dimen/size_160"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
         <ImageView

@@ -15,8 +15,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
-import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsState
+import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetails
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsViewModel
+import com.practicum.playlistmaker.playlist_details.view_model.TracksInPlaylistData
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,7 +38,7 @@ class PlaylistDetailsFragment : Fragment() {
     private val trackAdapter =
         TrackInPlaylistAdapter(object : TrackInPlaylistAdapter.TrackClickListener {
             override fun onTrackLongClickListener(track: Track): Boolean {
-                viewModel.onTrackLongClicked(track.trackId)
+                viewModel.onTrackLongClicked(track)
                 confirmDialog.show()
                 return true
             }
@@ -65,10 +66,11 @@ class PlaylistDetailsFragment : Fragment() {
 
         confirmDialog =
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
-                .setTitle(getDialogueTitle())
-                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                    viewModel.onTrackDeleteClicked()
+                .setTitle(resources.getString(R.string.delete_track_title))
+                .setMessage(resources.getString(R.string.delete_track_message))
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
+                    viewModel.onTrackDeleteConfirmed()
                 }
 
         onCLickDebounce = debounce(
@@ -87,21 +89,26 @@ class PlaylistDetailsFragment : Fragment() {
             adapter = trackAdapter
         }
 
-        viewModel.observePlaylistState().observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is PlaylistDetailsState.PlaylistScreen -> renderScreen(state)
-            }
+        viewModel.observePlaylistData().observe(viewLifecycleOwner) { data ->
+            renderScreen(data)
+        }
+
+        viewModel.observeTracksLiveDate().observe(viewLifecycleOwner) { tracks ->
+            renderTrackData(tracks)
         }
     }
 
-    private fun renderScreen(state: PlaylistDetailsState.PlaylistScreen) {
-        binding.playlistName.text = state.name
-        binding.playlistDescription.text = state.description
-        binding.playlistDuration.text = state.duration
-        binding.numberOfTracks.text = state.numberOfTracks
-        setCoverImage(state.coverUri)
+    private fun renderScreen(playlistData: PlaylistDetails) {
+        binding.playlistName.text = playlistData.name
+        binding.playlistDescription.text = playlistData.description
+        setCoverImage(playlistData.coverUri)
+    }
+
+    private fun renderTrackData(tracksData: TracksInPlaylistData) {
+        binding.playlistDuration.text = tracksData.duration
+        binding.numberOfTracks.text = tracksData.numberOfTracks
         trackAdapter.trackList.clear()
-        trackAdapter.trackList.addAll(state.tracks)
+        trackAdapter.trackList.addAll(tracksData.tracks)
         trackAdapter.notifyDataSetChanged()
     }
 
@@ -114,7 +121,7 @@ class PlaylistDetailsFragment : Fragment() {
     }
 
     private fun getDialogueTitle(): String {
-        return "${resources.getString(R.string.delete_playlist_question)} \"${binding.playlistName.text}\"?"
+        return "${resources.getString(R.string.delete_playlist_question)} \"${binding.playlistName.text.toString()}\"?"
     }
 
     companion object {

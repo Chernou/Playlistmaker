@@ -74,11 +74,14 @@
     <dimen name="size_166">166dp</dimen>
     <dimen name="snackbar_text_size">5sp</dimen>
     <dimen name="max_pl_cover_height">160dp</dimen>
+    <dimen name="cursor_width">2dp</dimen>
+    <dimen name="size_50">50dp</dimen>
     <dimen name="font_weight_playlist_name">700</dimen>
     <dimen name="playlist_details_text_size">18sp</dimen>
     <dimen name="size_1">1dp</dimen>
-    <dimen name="size_50">50dp</dimen>
     <dimen name="size_152">152dp</dimen>
     <dimen name="font_weight_playlist_other">400</dimen>
+    <dimen name="size_192">192dp</dimen>
+    <dimen name="size_160">160dp</dimen>
 
 </resources>

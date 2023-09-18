@@ -31,10 +31,13 @@ class PlaylistRepositoryImpl(
 
     override suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int) {
         withContext(Dispatchers.IO) {
-            database.playlistsTracksCrossRefDao().deleteTrack(PlaylistTracksCrossRef(trackId, playlistId))
+            database.playlistsTracksCrossRefDao()
+                .deleteTrack(PlaylistTracksCrossRef(trackId, playlistId))
             val updatedNumberOfTracks = database.playlistsDao().getNumberOfTracks(playlistId) - 1
             database.playlistsDao().updateNumberOfTracks(playlistId, updatedNumberOfTracks)
-            if (database.playlistsTracksCrossRefDao().getPlaylistsContainingTrack(trackId).isEmpty()) database.tracksInPlDao().deleteTrack(trackId)
+            if (database.playlistsTracksCrossRefDao().getPlaylistsContainingTrack(trackId)
+                    .isEmpty()
+            ) database.tracksInPlDao().deleteTrack(trackId)
         }
     }
 }
