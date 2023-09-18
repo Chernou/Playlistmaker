@@ -104,6 +104,12 @@
         <item name="fontWeight">400</item>
     </style>
 
+    <style name="NumberOfTracks_TrackCardVIew">
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="fontWeight">400</item>
+    </style>
+
     <!-- Dialog -->
     <style name="AppTheme_MyMaterialAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="materialAlertDialogTitleTextStyle">

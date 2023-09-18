@@ -165,5 +165,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/menu_bottom_sheet_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_bottom_sheet"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="@dimen/size_160"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <ImageView
+            android:layout_width="@dimen/size_50"
+            android:layout_height="@dimen/size_4"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_8"
+            android:src="@drawable/ic_bottom_sheet_stick" />
+
+    </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
