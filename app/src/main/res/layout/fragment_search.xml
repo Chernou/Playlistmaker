@@ -15,7 +15,7 @@
         android:layout_marginBottom="@dimen/size_16">
 
         <TextView
-            android:id="@+id/back_to_main"
+            android:id="@+id/search_screen_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -48,6 +48,7 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/search_hint_color"
+            android:textCursorDrawable="@drawable/blue_cursor"
             android:textSize="@dimen/settings_text_size"
             android:visibility="visible"
             app:drawableTint="@color/search_hint_color"
@@ -106,9 +107,11 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/refresh_search_button"
-                style="@style/SearchScreenSupportButtons"
                 android:layout_marginTop="@dimen/size_332"
                 android:text="@string/refresh_search"
+
+                style="@style/SearchScreenSupportButtons"
+                app:backgroundTint="@color/black_light_white_night"
                 app:cornerRadius="@dimen/support_search_buttons_corner_radius"
                 app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent" />
 
@@ -119,7 +122,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/purple_500"
+            android:indeterminateTint="@color/blue"
             android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -157,17 +160,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/search_history_text_view" />
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/clear_search_history_button"
                 style="@style/SearchScreenSupportButtons"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginVertical="@dimen/size_16"
+                android:layout_marginTop="@dimen/size_12"
+                android:background="@drawable/bg_rounded_button"
                 android:text="@string/clear_search_history"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_history_recycler_view"
-                app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent" />
+                app:layout_constraintTop_toBottomOf="@id/search_history_recycler_view" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

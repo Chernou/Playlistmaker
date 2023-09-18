@@ -5,6 +5,9 @@
     <dimen name="rounded_corners_album_preview">2dp</dimen>
     <dimen name="rounded_corners_album">8dp</dimen>
     <dimen name="main_text_size">24sp</dimen>
+    <dimen name="medium_text_size">14sp</dimen>
+    <dimen name="pl_card_text_size">12sp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
     <dimen name="media_track_text_size">22sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
     <dimen name="support_search_buttons_text_size">14sp</dimen>
@@ -18,7 +21,9 @@
     <dimen name="size_8">8dp</dimen>
     <dimen name="size_4">4dp</dimen>
     <dimen name="vertical_padding_settings_menu_items">20dp</dimen>
+    <dimen name="vertical_padding_text_input_layout">18dp</dimen>
     <dimen name="start_padding_settings_menu_items">16dp</dimen>
+    <dimen name="start_padding_text_input_layout">16dp</dimen>
     <dimen name="corner_radius_main">16dp</dimen>
     <dimen name="support_search_buttons_corner_radius">54dp</dimen>
     <dimen name="main_icon_padding">8dp</dimen>
@@ -54,5 +59,21 @@
     <dimen name="size_108">108dp</dimen>
     <dimen name="size_256">256dp</dimen>
     <dimen name="size_148">148dp</dimen>
+    <dimen name="size_32">32dp</dimen>
+    <dimen name="size_32dp">32dp</dimen>
+    <dimen name="size_18">18dp</dimen>
+    <dimen name="size_14">14dp</dimen>
+    <dimen name="size_15">15dp</dimen>
+    <dimen name="size_45">45dp</dimen>
+    <dimen name="size_204">204dp</dimen>
+    <dimen name="size_26">26dp</dimen>
+    <dimen name="size_10">10dp</dimen>
+    <dimen name="edit_text_view_radius">4dp</dimen>
+    <dimen name="size_30">30dp</dimen>
+    <dimen name="size_166">166dp</dimen>
+    <dimen name="snackbar_text_size">5sp</dimen>
+    <dimen name="max_pl_cover_height">160dp</dimen>
+    <dimen name="cursor_width">2dp</dimen>
+    <dimen name="size_50">50dp</dimen>
 
 </resources>

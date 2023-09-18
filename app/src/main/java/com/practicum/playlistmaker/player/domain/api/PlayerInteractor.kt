@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.player.view_model.api
+package com.practicum.playlistmaker.player.domain.api
 
 interface PlayerInteractor {
 

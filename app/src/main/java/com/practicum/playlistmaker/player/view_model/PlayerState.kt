@@ -1,6 +1,10 @@
 package com.practicum.playlistmaker.player.view_model
 
-sealed class PlayerState(val isPlayButtonEnabled: Boolean, val buttonText: String, val progress: String) {
+sealed class PlayerState(
+    val isPlayButtonEnabled: Boolean,
+    val buttonText: String,
+    val progress: String
+) {
     class DefaultState : PlayerState(false, PLAY_BUTTON, ZERO_TIMER)
     class PreparedState : PlayerState(true, PLAY_BUTTON, ZERO_TIMER)
     class PlayingState(progress: String) : PlayerState(true, PAUSE_BUTTON, progress)

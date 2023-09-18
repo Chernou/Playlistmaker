@@ -4,7 +4,6 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.search.data.LocalStorage
 import com.practicum.playlistmaker.search.data.NetworkClient
-import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
 import com.practicum.playlistmaker.search.data.dto.SearchResponse
@@ -12,20 +11,22 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
+import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.utils.TextUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
 
+
 class SearchRepositoryImpl(
     private val localStorage: LocalStorage,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val networkClient: NetworkClient,
+    private val resourceProvider: ResourceProvider
 ) : SearchRepository, KoinComponent {
 
     override fun searchTracks(query: String): Flow<Resource<List<Track>>> = flow {
-        val resourceProvider: ResourceProvider = getKoin().get()
-        val networkClient: NetworkClient = getKoin().get()
         val searchRequest: SearchRequest = getKoin().get {
             parametersOf(query)
         }

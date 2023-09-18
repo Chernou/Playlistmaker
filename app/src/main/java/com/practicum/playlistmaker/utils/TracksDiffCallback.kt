@@ -2,7 +2,7 @@ package com.practicum.playlistmaker.utils
 
 import androidx.recyclerview.widget.DiffUtil
 
-class TracksDiffCallback: DiffUtil.Callback() {
+class TracksDiffCallback : DiffUtil.Callback() {
 
     //todo implement
 

@@ -24,7 +24,6 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         Glide.with(artwork)
             .load(model.lowResArtworkUri)
             .fitCenter()
-            .centerCrop()
             .apply(
                 RequestOptions
                     .bitmapTransform(

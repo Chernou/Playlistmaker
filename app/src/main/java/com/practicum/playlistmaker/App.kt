@@ -6,7 +6,7 @@ import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.navigatorModule
 import com.practicum.playlistmaker.di.repositoryModule
-import com.practicum.playlistmaker.di.resourceProviderModule
+import com.practicum.playlistmaker.di.othersModule
 import com.practicum.playlistmaker.di.viewModelModule
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
 import org.koin.android.ext.android.inject
@@ -25,7 +25,7 @@ class App : Application() {
                 repositoryModule,
                 dataModule,
                 interactorModule,
-                resourceProviderModule,
+                othersModule,
                 navigatorModule,
                 viewModelModule,
             )

@@ -9,10 +9,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 
-class RetrofitNetworkClient : NetworkClient, KoinComponent {
+class RetrofitNetworkClient(
+    private val itunesService: ItunesService,
+    private val connectivityManager: ConnectivityManager
+) : NetworkClient, KoinComponent {
 
     override suspend fun doRequest(dto: Any): Response {
-        val itunesService: ItunesService = getKoin().get()
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTIVITY_ERROR }
         }
@@ -30,7 +32,6 @@ class RetrofitNetworkClient : NetworkClient, KoinComponent {
     }
 
     private fun isConnected(): Boolean {
-        val connectivityManager: ConnectivityManager = getKoin().get()
         val capabilities =
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
