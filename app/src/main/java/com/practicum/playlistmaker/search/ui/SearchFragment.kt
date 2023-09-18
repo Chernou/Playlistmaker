@@ -29,13 +29,17 @@ SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
 
-    private val searchResultAdapter = TrackAdapter {
-        onCLickDebounce(it)
-    }
+    private val searchResultAdapter = TrackAdapter(object : TrackAdapter.TrackClickListener {
+        override fun onTrackClickListener(track: Track) {
+            onCLickDebounce(track)
+        }
+    })
 
-    private val searchHistoryAdapter = TrackAdapter {
-        onCLickDebounce(it)
-    }
+    private val searchHistoryAdapter = TrackAdapter(object : TrackAdapter.TrackClickListener {
+        override fun onTrackClickListener(track: Track) {
+            onCLickDebounce(track)
+        }
+    })
 
     private lateinit var binding: FragmentSearchBinding
     private lateinit var onCLickDebounce: (Track) -> Unit

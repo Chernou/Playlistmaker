@@ -27,6 +27,8 @@ class PlaylistDetailsViewModel(
     private val playlistStateLiveData = MutableLiveData<PlaylistDetailsState>()
     fun observePlaylistState(): LiveData<PlaylistDetailsState> = playlistStateLiveData
 
+    private var trackIdToDelete: Int = 0
+
     private fun renderScreen() {
         viewModelScope.launch {
             getPlaylistById()
@@ -60,5 +62,15 @@ class PlaylistDetailsViewModel(
 
     private fun getNumberOfTracks(): String {
         return getNumberOfTracksString(tracks.size)
+    }
+
+    fun onTrackDeleteClicked() {
+        viewModelScope.launch {
+            interactor.deleteTrackFromPl(trackIdToDelete, playlistId)
+        }
+    }
+
+    fun onTrackLongClicked(trackId: Int) {
+        trackIdToDelete = trackId
     }
 }

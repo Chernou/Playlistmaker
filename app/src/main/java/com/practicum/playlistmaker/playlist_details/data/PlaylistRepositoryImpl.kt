@@ -4,6 +4,7 @@ import com.practicum.playlistmaker.favorites.data.converters.TrackDbConverter
 import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistRepository
 import com.practicum.playlistmaker.playlists_creation.data.converters.PlaylistDbConverter
+import com.practicum.playlistmaker.playlists_creation.data.db.entity.PlaylistTracksCrossRef
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
@@ -26,5 +27,14 @@ class PlaylistRepositoryImpl(
 
     override suspend fun getPlaylist(playlistId: Int): Playlist = withContext(Dispatchers.IO) {
         playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))
+    }
+
+    override suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int) {
+        withContext(Dispatchers.IO) {
+            database.playlistsTracksCrossRefDao().deleteTrack(PlaylistTracksCrossRef(trackId, playlistId))
+            val updatedNumberOfTracks = database.playlistsDao().getNumberOfTracks(playlistId) - 1
+            database.playlistsDao().updateNumberOfTracks(playlistId, updatedNumberOfTracks)
+            if (database.playlistsTracksCrossRefDao().getPlaylistsContainingTrack(trackId).isEmpty()) database.tracksInPlDao().deleteTrack(trackId)
+        }
     }
 }

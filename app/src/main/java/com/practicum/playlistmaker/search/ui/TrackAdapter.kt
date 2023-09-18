@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 
-class TrackAdapter(private val clickListener: TrackClickListener) :
+open class TrackAdapter(private val clickListener: TrackClickListener) :
     RecyclerView.Adapter<TrackViewHolder>() {
 
     var trackList = ArrayList<Track>()
@@ -23,7 +23,7 @@ class TrackAdapter(private val clickListener: TrackClickListener) :
         holder.itemView.setOnClickListener { clickListener.onTrackClickListener(trackList[position]) }
     }
 
-    fun interface TrackClickListener {
+    interface TrackClickListener {
         fun onTrackClickListener(track: Track)
     }
 

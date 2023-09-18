@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.playlist_details.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +11,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsState
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsViewModel
 import com.practicum.playlistmaker.search.domain.model.Track
-import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -32,9 +31,21 @@ class PlaylistDetailsFragment : Fragment() {
     private val viewModel: PlaylistDetailsViewModel by viewModel {
         parametersOf(playlistId)
     }
-    private val trackAdapter = TrackAdapter { track ->
-        onCLickDebounce(track)
-    }
+
+    private lateinit var confirmDialog: MaterialAlertDialogBuilder
+
+    private val trackAdapter =
+        TrackInPlaylistAdapter(object : TrackInPlaylistAdapter.TrackClickListener {
+            override fun onTrackLongClickListener(track: Track): Boolean {
+                viewModel.onTrackLongClicked(track.trackId)
+                confirmDialog.show()
+                return true
+            }
+
+            override fun onTrackClickListener(track: Track) {
+                onCLickDebounce(track)
+            }
+        })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +62,14 @@ class PlaylistDetailsFragment : Fragment() {
         binding.playlistToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+
+        confirmDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
+                .setTitle(getDialogueTitle())
+                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                    viewModel.onTrackDeleteClicked()
+                }
 
         onCLickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
@@ -92,6 +111,10 @@ class PlaylistDetailsFragment : Fragment() {
             .placeholder(R.drawable.ic_track_placeholder_large)
             .transform(CenterCrop())
             .into(binding.playlistCoverImage)
+    }
+
+    private fun getDialogueTitle(): String {
+        return "${resources.getString(R.string.delete_playlist_question)} \"${binding.playlistName.text}\"?"
     }
 
     companion object {

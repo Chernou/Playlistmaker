@@ -12,8 +12,10 @@ import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.utils.TextUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
 
@@ -68,7 +70,7 @@ class SearchRepositoryImpl(
         emit(searchHistory.map {
             it.copy(isFavorite = favoritesIds.contains(it.trackId))
         })
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun clearSearchHistory() {
         localStorage.clearSearchHistory()

@@ -5,8 +5,11 @@ import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.favorites.data.db.entity.TrackEntity
 import com.practicum.playlistmaker.favorites.domain.api.FavoritesRepository
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class FavoritesRepositoryImpl(
@@ -15,19 +18,22 @@ class FavoritesRepositoryImpl(
 ) : FavoritesRepository {
 
     override suspend fun addFavorite(track: Track) {
-        database.favoritesDao()
-            .insertFavorite(trackDbConverter.map(track, Calendar.getInstance().time.time))
+        withContext(Dispatchers.IO) {
+            database.favoritesDao()
+                .insertFavorite(trackDbConverter.map(track, Calendar.getInstance().time.time))
+        }
     }
 
     override suspend fun deleteFavorite(track: Track) {
-        database.favoritesDao()
-            .deleteFavorite(trackDbConverter.map(track, Calendar.getInstance().time.time))
+        withContext(Dispatchers.IO) {
+            database.favoritesDao().deleteFavorite(trackDbConverter.map(track, Calendar.getInstance().time.time))
+        }
     }
 
     override fun getFavorites(): Flow<List<Track>> = flow {
         val tracks = database.favoritesDao().getFavorites()
         emit(convertFromTrackEntity(tracks))
-    }
+    }.flowOn(Dispatchers.IO)
 
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> =
         tracks.sortedByDescending { it.addingTime }.map { track -> trackDbConverter.map(track) }

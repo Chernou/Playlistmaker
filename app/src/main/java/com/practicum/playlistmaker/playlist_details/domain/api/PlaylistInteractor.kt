@@ -6,4 +6,5 @@ import com.practicum.playlistmaker.search.domain.model.Track
 interface PlaylistInteractor {
     suspend fun getTracksInPlaylist(playlist: Playlist): List<Track>
     suspend fun getPlaylist(playlistId: Int): Playlist
+    suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int)
 }

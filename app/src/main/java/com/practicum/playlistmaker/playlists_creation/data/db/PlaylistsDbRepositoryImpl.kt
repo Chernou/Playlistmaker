@@ -8,8 +8,11 @@ import com.practicum.playlistmaker.playlists_creation.data.db.entity.PlaylistTra
 import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbRepository
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 class PlaylistsDbRepositoryImpl(
     private val database: AppDatabase,
@@ -18,11 +21,15 @@ class PlaylistsDbRepositoryImpl(
 ) : PlaylistsDbRepository {
 
     override suspend fun addPlaylist(playlist: Playlist) {
-        database.playlistsDao().insertPlaylist(playlistDbConverter.map(playlist))
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().insertPlaylist(playlistDbConverter.map(playlist))
+        }
     }
 
     override suspend fun deletePlaylist(playlist: Playlist) {
-        database.playlistsDao().deletePlaylist(playlistDbConverter.map(playlist))
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().deletePlaylist(playlistDbConverter.map(playlist))
+        }
     }
 
     override fun getPlaylists(): Flow<List<Playlist>> = flow {
@@ -35,16 +42,18 @@ class PlaylistsDbRepositoryImpl(
             )
         }
         emit(playlists)
-    }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun addTrackToPl(track: Track, playlist: Playlist) {
-        database.playlistsDao().updateNumberOfTracks(
-            playlist.playlistId,
-            playlist.numberOfTracks
-        )
-        database.tracksInPlDao().addTrackToPl(trackDbConverter.map(track))
-        database.playlistsTracksCrossRefDao()
-            .addTrackInPl(PlaylistTracksCrossRef(track.trackId, playlist.playlistId))
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().updateNumberOfTracks(
+                playlist.playlistId,
+                playlist.numberOfTracks
+            )
+            database.tracksInPlDao().addTrackToPl(trackDbConverter.map(track))
+            database.playlistsTracksCrossRefDao()
+                .addTrackToPl(PlaylistTracksCrossRef(track.trackId, playlist.playlistId))
+        }
     }
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> =

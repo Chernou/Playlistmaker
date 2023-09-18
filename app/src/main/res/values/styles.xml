@@ -153,4 +153,22 @@
         <item name="android:imeOptions">actionDone|flagNoExtractUi</item>
     </style>
 
+    <style name="PlaylistDetailsTextStyle">
+        <item name="android:textSize">@dimen/playlist_details_text_size</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="fontWeight">@dimen/font_weight_playlist_other</item>
+        <item name="android:textColor">@color/black_alt</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PlaylistNameTextStyle">
+        <item name="android:textSize">@dimen/playlist_name_text_size</item>
+        <item name="fontFamily">@font/ys_display_bold</item>
+        <item name="fontWeight">@dimen/font_weight_playlist_name</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">@dimen/size_0</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
 </resources>

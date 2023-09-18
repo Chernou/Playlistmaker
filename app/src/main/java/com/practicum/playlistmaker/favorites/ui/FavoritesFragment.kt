@@ -23,9 +23,11 @@ class FavoritesFragment : Fragment() {
     private val viewModel: FavoritesViewModel by viewModel()
     private lateinit var favoritesRecyclerView: RecyclerView
     private lateinit var emptyFavoritesLayout: ViewGroup
-    private val favoritesAdapter = TrackAdapter {
-        onClickDebounce(it)
-    }
+    private val favoritesAdapter = TrackAdapter(object : TrackAdapter.TrackClickListener {
+        override fun onTrackClickListener(track: Track) {
+            onClickDebounce(track)
+        }
+    })
 
     private lateinit var onClickDebounce: (Track) -> Unit
 
