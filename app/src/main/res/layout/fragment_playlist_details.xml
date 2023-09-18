@@ -10,8 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:background="@color/light_gray"
         android:layout_height="match_parent"
+        android:background="@color/light_gray"
         android:paddingBottom="@dimen/size_12">
 
         <androidx.constraintlayout.widget.Guideline
@@ -50,9 +50,9 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/playlist_toolbar"
-            android:elevation="@dimen/size_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="@dimen/size_1"
             app:navigationIcon="@drawable/ic_arrow_back" />
 
         <ImageView
@@ -169,14 +169,21 @@
         android:background="@drawable/bg_bottom_sheet"
         android:orientation="vertical"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="@dimen/size_204"
+        app:behavior_peekHeight="@dimen/size_136"
         app:layout_behavior="@string/bottom_sheet_behavior">
+
+        <ImageView
+            android:layout_width="@dimen/size_50"
+            android:layout_height="@dimen/size_4"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_8"
+            android:src="@drawable/ic_bottom_sheet_stick" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tracks_in_pl_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_24" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/size_12" />
 
     </LinearLayout>
 

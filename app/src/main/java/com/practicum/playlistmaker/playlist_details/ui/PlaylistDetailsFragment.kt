@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.playlist_details.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,7 @@ class PlaylistDetailsFragment : Fragment() {
     private val viewModel: PlaylistDetailsViewModel by viewModel {
         parametersOf(playlistId)
     }
-    private val adapter = TrackAdapter { track ->
+    private val trackAdapter = TrackAdapter { track ->
         onCLickDebounce(track)
     }
 
@@ -47,7 +48,11 @@ class PlaylistDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         playlistId = requireArguments().getInt(PLAYLIST_ARG)
 
-        onCLickDebounce = debounce<Track>(
+        binding.playlistToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        onCLickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
@@ -60,7 +65,7 @@ class PlaylistDetailsFragment : Fragment() {
 
         binding.tracksInPlRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = adapter
+            adapter = trackAdapter
         }
 
         viewModel.observePlaylistState().observe(viewLifecycleOwner) { state ->
@@ -76,9 +81,9 @@ class PlaylistDetailsFragment : Fragment() {
         binding.playlistDuration.text = state.duration
         binding.numberOfTracks.text = state.numberOfTracks
         setCoverImage(state.coverUri)
-        adapter.trackList.clear()
-        adapter.trackList.addAll(state.tracks)
-        adapter.notifyDataSetChanged()
+        trackAdapter.trackList.clear()
+        trackAdapter.trackList.addAll(state.tracks)
+        trackAdapter.notifyDataSetChanged()
     }
 
     private fun setCoverImage(uri: String) {

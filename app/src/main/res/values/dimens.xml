@@ -77,5 +77,6 @@
     <dimen name="font_weight_playlist_name">700</dimen>
     <dimen name="playlist_details_text_size">18sp</dimen>
     <dimen name="size_1">1dp</dimen>
+    <dimen name="size_50">50dp</dimen>
 
 </resources>
