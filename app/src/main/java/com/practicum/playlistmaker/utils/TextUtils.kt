@@ -1,5 +1,8 @@
 package com.practicum.playlistmaker.utils
 
+import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.utils.DateUtils.formatTime
+
 object TextUtils {
 
     fun getHighResArtwork(lowResArtworkUri: String) =
@@ -24,4 +27,16 @@ object TextUtils {
                 else -> "$minutes минут"
             }
         }
+
+    fun getSharedTracksString(tracks: ArrayList<Track>): String {
+        var tracksString = getNumberOfTracksString(tracks.size)
+        for (i in 0 until tracks.size) {
+            tracksString += "\n${i + 1}. ${tracks[i].artistName} - ${tracks[i].trackName} ${
+                formatTime(
+                    tracks[i].duration
+                )
+            }"
+        }
+        return tracksString
+    }
 }

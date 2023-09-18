@@ -17,6 +17,7 @@ import com.practicum.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetails
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsViewModel
+import com.practicum.playlistmaker.playlist_details.view_model.EmptyPlaylistToastState
 import com.practicum.playlistmaker.playlist_details.view_model.TracksInPlaylistData
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.debounce
@@ -60,10 +61,6 @@ class PlaylistDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         playlistId = requireArguments().getInt(PLAYLIST_ARG)
 
-        binding.playlistToolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
         confirmDialog =
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
                 .setTitle(resources.getString(R.string.delete_track_title))
@@ -84,21 +81,40 @@ class PlaylistDetailsFragment : Fragment() {
             )
         }
 
-        binding.tracksInPlRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = trackAdapter
-        }
-
         viewModel.observePlaylistData().observe(viewLifecycleOwner) { data ->
-            renderScreen(data)
+            renderPlaylistData(data)
         }
 
         viewModel.observeTracksLiveDate().observe(viewLifecycleOwner) { tracks ->
             renderTrackData(tracks)
         }
+
+        viewModel.observeToastLiveData().observe(viewLifecycleOwner) { state ->
+            if (state == EmptyPlaylistToastState.SHOW) {
+                showEmptyPlaylistToast()
+                viewModel.toastWasShown()
+            }
+        }
+
+        binding.tracksInPlRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = trackAdapter
+        }
+
+        binding.playlistToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        binding.sharePlaylistImage.setOnClickListener {
+            viewModel.onShareClicked()
+        }
+
+        binding.menuImage.setOnClickListener {
+            viewModel.onMenuClicked()
+        }
     }
 
-    private fun renderScreen(playlistData: PlaylistDetails) {
+    private fun renderPlaylistData(playlistData: PlaylistDetails) {
         binding.playlistName.text = playlistData.name
         binding.playlistDescription.text = playlistData.description
         setCoverImage(playlistData.coverUri)
@@ -120,8 +136,12 @@ class PlaylistDetailsFragment : Fragment() {
             .into(binding.playlistCoverImage)
     }
 
+    private fun showEmptyPlaylistToast() {
+        TODO("Not yet implemented")
+    }
+
     private fun getDialogueTitle(): String {
-        return "${resources.getString(R.string.delete_playlist_question)} \"${binding.playlistName.text.toString()}\"?"
+        return "${resources.getString(R.string.delete_playlist_question)} \"${binding.playlistName.text}\"?"
     }
 
     companion object {

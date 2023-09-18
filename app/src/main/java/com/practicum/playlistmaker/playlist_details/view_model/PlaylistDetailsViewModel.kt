@@ -7,14 +7,17 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistInteractor
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.utils.DateUtils.getMinutesFromMillis
+import com.practicum.playlistmaker.utils.TextUtils
 import com.practicum.playlistmaker.utils.TextUtils.getNumberOfTracksString
 import com.practicum.playlistmaker.utils.TextUtils.getTotalMinutesString
 import kotlinx.coroutines.launch
 
 class PlaylistDetailsViewModel(
     private val playlistId: Int,
-    private val interactor: PlaylistInteractor
+    private val interactor: PlaylistInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
 
     private lateinit var playlist: Playlist
@@ -31,6 +34,9 @@ class PlaylistDetailsViewModel(
 
     private val tracksLiveData = MutableLiveData<TracksInPlaylistData>()
     fun observeTracksLiveDate(): LiveData<TracksInPlaylistData> = tracksLiveData
+
+    private val toastLiveData = MutableLiveData<EmptyPlaylistToastState>()
+    fun observeToastLiveData(): LiveData<EmptyPlaylistToastState> = toastLiveData
 
     private fun renderScreen() {
         viewModelScope.launch {
@@ -83,5 +89,18 @@ class PlaylistDetailsViewModel(
         }
         tracks.remove(trackToDelete)
         renderTracksData()
+    }
+
+    fun onShareClicked() {
+        if (tracks.isEmpty()) toastLiveData.value = EmptyPlaylistToastState.SHOW
+        else sharingInteractor.shareString(TextUtils.getSharedTracksString(tracks))
+    }
+
+    fun onMenuClicked() {
+        TODO("Not yet implemented")
+    }
+
+    fun toastWasShown() {
+        toastLiveData.value = EmptyPlaylistToastState.NONE
     }
 }
