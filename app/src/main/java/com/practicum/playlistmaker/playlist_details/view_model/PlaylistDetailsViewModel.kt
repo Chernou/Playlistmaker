@@ -1,11 +1,15 @@
 package com.practicum.playlistmaker.playlist_details.view_model
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistInteractor
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
-import com.practicum.playlistmaker.utils.TextUtils
+import com.practicum.playlistmaker.utils.DateUtils.getMinutesFromMillis
+import com.practicum.playlistmaker.utils.TextUtils.getNumberOfTracksString
+import com.practicum.playlistmaker.utils.TextUtils.getTotalMinutesString
 import kotlinx.coroutines.launch
 
 class PlaylistDetailsViewModel(
@@ -13,30 +17,48 @@ class PlaylistDetailsViewModel(
     private val interactor: PlaylistInteractor
 ) : ViewModel() {
 
-    private var tracksDuration = ""
-    private var numberOfTracks = ""
-    private val tracks = ArrayList<Track>()
     private lateinit var playlist: Playlist
+    private val tracks = ArrayList<Track>()
 
     init {
-        getPlaylistById()
-        initTrackList()
+        renderScreen()
     }
 
-    private fun getPlaylistById() {
+    private val playlistStateLiveData = MutableLiveData<PlaylistDetailsState>()
+    fun observePlaylistState(): LiveData<PlaylistDetailsState> = playlistStateLiveData
+
+    private fun renderScreen() {
         viewModelScope.launch {
-            playlist = interactor.getPlaylist(playlistId)
+            getPlaylistById()
+            initTrackList()
+            playlistStateLiveData.value = PlaylistDetailsState.PlaylistScreen(
+                playlist.coverUri,
+                playlist.name,
+                playlist.description,
+                getDuration(),
+                getNumberOfTracks(),
+                tracks
+            )
         }
     }
 
-    private fun initTrackList() {
-        viewModelScope.launch {
-            tracks.addAll(interactor.getTracksInPlaylist(playlist))
-            initStrings()
-        }
+    private suspend fun getPlaylistById() {
+        playlist = interactor.getPlaylist(playlistId)
     }
 
-    private fun initStrings() {
-        numberOfTracks = TextUtils.getNumberOfTracksString(tracks.size)
+    private suspend fun initTrackList() {
+        tracks.addAll(interactor.getTracksInPlaylist(playlist))
+    }
+
+    private fun getDuration(): String {
+        var durationInMillis = 0
+        for (track in tracks) {
+            durationInMillis += track.duration
+        }
+        return getTotalMinutesString(getMinutesFromMillis(durationInMillis))
+    }
+
+    private fun getNumberOfTracks(): String {
+        return getNumberOfTracksString(tracks.size)
     }
 }
