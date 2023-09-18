@@ -253,10 +253,17 @@
         app:behavior_peekHeight="@dimen/size_204"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
+        <ImageView
+            android:layout_width="@dimen/size_50"
+            android:layout_height="@dimen/size_4"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_8"
+            android:src="@drawable/ic_bottom_sheet_stick" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_24"
+            android:layout_marginTop="@dimen/size_12"
             android:fontFamily="@font/ys_display_medium"
             android:gravity="center"
             android:paddingHorizontal="@dimen/size_16"
