@@ -63,5 +63,6 @@
     <string name="delete_track_title">Удалить трек</string>
     <string name="delete_track_message">Вы уверены, что хотите удалить трек из плейлиста?</string>
     <string name="delete">Удалить</string>
+    <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
 
 </resources>

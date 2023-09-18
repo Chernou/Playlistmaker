@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,9 +16,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
+import com.practicum.playlistmaker.playlist_details.view_model.EmptyPlaylistToastState
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetails
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsViewModel
-import com.practicum.playlistmaker.playlist_details.view_model.EmptyPlaylistToastState
 import com.practicum.playlistmaker.playlist_details.view_model.TracksInPlaylistData
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.debounce
@@ -137,7 +138,11 @@ class PlaylistDetailsFragment : Fragment() {
     }
 
     private fun showEmptyPlaylistToast() {
-        TODO("Not yet implemented")
+        Toast.makeText(
+            context,
+            resources.getString(R.string.no_tracks_to_share),
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun getDialogueTitle(): String {
