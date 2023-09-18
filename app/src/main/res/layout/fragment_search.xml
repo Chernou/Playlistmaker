@@ -15,7 +15,7 @@
         android:layout_marginBottom="@dimen/size_16">
 
         <TextView
-            android:id="@+id/back_to_main"
+            android:id="@+id/search_screen_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -107,9 +107,11 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/refresh_search_button"
-                style="@style/SearchScreenSupportButtons"
                 android:layout_marginTop="@dimen/size_332"
                 android:text="@string/refresh_search"
+
+                style="@style/SearchScreenSupportButtons"
+                app:backgroundTint="@color/black_light_white_night"
                 app:cornerRadius="@dimen/support_search_buttons_corner_radius"
                 app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent" />
 

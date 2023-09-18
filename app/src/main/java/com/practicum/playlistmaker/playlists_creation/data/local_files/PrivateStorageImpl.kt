@@ -21,7 +21,7 @@ class PrivateStorageImpl(private val context: Context) : PrivateStorage {
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
-        val file = File(filePath, uri.lastPathSegment ?: "image")
+        val file = File(filePath, uri.toString().substringAfterLast('/'))
         val inputStream = context.contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
