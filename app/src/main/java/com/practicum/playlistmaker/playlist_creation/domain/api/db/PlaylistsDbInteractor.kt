@@ -9,4 +9,7 @@ interface PlaylistsDbInteractor {
     fun getPlaylists(): Flow<List<Playlist>>
     suspend fun addTrackToPl(track: Track, playlist: Playlist)
     suspend fun getPlaylist(playlistId: Int): Playlist
+    suspend fun editPlaylistUri(playlistId: Int, coverUri: String)
+    suspend fun editPlaylistName(playlistId: Int, name: String)
+    suspend fun editPlaylistDescription(playlistId: Int, description: String)
 }

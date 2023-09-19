@@ -2,11 +2,14 @@ package com.practicum.playlistmaker.playlist_edit.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetails
 import com.practicum.playlistmaker.playlist_edit.view_model.PlaylistEditViewModel
 import com.practicum.playlistmaker.playlist_creation.ui.PlaylistCreationFragment
+import com.practicum.playlistmaker.playlist_edit.view_model.PlaylistEditStringData
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -22,14 +25,40 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.observePlaylistData().observe(viewLifecycleOwner) { data ->
-            renderScreen(data)
+            renderPlaylistData(data)
+        }
+
+        viewModel.observePlaylistEditStringData().observe(viewLifecycleOwner) { data->
+            overrideScreenStrings(data)
+        }
+
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            findNavController().navigateUp()
+        }
+
+        binding.createPlaylist.setOnClickListener {
+            viewModel.onSaveChangesClicked()
+            findNavController().navigateUp()
         }
     }
 
-    private fun renderScreen(data: PlaylistDetails) {
+    private fun renderPlaylistData(data: PlaylistDetails) {
         setPlaylistCover(data.coverUri)
-        binding.playlistName.setText(data.name)
-        binding.playlistDescription.setText(data.description)
+        with(binding) {
+            playlistName.setText(data.name)
+            playlistDescription.setText(data.description)
+        }
+    }
+
+    private fun overrideScreenStrings(data: PlaylistEditStringData) {
+        with(binding) {
+            screenName.setText(data.screenDescription)
+            createPlaylist.setText(data.saveChangesButtonText)
+        }
     }
 
     private fun setPlaylistCover(coverUri: String) {

@@ -50,8 +50,26 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override suspend fun getPlaylist(playlistId: Int): Playlist {
-        return playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))
+    override suspend fun getPlaylist(playlistId: Int): Playlist = withContext(Dispatchers.IO) {
+        playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))
+    }
+
+    override suspend fun editPlaylistUri(playlistId: Int, coverUri: String) {
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().updateUri(playlistId, coverUri)
+        }
+    }
+
+    override suspend fun editPlaylistName(playlistId: Int, name: String) {
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().updateName(playlistId, name)
+        }
+    }
+
+    override suspend fun editPlaylistDescription(playlistId: Int, description: String) {
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().updateDescription(playlistId, description)
+        }
     }
 
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> =

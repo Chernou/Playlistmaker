@@ -29,9 +29,9 @@ open class PlaylistCreationViewModel(
     private val createButtonStateLiveData = MutableLiveData<CreateButtonState>()
     fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonStateLiveData
 
-    private var coverUri = ""
-    private var name = ""
-    private var description = ""
+    protected var coverUri = ""
+    protected var name = ""
+    protected var description = ""
 
     fun onCoverClicked() {
         handlePermission()
