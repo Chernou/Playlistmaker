@@ -38,6 +38,9 @@ class PlaylistDetailsViewModel(
     private val toastLiveData = MutableLiveData<EmptyPlaylistToastState>()
     fun observeToastLiveData(): LiveData<EmptyPlaylistToastState> = toastLiveData
 
+    private val menuLiveData = MutableLiveData<PlaylistMenuState>()
+    fun observePlaylistMenuState(): LiveData<PlaylistMenuState> = menuLiveData
+
     private fun renderScreen() {
         viewModelScope.launch {
             getPlaylistById()
@@ -102,5 +105,17 @@ class PlaylistDetailsViewModel(
 
     fun toastWasShown() {
         toastLiveData.value = EmptyPlaylistToastState.NONE
+    }
+
+    fun onDeletePlaylistConfirmed() {
+        TODO("Not yet implemented")
+    }
+
+    fun menuWasShown() {
+        TODO("Not yet implemented")
+    }
+
+    fun onEditInfoClicked() {
+        TODO("Not yet implemented")
     }
 }

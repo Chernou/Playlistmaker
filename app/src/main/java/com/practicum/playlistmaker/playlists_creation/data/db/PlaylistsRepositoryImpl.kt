@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.playlists_creation.data.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.playlists_creation.data.db.entity.PlaylistEntity
 import com.practicum.playlistmaker.playlists_creation.data.db.entity.PlaylistTracksCrossRef
-import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbRepository
+import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsRepository
 import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
@@ -14,21 +14,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
-class PlaylistsDbRepositoryImpl(
+class PlaylistsRepositoryImpl(
     private val database: AppDatabase,
     private val playlistDbConverter: PlaylistDbConverter,
     private val trackDbConverter: TrackDbConverter
-) : PlaylistsDbRepository {
+) : PlaylistsRepository {
 
     override suspend fun addPlaylist(playlist: Playlist) {
         withContext(Dispatchers.IO) {
             database.playlistsDao().insertPlaylist(playlistDbConverter.map(playlist))
-        }
-    }
-
-    override suspend fun deletePlaylist(playlist: Playlist) {
-        withContext(Dispatchers.IO) {
-            database.playlistsDao().deletePlaylist(playlistDbConverter.map(playlist))
         }
     }
 

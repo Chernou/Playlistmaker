@@ -64,5 +64,9 @@
     <string name="delete_track_message">Вы уверены, что хотите удалить трек из плейлиста?</string>
     <string name="delete">Удалить</string>
     <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="share">Поделиться</string>
+    <string name="edit_info">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
 
+    <dimen name="start_padding_playlist_menu_items">16dp</dimen>
 </resources>

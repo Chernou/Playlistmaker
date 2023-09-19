@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistDetailsBinding
@@ -19,6 +20,7 @@ import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.playlist_details.view_model.EmptyPlaylistToastState
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetails
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsViewModel
+import com.practicum.playlistmaker.playlist_details.view_model.PlaylistMenuState
 import com.practicum.playlistmaker.playlist_details.view_model.TracksInPlaylistData
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.debounce
@@ -35,13 +37,13 @@ class PlaylistDetailsFragment : Fragment() {
         parametersOf(playlistId)
     }
 
-    private lateinit var confirmDialog: MaterialAlertDialogBuilder
+    private lateinit var deleteTrackDialog: MaterialAlertDialogBuilder
 
     private val trackAdapter =
         TrackInPlaylistAdapter(object : TrackInPlaylistAdapter.TrackClickListener {
             override fun onTrackLongClickListener(track: Track): Boolean {
                 viewModel.onTrackLongClicked(track)
-                confirmDialog.show()
+                deleteTrackDialog.show()
                 return true
             }
 
@@ -62,13 +64,22 @@ class PlaylistDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         playlistId = requireArguments().getInt(PLAYLIST_ARG)
 
-        confirmDialog =
+        deleteTrackDialog =
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
                 .setTitle(resources.getString(R.string.delete_track_title))
                 .setMessage(resources.getString(R.string.delete_track_message))
                 .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
                 }.setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                     viewModel.onTrackDeleteConfirmed()
+                }
+
+        val deletePlaylistDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
+                .setTitle(resources.getString(R.string.delete_playlist))
+                .setMessage(getDialogueTitle())
+                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                    viewModel.onDeletePlaylistConfirmed()
                 }
 
         onCLickDebounce = debounce(
@@ -81,6 +92,23 @@ class PlaylistDetailsFragment : Fragment() {
                 PlayerFragment.createArgs(track.toString())
             )
         }
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.menuBottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                binding.playlistDetailsOverlay.visibility = when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> View.GONE
+                    else -> View.VISIBLE
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
 
         viewModel.observePlaylistData().observe(viewLifecycleOwner) { data ->
             renderPlaylistData(data)
@@ -97,13 +125,19 @@ class PlaylistDetailsFragment : Fragment() {
             }
         }
 
-        binding.tracksInPlRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = trackAdapter
+        viewModel.observePlaylistMenuState().observe(viewLifecycleOwner) { state ->
+            if (state == PlaylistMenuState.SHOW) bottomSheetBehavior.state =
+                BottomSheetBehavior.STATE_HALF_EXPANDED
+            viewModel.menuWasShown()
         }
 
         binding.playlistToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.tracksInPlRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = trackAdapter
         }
 
         binding.sharePlaylistImage.setOnClickListener {
@@ -113,12 +147,26 @@ class PlaylistDetailsFragment : Fragment() {
         binding.menuImage.setOnClickListener {
             viewModel.onMenuClicked()
         }
+
+        binding.shareMenuItem.setOnClickListener {
+            viewModel.onShareClicked()
+        }
+
+        binding.editInfo.setOnClickListener {
+            viewModel.onEditInfoClicked()
+        }
+
+        binding.deletePlaylist.setOnClickListener {
+            deletePlaylistDialog.show()
+        }
     }
 
     private fun renderPlaylistData(playlistData: PlaylistDetails) {
         binding.playlistName.text = playlistData.name
         binding.playlistDescription.text = playlistData.description
         setCoverImage(playlistData.coverUri)
+        binding.playlistNameSmall.text = playlistData.name
+
     }
 
     private fun renderTrackData(tracksData: TracksInPlaylistData) {
@@ -127,6 +175,7 @@ class PlaylistDetailsFragment : Fragment() {
         trackAdapter.trackList.clear()
         trackAdapter.trackList.addAll(tracksData.tracks)
         trackAdapter.notifyDataSetChanged()
+        binding.numberOfTracksSmall.text = tracksData.numberOfTracks
     }
 
     private fun setCoverImage(uri: String) {
@@ -135,6 +184,12 @@ class PlaylistDetailsFragment : Fragment() {
             .placeholder(R.drawable.ic_track_placeholder_large)
             .transform(CenterCrop())
             .into(binding.playlistCoverImage)
+
+        Glide.with(binding.playlistCoverSmall)
+            .load(uri)
+            .placeholder(R.drawable.ic_track_placeholder_small)
+            .transform(CenterCrop())
+            .into(binding.playlistCoverSmall)
     }
 
     private fun showEmptyPlaylistToast() {

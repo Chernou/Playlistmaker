@@ -7,15 +7,16 @@ import com.practicum.playlistmaker.search.domain.model.Track
 
 class PlaylistInteractorImpl(private val repository: PlaylistRepository) : PlaylistInteractor {
 
-    override suspend fun getTracksInPlaylist(playlist: Playlist): List<Track> {
-        return repository.getTracksInPlaylist(playlist)
-    }
+    override suspend fun getTracksInPlaylist(playlist: Playlist): List<Track> =
+        repository.getTracksInPlaylist(playlist)
 
-    override suspend fun getPlaylist(playlistId: Int): Playlist {
-        return  repository.getPlaylist(playlistId)
-    }
+    override suspend fun getPlaylist(playlistId: Int): Playlist = repository.getPlaylist(playlistId)
 
     override suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int) {
         repository.deleteTrackFromPl(trackId, playlistId)
+    }
+
+    override suspend fun deletePlaylist(playlistId: Int) {
+        repository.deletePlaylist(playlistId)
     }
 }

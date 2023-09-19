@@ -7,4 +7,5 @@ interface PlaylistRepository {
     suspend fun getTracksInPlaylist(playlist: Playlist): List<Track>
     suspend fun getPlaylist(playlistId: Int): Playlist
     suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int)
+    suspend fun deletePlaylist(playlistId: Int)
 }

@@ -83,5 +83,8 @@
     <dimen name="font_weight_playlist_other">400</dimen>
     <dimen name="size_192">192dp</dimen>
     <dimen name="size_160">160dp</dimen>
+    <dimen name="font_weight_playlist_menu">400</dimen>
+    <dimen name="playlist_menu_text_size">16sp</dimen>
+    <dimen name="vertical_padding_playlist_menu_items">21dp</dimen>
 
 </resources>

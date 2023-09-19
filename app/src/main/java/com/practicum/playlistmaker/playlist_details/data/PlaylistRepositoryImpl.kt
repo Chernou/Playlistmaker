@@ -35,9 +35,25 @@ class PlaylistRepositoryImpl(
                 .deleteTrack(PlaylistTracksCrossRef(trackId, playlistId))
             val updatedNumberOfTracks = database.playlistsDao().getNumberOfTracks(playlistId) - 1
             database.playlistsDao().updateNumberOfTracks(playlistId, updatedNumberOfTracks)
-            if (database.playlistsTracksCrossRefDao().getPlaylistsContainingTrack(trackId)
-                    .isEmpty()
-            ) database.tracksInPlDao().deleteTrack(trackId)
+            checkAndDeleteTrack(trackId)
         }
+    }
+
+    override suspend fun deletePlaylist(playlistId: Int) {
+        withContext(Dispatchers.IO) {
+            database.playlistsDao().deletePlaylist(playlistId)
+            val tracksInPlaylist =
+                database.playlistsTracksCrossRefDao().getTracksInPlaylist(playlistId)
+            database.playlistsTracksCrossRefDao().deleteAllTracksInPlaylist(playlistId)
+            for (track in tracksInPlaylist) {
+                checkAndDeleteTrack(track.trackId)
+            }
+        }
+    }
+
+    private suspend fun checkAndDeleteTrack(trackId: Int) {
+        if (database.playlistsTracksCrossRefDao().getPlaylistsContainingTrack(trackId)
+                .isEmpty()
+        ) database.tracksInPlDao().deleteTrack(trackId)
     }
 }

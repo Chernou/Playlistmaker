@@ -77,7 +77,7 @@ class PlayerFragment : Fragment() {
         val addToPlaylist: ImageView = view.findViewById(R.id.add_to_playlist)
         val createPlaylist: TextView = view.findViewById(R.id.create_playlist)
         val bottomSheetContainer: ViewGroup = view.findViewById(R.id.bottom_sheet_container)
-        val greyOverlay: View = view.findViewById(R.id.overlay)
+        val grayOverlay: View = view.findViewById(R.id.player_overlay)
 
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
@@ -86,14 +86,14 @@ class PlayerFragment : Fragment() {
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> greyOverlay.visibility = View.GONE
-                    else -> greyOverlay.visibility = View.VISIBLE
+                grayOverlay.visibility = when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> View.GONE
+                    else -> View.VISIBLE
                 }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                greyOverlay.alpha = slideOffset
+                grayOverlay.alpha = slideOffset
             }
         })
 

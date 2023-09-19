@@ -24,5 +24,6 @@
     <color name="media_icons_background">#1A1B22</color>
     <color name="tab_indicator">#1A1B22</color>
     <color name="light_gray">#E6E8EB</color>
+    <color name="gray_overlay">#801A1B22</color>
 
 </resources>

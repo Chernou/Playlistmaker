@@ -140,6 +140,13 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <View
+        android:id="@+id/playlist_details_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_overlay"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/playlist_bottom_sheet_container"
         android:layout_width="match_parent"
@@ -181,6 +188,63 @@
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/size_8"
             android:src="@drawable/ic_bottom_sheet_stick" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:layout_marginTop="@dimen/size_12"
+            android:backgroundTint="@color/background">
+
+            <ImageView
+                android:id="@+id/playlist_cover_small"
+                android:layout_width="@dimen/size_45"
+                android:layout_height="@dimen/size_45"
+                android:layout_marginVertical="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_12"
+                android:contentDescription="@string/artwork_content_description" />
+
+            <TextView
+                android:id="@+id/playlist_name_small"
+                style="@style/TrackName_TrackCardVIew"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/size_68"
+                android:layout_marginTop="@dimen/size_14"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="@dimen/settings_text_size" />
+
+            <TextView
+                android:id="@+id/number_of_tracks_small"
+                style="@style/NumberOfTracks_TrackCardVIew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="@dimen/size_68"
+                android:layout_marginEnd="@dimen/size_4"
+                android:layout_marginBottom="@dimen/size_14"
+                android:ellipsize="end"
+                android:maxWidth="@dimen/size_224"
+                android:maxLines="1"
+                android:textColor="@color/settings_icons"
+                android:textSize="@dimen/small_text_size" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/share_menu_item"
+            style="@style/PlaylistMenuTextStyle"
+            android:text="@string/share" />
+
+        <TextView
+            android:id="@+id/edit_info"
+            style="@style/PlaylistMenuTextStyle"
+            android:text="@string/edit_info" />
+
+        <TextView
+            android:id="@+id/delete_playlist"
+            style="@style/PlaylistMenuTextStyle"
+            android:text="@string/delete_playlist" />
 
     </LinearLayout>
 
