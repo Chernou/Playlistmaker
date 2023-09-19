@@ -79,7 +79,8 @@ class PlaylistDetailsFragment : Fragment() {
                 .setMessage(getDialogueTitle())
                 .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
                 }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                    viewModel.onDeletePlaylistConfirmed()
+                    viewModel.onPlaylistDeleteConfirmed()
+                    findNavController().navigateUp()
                 }
 
         onCLickDebounce = debounce(
@@ -93,16 +94,23 @@ class PlaylistDetailsFragment : Fragment() {
             )
         }
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.menuBottomSheetContainer).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
+        val tracksBottomSheetBehavior = BottomSheetBehavior.from(binding.tracksBottomSheetContainer)
 
-        bottomSheetBehavior.addBottomSheetCallback(object :
+        val menuBottomSheetBehavior =
+            BottomSheetBehavior.from(binding.menuBottomSheetContainer).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+            }
+
+        menuBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                binding.playlistDetailsOverlay.visibility = when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> View.GONE
-                    else -> View.VISIBLE
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.playlistDetailsOverlay.visibility = View.GONE
+                        tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    }
+
+                    else -> binding.playlistDetailsOverlay.visibility = View.VISIBLE
                 }
             }
 
@@ -126,9 +134,12 @@ class PlaylistDetailsFragment : Fragment() {
         }
 
         viewModel.observePlaylistMenuState().observe(viewLifecycleOwner) { state ->
-            if (state == PlaylistMenuState.SHOW) bottomSheetBehavior.state =
-                BottomSheetBehavior.STATE_HALF_EXPANDED
-            viewModel.menuWasShown()
+            if (state == PlaylistMenuState.SHOW) {
+                menuBottomSheetBehavior.state =
+                    BottomSheetBehavior.STATE_HALF_EXPANDED
+                tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                viewModel.menuWasShown()
+            }
         }
 
         binding.playlistToolbar.setNavigationOnClickListener {

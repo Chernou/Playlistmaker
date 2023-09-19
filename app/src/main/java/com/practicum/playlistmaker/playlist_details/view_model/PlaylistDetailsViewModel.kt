@@ -38,8 +38,8 @@ class PlaylistDetailsViewModel(
     private val toastLiveData = MutableLiveData<EmptyPlaylistToastState>()
     fun observeToastLiveData(): LiveData<EmptyPlaylistToastState> = toastLiveData
 
-    private val menuLiveData = MutableLiveData<PlaylistMenuState>()
-    fun observePlaylistMenuState(): LiveData<PlaylistMenuState> = menuLiveData
+    private val menuStateLiveData = MutableLiveData<PlaylistMenuState>()
+    fun observePlaylistMenuState(): LiveData<PlaylistMenuState> = menuStateLiveData
 
     private fun renderScreen() {
         viewModelScope.launch {
@@ -91,6 +91,7 @@ class PlaylistDetailsViewModel(
             interactor.deleteTrackFromPl(trackToDelete!!.trackId, playlistId)
         }
         tracks.remove(trackToDelete)
+        trackToDelete = null
         renderTracksData()
     }
 
@@ -100,19 +101,21 @@ class PlaylistDetailsViewModel(
     }
 
     fun onMenuClicked() {
-        TODO("Not yet implemented")
+        menuStateLiveData.value = PlaylistMenuState.SHOW
     }
 
     fun toastWasShown() {
         toastLiveData.value = EmptyPlaylistToastState.NONE
     }
 
-    fun onDeletePlaylistConfirmed() {
-        TODO("Not yet implemented")
+    fun onPlaylistDeleteConfirmed() {
+        viewModelScope.launch {
+            interactor.deletePlaylist(playlistId)
+        }
     }
 
     fun menuWasShown() {
-        TODO("Not yet implemented")
+        menuStateLiveData.value = PlaylistMenuState.NONE
     }
 
     fun onEditInfoClicked() {
