@@ -93,7 +93,6 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                grayOverlay.alpha = slideOffset
             }
         })
 
@@ -160,11 +159,14 @@ class PlayerFragment : Fragment() {
             when (it) {
                 is PlaylistsInPlayerState.DisplayPlaylists -> {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                    grayOverlay.visibility = View.VISIBLE
                     displayPlaylists(it.playlists)
                 }
 
-                is PlaylistsInPlayerState.HidePlaylists -> bottomSheetBehavior.state =
-                    BottomSheetBehavior.STATE_HIDDEN
+                is PlaylistsInPlayerState.HidePlaylists -> {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    grayOverlay.visibility = View.GONE
+                }
             }
         }
         viewModel.preparePlayer()

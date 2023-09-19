@@ -3,10 +3,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:id="@+id/parent_layout"
     tools:context=".playlists_creation.ui.PlaylistCreationFragment">
 
     <androidx.constraintlayout.widget.Guideline
@@ -37,7 +37,7 @@
         app:navigationIcon="@drawable/ic_arrow_back">
 
         <TextView
-            android:id="@+id/back_to_main"
+            android:id="@+id/new_playlist_screen_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -86,7 +86,8 @@
             android:lines="1"
             android:paddingStart="@dimen/start_padding_text_input_layout"
             android:paddingTop="@dimen/vertical_padding_text_input_layout"
-            android:paddingBottom="@dimen/vertical_padding_text_input_layout" />
+            android:paddingBottom="@dimen/vertical_padding_text_input_layout"
+            android:textCursorDrawable="@drawable/blue_cursor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -113,7 +114,8 @@
             android:lines="1"
             android:paddingStart="@dimen/start_padding_text_input_layout"
             android:paddingTop="@dimen/vertical_padding_text_input_layout"
-            android:paddingBottom="@dimen/vertical_padding_text_input_layout" />
+            android:paddingBottom="@dimen/vertical_padding_text_input_layout"
+            android:textCursorDrawable="@drawable/blue_cursor" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

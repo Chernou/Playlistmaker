@@ -197,6 +197,7 @@ SearchFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.VISIBLE
         binding.searchHistoryLayout.visibility = View.GONE
+        binding.refreshSearchButton.visibility = View.GONE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
         binding.searchErrorText.text = emptySearchMessage
@@ -213,6 +214,7 @@ SearchFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
         binding.searchErrorLayout.visibility = View.VISIBLE
         binding.searchHistoryLayout.visibility = View.GONE
+        binding.refreshSearchButton.visibility = View.VISIBLE
         searchResultAdapter.trackList.clear()
         searchResultAdapter.notifyDataSetChanged()
         binding.searchErrorText.text = errorMessage

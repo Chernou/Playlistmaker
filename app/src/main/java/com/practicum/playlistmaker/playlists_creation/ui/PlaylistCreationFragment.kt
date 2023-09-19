@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
@@ -25,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.playlists_creation.view_model.CreateButtonState
 import com.practicum.playlistmaker.playlists_creation.view_model.PermissionState
 import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistCreationState
 import com.practicum.playlistmaker.playlists_creation.view_model.PlaylistsCreationViewModel
@@ -89,7 +91,6 @@ class PlaylistCreationFragment : Fragment() {
 
         nameEditText.doOnTextChanged { text, _, _, _ ->
             viewModel.onNameChanged(text)
-            createPlTextView.isEnabled = text?.isNotEmpty() == true
             setHintAndBoxColor(text, nameContainer)
         }
 
@@ -107,10 +108,8 @@ class PlaylistCreationFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
                 .setTitle(resources.getString(R.string.save_pl_dialog_title))
                 .setMessage(resources.getString(R.string.save_pl_dialog_message))
-                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.finish)) { _, _ ->
-                    findNavController().navigateUp()
-                }
+                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ -> }
+                .setPositiveButton(resources.getString(R.string.finish)) { _, _ -> findNavController().navigateUp() }
 
         toolbar.setNavigationOnClickListener {
             viewModel.onBackPressed()
@@ -120,10 +119,21 @@ class PlaylistCreationFragment : Fragment() {
             when (state) {
                 PlaylistCreationState.EMPTY_STATE -> findNavController().navigateUp()
                 PlaylistCreationState.PLAYLIST_CREATED -> findNavController().navigateUp()
-                PlaylistCreationState.REQUEST_PERMISSION -> confirmDialog.show()
-                PlaylistCreationState.CREATE_BUTTON_DISABLED -> createPlTextView.isEnabled = false
-                PlaylistCreationState.CREATE_BUTTON_ENABLED -> createPlTextView.isEnabled = true
+                PlaylistCreationState.SHOW_DIALOG -> {
+                    confirmDialog.show()
+                }
             }
+        }
+
+        viewModel.observeCreateButtonState().observe(viewLifecycleOwner) { state ->
+            when (state) {
+                CreateButtonState.DISABLED -> createPlTextView.isEnabled = false
+                CreateButtonState.ENABLED -> createPlTextView.isEnabled = true
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            viewModel.onBackPressed()
         }
     }
 
