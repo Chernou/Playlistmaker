@@ -86,5 +86,6 @@
     <dimen name="font_weight_playlist_menu">400</dimen>
     <dimen name="playlist_menu_text_size">16sp</dimen>
     <dimen name="vertical_padding_playlist_menu_items">21dp</dimen>
+    <dimen name="start_padding_playlist_menu_items">16dp</dimen>
 
 </resources>

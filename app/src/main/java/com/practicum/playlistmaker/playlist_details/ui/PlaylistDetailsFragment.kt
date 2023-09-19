@@ -73,16 +73,6 @@ class PlaylistDetailsFragment : Fragment() {
                     viewModel.onTrackDeleteConfirmed()
                 }
 
-        val deletePlaylistDialog =
-            MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
-                .setTitle(resources.getString(R.string.delete_playlist))
-                .setMessage(getDialogueTitle())
-                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                    viewModel.onPlaylistDeleteConfirmed()
-                    findNavController().navigateUp()
-                }
-
         onCLickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
@@ -95,7 +85,6 @@ class PlaylistDetailsFragment : Fragment() {
         }
 
         val tracksBottomSheetBehavior = BottomSheetBehavior.from(binding.tracksBottomSheetContainer)
-
         val menuBottomSheetBehavior =
             BottomSheetBehavior.from(binding.menuBottomSheetContainer).apply {
                 state = BottomSheetBehavior.STATE_HIDDEN
@@ -142,6 +131,15 @@ class PlaylistDetailsFragment : Fragment() {
             }
         }
 
+        val deletePlaylistDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
+                .setTitle(resources.getString(R.string.delete_playlist))
+                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                    viewModel.onPlaylistDeleteConfirmed()
+                    findNavController().navigateUp()
+                }
+
         binding.playlistToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
@@ -168,6 +166,7 @@ class PlaylistDetailsFragment : Fragment() {
         }
 
         binding.deletePlaylist.setOnClickListener {
+            deletePlaylistDialog.setMessage(getDialogueTitle())
             deletePlaylistDialog.show()
         }
     }
@@ -177,7 +176,6 @@ class PlaylistDetailsFragment : Fragment() {
         binding.playlistDescription.text = playlistData.description
         setCoverImage(playlistData.coverUri)
         binding.playlistNameSmall.text = playlistData.name
-
     }
 
     private fun renderTrackData(tracksData: TracksInPlaylistData) {

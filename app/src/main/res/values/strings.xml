@@ -67,6 +67,4 @@
     <string name="share">Поделиться</string>
     <string name="edit_info">Редактировать информацию</string>
     <string name="delete_playlist">Удалить плейлист</string>
-
-    <dimen name="start_padding_playlist_menu_items">16dp</dimen>
 </resources>
