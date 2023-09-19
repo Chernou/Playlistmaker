@@ -3,9 +3,9 @@ package com.practicum.playlistmaker.playlist_details.data
 import com.practicum.playlistmaker.favorites.data.converters.TrackDbConverter
 import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistRepository
-import com.practicum.playlistmaker.playlists_creation.data.converters.PlaylistDbConverter
-import com.practicum.playlistmaker.playlists_creation.data.db.entity.PlaylistTracksCrossRef
-import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
+import com.practicum.playlistmaker.playlist_creation.data.converters.PlaylistDbConverter
+import com.practicum.playlistmaker.playlist_creation.data.db.entity.PlaylistTracksCrossRef
+import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

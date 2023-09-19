@@ -15,7 +15,7 @@ import com.practicum.playlistmaker.playlist_details.ui.PlaylistDetailsFragment
 import com.practicum.playlistmaker.playlists.ui.playlists_adapter.PlaylistsLargeAdapter
 import com.practicum.playlistmaker.playlists.view_model.PlaylistsState
 import com.practicum.playlistmaker.playlists.view_model.PlaylistsViewModel
-import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
+import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

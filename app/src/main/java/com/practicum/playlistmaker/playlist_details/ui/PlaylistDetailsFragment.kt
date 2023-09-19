@@ -22,6 +22,7 @@ import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetails
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistDetailsViewModel
 import com.practicum.playlistmaker.playlist_details.view_model.PlaylistMenuState
 import com.practicum.playlistmaker.playlist_details.view_model.TracksInPlaylistData
+import com.practicum.playlistmaker.playlist_edit.ui.PlaylistEditFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -162,7 +163,10 @@ class PlaylistDetailsFragment : Fragment() {
         }
 
         binding.editInfo.setOnClickListener {
-            viewModel.onEditInfoClicked()
+            findNavController().navigate(
+                R.id.action_playlistDetailsFragment_to_playlistEditFragment,
+                PlaylistEditFragment.createArgs(playlistId)
+            )
         }
 
         binding.deletePlaylist.setOnClickListener {

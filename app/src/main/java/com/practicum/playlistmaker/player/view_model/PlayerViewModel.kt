@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.favorites.domain.api.FavoritesInteractor
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
-import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbInteractor
-import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
+import com.practicum.playlistmaker.playlist_creation.domain.api.db.PlaylistsDbInteractor
+import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.ResourceProvider

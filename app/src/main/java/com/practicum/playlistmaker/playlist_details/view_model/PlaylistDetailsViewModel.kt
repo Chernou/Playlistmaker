@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistInteractor
-import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
+import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.utils.DateUtils.getMinutesFromMillis
@@ -114,9 +114,5 @@ class PlaylistDetailsViewModel(
 
     fun menuWasShown() {
         menuStateLiveData.value = PlaylistMenuState.NONE
-    }
-
-    fun onEditInfoClicked() {
-        TODO("Not yet implemented")
     }
 }

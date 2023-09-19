@@ -6,10 +6,10 @@ import com.practicum.playlistmaker.player.domain.PlayerInteractorImpl
 import com.practicum.playlistmaker.player.domain.api.PlayerInteractor
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistInteractor
 import com.practicum.playlistmaker.playlist_details.domain.impl.PlaylistInteractorImpl
-import com.practicum.playlistmaker.playlists_creation.domain.api.db.PlaylistsDbInteractor
-import com.practicum.playlistmaker.playlists_creation.domain.api.local_files.PlaylistsFilesInteractor
-import com.practicum.playlistmaker.playlists_creation.domain.impl.PlaylistsDbInteractorImpl
-import com.practicum.playlistmaker.playlists_creation.domain.impl.PlaylistsFilesInteractorImpl
+import com.practicum.playlistmaker.playlist_creation.domain.api.db.PlaylistsDbInteractor
+import com.practicum.playlistmaker.playlist_creation.domain.api.local_files.PlaylistsFilesInteractor
+import com.practicum.playlistmaker.playlist_creation.domain.impl.PlaylistsDbInteractorImpl
+import com.practicum.playlistmaker.playlist_creation.domain.impl.PlaylistsFilesInteractorImpl
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.impl.SearchInteractorImpl
 import com.practicum.playlistmaker.settings.domain.api.SettingsInteractorImpl

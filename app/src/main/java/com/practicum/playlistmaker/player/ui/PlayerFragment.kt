@@ -24,7 +24,7 @@ import com.practicum.playlistmaker.player.ui.playlists_adapter.PlaylistsSmallAda
 import com.practicum.playlistmaker.player.view_model.PlayerViewModel
 import com.practicum.playlistmaker.player.view_model.PlaylistsInPlayerState
 import com.practicum.playlistmaker.player.view_model.ToastState
-import com.practicum.playlistmaker.playlists_creation.domain.model.Playlist
+import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils
 import org.koin.android.ext.android.inject
