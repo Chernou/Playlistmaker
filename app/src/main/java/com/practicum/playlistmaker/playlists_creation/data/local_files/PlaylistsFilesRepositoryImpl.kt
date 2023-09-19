@@ -6,7 +6,6 @@ import java.net.URI
 
 class PlaylistsFilesRepositoryImpl(private val privateStorage: PrivateStorage) :
     PlaylistsFilesRepository {
-    override suspend fun addToPrivateStorage(uri: Uri): URI {
-        return privateStorage.saveImage(uri)
-    }
+
+    override suspend fun addToPrivateStorage(uri: Uri): URI = privateStorage.saveImage(uri)
 }

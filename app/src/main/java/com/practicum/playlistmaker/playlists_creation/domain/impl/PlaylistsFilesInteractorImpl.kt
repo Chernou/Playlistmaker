@@ -7,7 +7,6 @@ import java.net.URI
 
 class PlaylistsFilesInteractorImpl(private val filesRepository: PlaylistsFilesRepository) :
     PlaylistsFilesInteractor {
-    override suspend fun addToPrivateStorage(uri: Uri): URI {
-        return filesRepository.addToPrivateStorage(uri)
-    }
+
+    override suspend fun addToPrivateStorage(uri: Uri): URI = filesRepository.addToPrivateStorage(uri)
 }

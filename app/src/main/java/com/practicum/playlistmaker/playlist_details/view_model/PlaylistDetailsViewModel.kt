@@ -74,9 +74,7 @@ class PlaylistDetailsViewModel(
         return getTotalMinutesString(getMinutesFromMillis(durationInMillis))
     }
 
-    private fun getNumberOfTracks(): String {
-        return getNumberOfTracksString(tracks.size)
-    }
+    private fun getNumberOfTracks(): String = getNumberOfTracksString(tracks.size)
 
     private fun renderTracksData() {
         tracksLiveData.value = TracksInPlaylistData(getDuration(), getNumberOfTracks(), tracks)

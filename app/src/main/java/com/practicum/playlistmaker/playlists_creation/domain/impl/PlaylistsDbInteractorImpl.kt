@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 class PlaylistsDbInteractorImpl(private val repository: PlaylistsRepository) :
     PlaylistsDbInteractor {
+
     override suspend fun addPlaylist(playlist: Playlist) {
         repository.addPlaylist(playlist)
     }

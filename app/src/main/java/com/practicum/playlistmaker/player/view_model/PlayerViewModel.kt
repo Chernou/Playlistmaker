@@ -157,9 +157,7 @@ class PlayerViewModel(
         }
     }
 
-    private fun getCurrentPlayerPosition(): String {
-        return formatTime(playerInteractor.getPlayerPosition())
-    }
+    private fun getCurrentPlayerPosition(): String = formatTime(playerInteractor.getPlayerPosition())
 
     companion object {
         private const val PLAYBACK_TIME_REFRESH = 200L
