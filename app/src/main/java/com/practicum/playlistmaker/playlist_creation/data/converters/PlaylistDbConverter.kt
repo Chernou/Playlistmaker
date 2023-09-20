@@ -6,9 +6,10 @@ import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 class PlaylistDbConverter {
     fun map(playlist: Playlist): PlaylistEntity =
         PlaylistEntity(
+            playlistId = playlist.playlistId,
             name = playlist.name,
             description = playlist.description,
-            coverPath = playlist.coverUri,
+            coverUri = playlist.coverUri,
             numberOfTracks = playlist.numberOfTracks
         )
 

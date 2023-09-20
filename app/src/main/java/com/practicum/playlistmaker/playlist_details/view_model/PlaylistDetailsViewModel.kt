@@ -115,4 +115,11 @@ class PlaylistDetailsViewModel(
     fun menuWasShown() {
         menuStateLiveData.value = PlaylistMenuState.NONE
     }
+
+    fun onResume() {
+        viewModelScope.launch {
+            getPlaylistById()
+            renderPlaylistData()
+        }
+    }
 }

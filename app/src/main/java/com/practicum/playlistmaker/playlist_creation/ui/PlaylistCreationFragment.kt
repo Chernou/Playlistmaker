@@ -124,7 +124,7 @@ open class PlaylistCreationFragment : Fragment() {
         }
     }
 
-    private fun playlistCreatedSnackbar(view: View) {
+    protected open fun playlistCreatedSnackbar(view: View) {
         val snackbar = Snackbar.make(
             requireContext(),
             view,

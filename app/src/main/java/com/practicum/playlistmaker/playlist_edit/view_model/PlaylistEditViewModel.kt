@@ -24,17 +24,13 @@ class PlaylistEditViewModel(
     private val playlistLiveData = MutableLiveData<PlaylistDetails>()
     private val playlistEditStringLiveData = MutableLiveData<PlaylistEditStringData>()
 
-    init {
-        renderScreen()
-    }
-
-    private lateinit var playlist: Playlist
+    override lateinit var playlist: Playlist
 
     fun observePlaylistData(): LiveData<PlaylistDetails> = playlistLiveData
     fun observePlaylistEditStringData(): LiveData<PlaylistEditStringData> =
         playlistEditStringLiveData
 
-    private fun renderScreen() {
+    fun initScreen() {
         viewModelScope.launch {
             playlist = dbInteractor.getPlaylist(playlistId)
             playlistLiveData.value =
@@ -43,18 +39,23 @@ class PlaylistEditViewModel(
                 resourceProvider.getString(R.string.edit),
                 resourceProvider.getString(R.string.save)
             )
+            name = playlist.name
+            description = playlist.description
+            coverUri = playlist.coverUri
         }
     }
 
-    fun onSaveChangesClicked() {
-        viewModelScope.launch {
-            if (coverUri != playlist.coverUri) dbInteractor
-                .editPlaylistUri(playlistId, coverUri)
-            if (name != playlist.name) dbInteractor
-                .editPlaylistName(playlistId, name)
-            if (description != playlist.description) dbInteractor
-                .editPlaylistDescription(playlistId, description)
+    override fun onNameChanged(text: CharSequence?) {
+        if (text != null) {
+            playlist = playlist.copy(name = text.toString())
         }
+        super.onNameChanged(text)
     }
 
+    override fun onDescriptionChanged(text: CharSequence?) {
+        if (text != null) {
+            playlist = playlist.copy(description = text.toString())
+        }
+        super.onDescriptionChanged(text)
+    }
 }

@@ -11,11 +11,4 @@ data class PlaylistEntity(
     val description: String,
     val coverUri: String,
     val numberOfTracks: Int
-) {
-    constructor(
-        name: String,
-        description: String,
-        coverPath: String,
-        numberOfTracks: Int
-    ) : this(0, name, description, coverPath, numberOfTracks)
-}
+)

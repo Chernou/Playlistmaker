@@ -29,9 +29,10 @@ open class PlaylistCreationViewModel(
     private val createButtonStateLiveData = MutableLiveData<CreateButtonState>()
     fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonStateLiveData
 
-    protected var coverUri = ""
-    protected var name = ""
-    protected var description = ""
+    protected open var playlist = Playlist.emptyPlaylist
+    protected open var coverUri: String? = null
+    protected open var name: String? = null
+    protected open var description: String? = null
 
     fun onCoverClicked() {
         handlePermission()
@@ -55,24 +56,33 @@ open class PlaylistCreationViewModel(
         }
     }
 
-    fun onNameChanged(text: CharSequence?) {
+    open fun onNameChanged(text: CharSequence?) {
         if (text.toString().isEmpty())
             createButtonStateLiveData.value = CreateButtonState.DISABLED
         else createButtonStateLiveData.value = CreateButtonState.ENABLED
-        name = text.toString()
+        if (text != null) {
+            name = text.toString()
+        }
     }
 
-    fun onDescriptionChanged(text: CharSequence?) {
-        description = text.toString()
+    open fun onDescriptionChanged(text: CharSequence?) {
+        if (text != null) {
+            description = text.toString()
+        }
     }
 
-    fun onCreatePlClicked() {
+    open fun onCreatePlClicked() {
         viewModelScope.launch {
-            var updatedUri = ""
-            if (coverUri.isNotEmpty()) {
-                updatedUri = filesInteractor.addToPrivateStorage(Uri.parse(coverUri)).toString()
+            if (!coverUri.isNullOrEmpty()) {
+                coverUri = filesInteractor.addToPrivateStorage(Uri.parse(coverUri)).toString()
             }
-            dbInteractor.addPlaylist(Playlist(name, description, updatedUri))
+            dbInteractor.addPlaylist(
+                playlist.copy(
+                    name = name!!,
+                    description = description ?: "",
+                    coverUri = coverUri ?: ""
+                )
+            )
             screenStateLiveData.value = PlaylistCreationState.PLAYLIST_CREATED
         }
     }
@@ -82,7 +92,7 @@ open class PlaylistCreationViewModel(
     }
 
     fun onBackPressed() {
-        if (coverUri.isNotEmpty() || name.isNotEmpty() || description.isNotEmpty()) {
+        if (!coverUri.isNullOrEmpty() || !name.isNullOrEmpty() || !description.isNullOrEmpty()) {
             screenStateLiveData.value = PlaylistCreationState.SHOW_DIALOG
         } else {
             screenStateLiveData.value = PlaylistCreationState.EMPTY_STATE

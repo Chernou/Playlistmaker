@@ -20,16 +20,4 @@ class PlaylistsDbInteractorImpl(private val repository: PlaylistsRepository) :
     }
 
     override suspend fun getPlaylist(playlistId: Int): Playlist = repository.getPlaylist(playlistId)
-
-    override suspend fun editPlaylistUri(playlistId: Int, coverUri: String) {
-        repository.editPlaylistUri(playlistId, coverUri)
-    }
-
-    override suspend fun editPlaylistName(playlistId: Int, name: String) {
-        repository.editPlaylistName(playlistId, name)
-    }
-
-    override suspend fun editPlaylistDescription(playlistId: Int, description: String) {
-        repository.editPlaylistDescription(playlistId, description)
-    }
 }

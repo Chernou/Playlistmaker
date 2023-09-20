@@ -175,20 +175,29 @@ class PlaylistDetailsFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
+
     private fun renderPlaylistData(playlistData: PlaylistDetails) {
-        binding.playlistName.text = playlistData.name
-        binding.playlistDescription.text = playlistData.description
+        with(binding) {
+            playlistName.text = playlistData.name
+            playlistDescription.text = playlistData.description
+            playlistNameSmall.text = playlistData.name
+        }
         setCoverImage(playlistData.coverUri)
-        binding.playlistNameSmall.text = playlistData.name
     }
 
     private fun renderTrackData(tracksData: TracksInPlaylistData) {
-        binding.playlistDuration.text = tracksData.duration
-        binding.numberOfTracks.text = tracksData.numberOfTracks
+        with(binding) {
+            playlistDuration.text = tracksData.duration
+            numberOfTracks.text = tracksData.numberOfTracks
+            numberOfTracksSmall.text = tracksData.numberOfTracks
+        }
         trackAdapter.trackList.clear()
         trackAdapter.trackList.addAll(tracksData.tracks)
         trackAdapter.notifyDataSetChanged()
-        binding.numberOfTracksSmall.text = tracksData.numberOfTracks
     }
 
     private fun setCoverImage(uri: String) {
