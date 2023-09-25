@@ -5,4 +5,5 @@ import java.net.URI
 
 interface PlaylistsFilesInteractor {
     suspend fun addToPrivateStorage(uri: Uri): URI
+    suspend fun deleteFromPrivateStorage(coverUri: String)
 }

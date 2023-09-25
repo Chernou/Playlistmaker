@@ -69,7 +69,7 @@ class SearchViewModel(
 
     fun onResume() {
         if (stateLiveData.value is SearchState.HistoryContent) showSearchHistory()
-        else if (stateLiveData.value is SearchState.SearchContent) searchRequest(latestSearchText!!)
+        else if (stateLiveData.value is SearchState.SearchContent) searchRequest(latestSearchText ?: "")
     }
 
     fun onDestroy() {

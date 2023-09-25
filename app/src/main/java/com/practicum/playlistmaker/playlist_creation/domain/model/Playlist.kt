@@ -11,11 +11,9 @@ data class Playlist(
     val numberOfTracks: Int
 ) {
 
+    constructor() :  this(0, "", "", "", ArrayList(), 0)
+
     override fun toString(): String {
         return Gson().toJson(this)
-    }
-
-    companion object {
-        val emptyPlaylist = Playlist(0, "", "", "", ArrayList(), 0)
     }
 }

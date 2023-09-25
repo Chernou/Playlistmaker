@@ -1,10 +1,10 @@
 package com.practicum.playlistmaker.playlist_details.view_model
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.playlist_creation.domain.api.local_files.PlaylistsFilesInteractor
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistInteractor
 import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class PlaylistDetailsViewModel(
     private val playlistId: Int,
-    private val interactor: PlaylistInteractor,
+    private val playlistInteractor: PlaylistInteractor,
+    private val filesInteractor: PlaylistsFilesInteractor,
     private val sharingInteractor: SharingInteractor
 ) : ViewModel() {
 
@@ -50,11 +51,11 @@ class PlaylistDetailsViewModel(
     }
 
     private suspend fun getPlaylistById() {
-        playlist = interactor.getPlaylist(playlistId)
+        playlist = playlistInteractor.getPlaylist(playlistId)
     }
 
     private suspend fun initTrackList() {
-        tracks.addAll(interactor.getTracksInPlaylist(playlist))
+        tracks.addAll(playlistInteractor.getTracksInPlaylist(playlist))
     }
 
     private fun renderPlaylistData() {
@@ -75,7 +76,6 @@ class PlaylistDetailsViewModel(
 
     private fun renderTracksData() {
         tracksLiveData.value = TracksInPlaylistData(getDuration(), playlist.numberOfTracks, tracks)
-        Log.d("!@#", playlist.numberOfTracks.toString())
     }
 
     fun onTrackLongClicked(track: Track) {
@@ -84,7 +84,7 @@ class PlaylistDetailsViewModel(
 
     fun onTrackDeleteConfirmed() {
         viewModelScope.launch {
-            interactor.deleteTrackFromPl(trackToDelete!!.trackId, playlistId)
+            playlistInteractor.deleteTrackFromPlaylist(trackToDelete!!.trackId, playlistId)
         }
         tracks.remove(trackToDelete)
         playlist = playlist.copy(numberOfTracks = playlist.numberOfTracks - 1)
@@ -113,7 +113,8 @@ class PlaylistDetailsViewModel(
 
     fun onPlaylistDeleteConfirmed() {
         viewModelScope.launch {
-            interactor.deletePlaylist(playlistId)
+            playlistInteractor.deletePlaylist(playlistId)
+            filesInteractor.deleteFromPrivateStorage(playlist.coverUri)
         }
     }
 

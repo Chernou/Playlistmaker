@@ -5,4 +5,5 @@ import java.net.URI
 
 interface PrivateStorage {
     suspend fun saveImage(uri: Uri): URI
+    suspend fun deleteFromPrivateStorage(coverUri: String)
 }

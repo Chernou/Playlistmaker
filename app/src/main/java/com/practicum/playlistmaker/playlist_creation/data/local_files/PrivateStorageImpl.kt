@@ -30,6 +30,10 @@ class PrivateStorageImpl(private val context: Context) : PrivateStorage {
         file.toURI()
     }
 
+    override suspend fun deleteFromPrivateStorage(coverUri: String) {
+        //todo implement
+    }
+
     companion object {
         const val PLAYLISTS_COVERS_FOLDER = "playlists_covers"
         const val IMAGE_QUALITY = 30

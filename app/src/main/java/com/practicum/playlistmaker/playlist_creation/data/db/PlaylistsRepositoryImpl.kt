@@ -39,15 +39,15 @@ class PlaylistsRepositoryImpl(
         emit(playlists)
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun addTrackToPl(track: Track, playlist: Playlist) {
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
         withContext(Dispatchers.IO) {
             database.playlistsDao().updateNumberOfTracks(
                 playlist.playlistId,
                 playlist.numberOfTracks
             )
-            database.tracksInPlDao().addTrackToPl(trackDbConverter.map(track))
+            database.tracksInPlDao().addTrackToPlaylist(trackDbConverter.map(track))
             database.playlistsTracksCrossRefDao()
-                .addTrackToPl(PlaylistTracksCrossRef(track.trackId, playlist.playlistId, Calendar.getInstance().time.time))
+                .addTrackToPlaylist(PlaylistTracksCrossRef(track.trackId, playlist.playlistId, Calendar.getInstance().time.time))
         }
     }
 

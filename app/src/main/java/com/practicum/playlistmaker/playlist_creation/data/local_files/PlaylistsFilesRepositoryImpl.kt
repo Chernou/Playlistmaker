@@ -8,4 +8,8 @@ class PlaylistsFilesRepositoryImpl(private val privateStorage: PrivateStorage) :
     PlaylistsFilesRepository {
 
     override suspend fun addToPrivateStorage(uri: Uri): URI = privateStorage.saveImage(uri)
+
+    override suspend fun deleteFromPrivateStorage(coverUri: String) {
+        privateStorage.deleteFromPrivateStorage(coverUri)
+    }
 }

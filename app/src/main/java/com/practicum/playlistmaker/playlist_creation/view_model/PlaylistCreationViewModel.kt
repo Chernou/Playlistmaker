@@ -29,7 +29,7 @@ open class PlaylistCreationViewModel(
     private val createButtonStateLiveData = MutableLiveData<CreateButtonState>()
     fun observeCreateButtonState(): LiveData<CreateButtonState> = createButtonStateLiveData
 
-    protected open var playlist = Playlist.emptyPlaylist
+    protected open var playlist = Playlist()
     protected open var coverUri: String? = null
     protected open var name: String? = null
     protected open var description: String? = null
@@ -78,7 +78,7 @@ open class PlaylistCreationViewModel(
             }
             dbInteractor.addPlaylist(
                 playlist.copy(
-                    name = name!!,
+                    name = name ?: "",
                     description = description ?: "",
                     coverUri = coverUri ?: ""
                 )

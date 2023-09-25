@@ -108,7 +108,7 @@ class PlayerViewModel(
             viewModelScope.launch {
                 playlist.tracks.add(track.trackId)
                 val updatedPlaylist = playlist.copy(numberOfTracks = playlist.numberOfTracks + 1)
-                playlistsDbInteractor.addTrackToPl(track, updatedPlaylist)
+                playlistsDbInteractor.addTrackToPlaylist(track, updatedPlaylist)
             }
             showToast("${resourceProvider.getString(R.string.track_added_to_pl)} ${playlist.name}")
         }

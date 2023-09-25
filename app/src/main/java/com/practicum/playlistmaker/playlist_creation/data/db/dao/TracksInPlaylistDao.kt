@@ -7,10 +7,10 @@ import androidx.room.Query
 import com.practicum.playlistmaker.playlist_creation.data.db.entity.TrackInPlEntity
 
 @Dao
-interface TracksInPlDao {
+interface TracksInPlaylistDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addTrackToPl(track: TrackInPlEntity)
+    suspend fun addTrackToPlaylist(track: TrackInPlEntity)
 
     @Query("DELETE FROM tracks_in_pl_table WHERE trackId = :trackId")
     suspend fun deleteTrack(trackId: Int)

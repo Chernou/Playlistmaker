@@ -15,8 +15,8 @@ class PlaylistsDbInteractorImpl(private val repository: PlaylistsRepository) :
 
     override fun getPlaylists(): Flow<List<Playlist>> = repository.getPlaylists()
 
-    override suspend fun addTrackToPl(track: Track, playlist: Playlist) {
-        repository.addTrackToPl(track, playlist)
+    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        repository.addTrackToPlaylist(track, playlist)
     }
 
     override suspend fun getPlaylist(playlistId: Int): Playlist = repository.getPlaylist(playlistId)

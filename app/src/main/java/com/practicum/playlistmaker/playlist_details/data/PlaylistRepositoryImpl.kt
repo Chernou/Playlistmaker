@@ -37,7 +37,7 @@ class PlaylistRepositoryImpl(
         playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))
     }
 
-    override suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int) {
+    override suspend fun deleteTrackFromPlaylist(trackId: Int, playlistId: Int) {
         withContext(Dispatchers.IO) {
             database.playlistsTracksCrossRefDao()
                 .deleteTrack(trackId, playlistId)

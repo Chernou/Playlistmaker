@@ -10,7 +10,7 @@ import com.practicum.playlistmaker.playlist_creation.data.db.entity.PlaylistTrac
 interface PlaylistTracksCrossRefDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addTrackToPl(trackInPlaylist: PlaylistTracksCrossRef)
+    suspend fun addTrackToPlaylist(trackInPlaylist: PlaylistTracksCrossRef)
 
     @Query("SELECT * FROM playlist_tracks_cross_ref_table WHERE playlistId = :playlistId")
     suspend fun getTracksInPlaylist(playlistId: Int): List<PlaylistTracksCrossRef>

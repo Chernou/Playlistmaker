@@ -9,4 +9,8 @@ class PlaylistsFilesInteractorImpl(private val filesRepository: PlaylistsFilesRe
     PlaylistsFilesInteractor {
 
     override suspend fun addToPrivateStorage(uri: Uri): URI = filesRepository.addToPrivateStorage(uri)
+
+    override suspend fun deleteFromPrivateStorage(coverUri: String) {
+        filesRepository.deleteFromPrivateStorage(coverUri)
+    }
 }
