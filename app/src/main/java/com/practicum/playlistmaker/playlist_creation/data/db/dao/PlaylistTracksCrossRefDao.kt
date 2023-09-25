@@ -1,7 +1,6 @@
 package com.practicum.playlistmaker.playlist_creation.data.db.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,8 +15,8 @@ interface PlaylistTracksCrossRefDao {
     @Query("SELECT * FROM playlist_tracks_cross_ref_table WHERE playlistId = :playlistId")
     suspend fun getTracksInPlaylist(playlistId: Int): List<PlaylistTracksCrossRef>
 
-    @Delete
-    suspend fun deleteTrack(track: PlaylistTracksCrossRef)
+    @Query("DELETE FROM playlist_tracks_cross_ref_table WHERE trackId = :trackId AND playlistId = :playlistId")
+    suspend fun deleteTrack(trackId: Int, playlistId: Int)
 
     @Query("SELECT * FROM playlist_tracks_cross_ref_table WHERE trackId = :trackId")
     suspend fun getPlaylistsContainingTrack(trackId: Int): List<PlaylistTracksCrossRef>

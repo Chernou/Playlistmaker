@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class PlaylistsRepositoryImpl(
     private val database: AppDatabase,
@@ -46,7 +47,7 @@ class PlaylistsRepositoryImpl(
             )
             database.tracksInPlDao().addTrackToPl(trackDbConverter.map(track))
             database.playlistsTracksCrossRefDao()
-                .addTrackToPl(PlaylistTracksCrossRef(track.trackId, playlist.playlistId))
+                .addTrackToPl(PlaylistTracksCrossRef(track.trackId, playlist.playlistId, Calendar.getInstance().time.time))
         }
     }
 

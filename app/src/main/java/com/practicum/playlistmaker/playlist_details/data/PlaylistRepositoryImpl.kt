@@ -4,7 +4,6 @@ import com.practicum.playlistmaker.favorites.data.converters.TrackDbConverter
 import com.practicum.playlistmaker.favorites.data.db.AppDatabase
 import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistRepository
 import com.practicum.playlistmaker.playlist_creation.data.converters.PlaylistDbConverter
-import com.practicum.playlistmaker.playlist_creation.data.db.entity.PlaylistTracksCrossRef
 import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +19,14 @@ class PlaylistRepositoryImpl(
         withContext(Dispatchers.IO) {
             val tracksIds =
                 database.playlistsTracksCrossRefDao().getTracksInPlaylist(playlist.playlistId)
-                    .map { crossRef -> crossRef.trackId }
-            database.tracksInPlDao().getTracks(tracksIds)
-                .map { trackInPlEntity -> trackDbConverter.map(trackInPlEntity, checkIsFavorite(trackInPlEntity.trackId)) }
+                    .sortedByDescending { it.addingTime }.map { crossRef -> crossRef.trackId }
+            database.tracksInPlDao().getTracks(tracksIds).sortedBy { tracksIds.indexOf(it.trackId) }
+                .map { trackInPlEntity ->
+                    trackDbConverter.map(
+                        trackInPlEntity,
+                        checkIsFavorite(trackInPlEntity.trackId)
+                    )
+                }
         }
 
     private fun checkIsFavorite(trackId: Int): Boolean {
@@ -36,7 +40,7 @@ class PlaylistRepositoryImpl(
     override suspend fun deleteTrackFromPl(trackId: Int, playlistId: Int) {
         withContext(Dispatchers.IO) {
             database.playlistsTracksCrossRefDao()
-                .deleteTrack(PlaylistTracksCrossRef(trackId, playlistId))
+                .deleteTrack(trackId, playlistId)
             val updatedNumberOfTracks = database.playlistsDao().getNumberOfTracks(playlistId) - 1
             database.playlistsDao().updateNumberOfTracks(playlistId, updatedNumberOfTracks)
             checkAndDeleteTrack(trackId)
