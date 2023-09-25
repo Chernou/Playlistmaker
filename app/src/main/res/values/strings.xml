@@ -71,4 +71,5 @@
     <string name="edit">Редактировать</string>
     <string name="save">Сохранить</string>
     <string name="saved">сохранен</string>
+    <string name="no_tracks_in_playlist">В этом плейлисте нет треков</string>
 </resources>

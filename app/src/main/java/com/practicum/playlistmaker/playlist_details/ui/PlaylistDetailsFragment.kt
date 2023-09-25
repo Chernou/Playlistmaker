@@ -199,9 +199,20 @@ class PlaylistDetailsFragment : Fragment() {
             numberOfTracks.text = tracksData.numberOfTracks
             numberOfTracksSmall.text = tracksData.numberOfTracks
         }
-        trackAdapter.trackList.clear()
-        trackAdapter.trackList.addAll(tracksData.tracks)
-        trackAdapter.notifyDataSetChanged()
+        if (tracksData.tracks.isEmpty()) {
+            with(binding) {
+                tracksInPlRecyclerView.visibility = View.GONE
+                emptyPlaylistLayout.visibility = View.VISIBLE
+            }
+        } else {
+            binding.tracksInPlRecyclerView.visibility = View.VISIBLE
+            binding.emptyPlaylistLayout.visibility = View.GONE
+            trackAdapter.trackList.apply {
+                clear()
+                addAll(tracksData.tracks)
+            }
+            trackAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun setCoverImage(uri: String) {
