@@ -22,8 +22,12 @@ class PlaylistRepositoryImpl(
                 database.playlistsTracksCrossRefDao().getTracksInPlaylist(playlist.playlistId)
                     .map { crossRef -> crossRef.trackId }
             database.tracksInPlDao().getTracks(tracksIds)
-                .map { trackInPlEntity -> trackDbConverter.map(trackInPlEntity) }
+                .map { trackInPlEntity -> trackDbConverter.map(trackInPlEntity, checkIsFavorite(trackInPlEntity.trackId)) }
         }
+
+    private fun checkIsFavorite(trackId: Int): Boolean {
+        return database.favoritesDao().isInFavorite(trackId)
+    }
 
     override suspend fun getPlaylist(playlistId: Int): Playlist = withContext(Dispatchers.IO) {
         playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))

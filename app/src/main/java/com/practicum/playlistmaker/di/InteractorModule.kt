@@ -16,39 +16,17 @@ import com.practicum.playlistmaker.settings.domain.api.SettingsInteractorImpl
 import com.practicum.playlistmaker.settings.domain.impl.SettingsInteractor
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.sharing.domain.impl.SharingInteractorImpl
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val interactorModule = module {
-
-    factory<PlayerInteractor> {
-        PlayerInteractorImpl(get())
-    }
-
-    single<SearchInteractor> {
-        SearchInteractorImpl(get())
-    }
-
-    single<SharingInteractor> {
-        SharingInteractorImpl(get(), get())
-    }
-
-    single<SettingsInteractor> {
-        SettingsInteractorImpl(get())
-    }
-
-    single<FavoritesInteractor> {
-        FavoritesInteractorImpl(get())
-    }
-
-    single<PlaylistsDbInteractor> {
-        PlaylistsDbInteractorImpl(get())
-    }
-
-    single<PlaylistsFilesInteractor> {
-        PlaylistsFilesInteractorImpl(get())
-    }
-
-    single<PlaylistInteractor> {
-        PlaylistInteractorImpl(get())
-    }
+    singleOf(::PlayerInteractorImpl) bind PlayerInteractor::class
+    singleOf(::SearchInteractorImpl) bind SearchInteractor::class
+    singleOf(::SharingInteractorImpl) bind SharingInteractor::class
+    singleOf(::SettingsInteractorImpl) bind SettingsInteractor::class
+    singleOf(::FavoritesInteractorImpl) bind FavoritesInteractor::class
+    singleOf(::PlaylistsDbInteractorImpl) bind PlaylistsDbInteractor::class
+    singleOf(::PlaylistsFilesInteractorImpl) bind PlaylistsFilesInteractor::class
+    singleOf(::PlaylistInteractorImpl) bind PlaylistInteractor::class
 }

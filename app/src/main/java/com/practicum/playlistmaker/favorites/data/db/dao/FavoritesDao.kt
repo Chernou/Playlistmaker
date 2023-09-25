@@ -21,4 +21,7 @@ interface FavoritesDao {
 
     @Delete
     suspend fun deleteFavorite(trackEntity: TrackEntity)
+
+    @Query("SELECT EXISTS(SELECT * FROM favorites_table WHERE trackId = :trackId)")
+    fun isInFavorite(trackId : Int) : Boolean
 }

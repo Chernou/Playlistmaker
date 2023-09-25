@@ -17,35 +17,21 @@ import com.practicum.playlistmaker.search.data.network.ItunesService
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.practicum.playlistmaker.search.data.sharedprefs.LocalStorageImpl
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
-
-    single<Player> {
-        PlayerImpl(get())
-    }
-
-    single<LocalStorage> {
-        LocalStorageImpl(get(), get())
-    }
-
-    single<NetworkClient> {
-        RetrofitNetworkClient(get(), get())
-    }
-
-    single {
-        Gson()
-    }
-
-    single {
-        MediaPlayer()
-    }
-
-    factory { (query: String) ->
-        SearchRequest(query)
-    }
+    singleOf(::PlayerImpl) bind Player::class
+    singleOf(::LocalStorageImpl) bind LocalStorage::class
+    singleOf(::RetrofitNetworkClient) bind NetworkClient::class
+    singleOf(::Gson)
+    singleOf(::MediaPlayer)
+    factoryOf(::SearchRequest)
+    singleOf(::PrivateStorageImpl) bind PrivateStorage::class
 
     single<ItunesService> {
         Retrofit.Builder()
@@ -67,9 +53,4 @@ val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db").build()
     }
-
-    single<PrivateStorage> {
-        PrivateStorageImpl(androidContext())
-    }
-
 }

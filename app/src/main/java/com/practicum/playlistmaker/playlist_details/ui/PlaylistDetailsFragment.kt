@@ -65,12 +65,25 @@ class PlaylistDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         playlistId = requireArguments().getInt(PLAYLIST_ARG)
 
+        val deletePlaylistDialog =
+            MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
+                .setMessage(buildString {
+                    append(resources.getString(R.string.want_to_delete_playlist))
+                    append("binding.playlistName.text")
+                    append(binding.playlistName.text)
+                    append("?")
+                })
+                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
+                    viewModel.onPlaylistDeleteConfirmed()
+                    findNavController().navigateUp()
+                }
+
         deleteTrackDialog =
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
-                .setTitle(resources.getString(R.string.delete_track_title))
                 .setMessage(resources.getString(R.string.delete_track_message))
-                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
+                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
+                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
                     viewModel.onTrackDeleteConfirmed()
                 }
 
@@ -131,15 +144,6 @@ class PlaylistDetailsFragment : Fragment() {
                 viewModel.menuWasShown()
             }
         }
-
-        val deletePlaylistDialog =
-            MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
-                .setTitle(resources.getString(R.string.delete_playlist))
-                .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
-                }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                    viewModel.onPlaylistDeleteConfirmed()
-                    findNavController().navigateUp()
-                }
 
         binding.playlistToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()

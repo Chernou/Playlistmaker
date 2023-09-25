@@ -40,7 +40,7 @@ class TrackDbConverter {
             addingTime
         )
 
-    fun map(track: TrackInPlEntity): Track =
+    fun map(track: TrackInPlEntity, isFavorite: Boolean): Track =
         Track(
             track.trackId,
             track.trackName,
@@ -54,7 +54,7 @@ class TrackDbConverter {
             track.genre,
             track.album,
             track.previewUrl,
-            true
+            isFavorite
         )
 
     fun map(track: Track): TrackInPlEntity =

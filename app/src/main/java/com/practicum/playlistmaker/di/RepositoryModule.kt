@@ -14,35 +14,17 @@ import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.data.impl.SearchRepositoryImpl
 import com.practicum.playlistmaker.settings.data.api.SettingsRepository
 import com.practicum.playlistmaker.settings.data.impl.SettingsRepositoryImpl
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val repositoryModule = module {
-
-    single<SearchRepository> {
-        SearchRepositoryImpl(get(), get(), get(), get())
-    }
-
-    single<SettingsRepository> {
-        SettingsRepositoryImpl(get())
-    }
-
-    single { TrackDbConverter() }
-
-    single<FavoritesRepository> {
-        FavoritesRepositoryImpl(get(), get())
-    }
-
-    single { PlaylistDbConverter() }
-
-    single<PlaylistsRepository> {
-        PlaylistsRepositoryImpl(get(), get(), get())
-    }
-
-    single<PlaylistsFilesRepository> {
-        PlaylistsFilesRepositoryImpl(get())
-    }
-
-    single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get(), get(), get())
-    }
+    singleOf(::SearchRepositoryImpl) bind SearchRepository::class
+    singleOf(::SettingsRepositoryImpl) bind SettingsRepository::class
+    singleOf(::TrackDbConverter)
+    singleOf(::FavoritesRepositoryImpl) bind FavoritesRepository::class
+    singleOf(::PlaylistDbConverter)
+    singleOf(::PlaylistsRepositoryImpl) bind PlaylistsRepository::class
+    singleOf(::PlaylistsFilesRepositoryImpl) bind PlaylistsFilesRepository::class
+    singleOf(::PlaylistRepositoryImpl) bind PlaylistRepository::class
 }
