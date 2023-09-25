@@ -95,7 +95,7 @@ class PlaylistDetailsViewModel(
 
     fun onShareClicked() {
         if (tracks.isEmpty()) toastLiveData.value = EmptyPlaylistToastState.SHOW
-        else sharingInteractor.shareString(TextUtils.getSharedTracksString(tracks))
+        else sharingInteractor.shareString(TextUtils.getSharedTracksString(playlist, tracks))
     }
 
     fun onMenuClicked() {

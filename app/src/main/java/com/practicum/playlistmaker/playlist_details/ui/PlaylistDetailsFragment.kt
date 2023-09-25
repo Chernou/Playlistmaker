@@ -39,7 +39,8 @@ class PlaylistDetailsFragment : Fragment() {
     }
 
     private val trackAdapter =
-        TrackInPlaylistAdapter<TrackInPlaylistViewHolder>(object : TrackInPlaylistAdapter.TrackClickListener {
+        TrackInPlaylistAdapter<TrackInPlaylistViewHolder>(object :
+            TrackInPlaylistAdapter.TrackClickListener {
             override fun onTrackLongClickListener(track: Track): Boolean {
                 viewModel.onTrackLongClicked(track)
                 deleteTrackDialog.show()
@@ -100,24 +101,24 @@ class PlaylistDetailsFragment : Fragment() {
         val menuBottomSheetBehavior =
             BottomSheetBehavior.from(binding.menuBottomSheetContainer).apply {
                 state = BottomSheetBehavior.STATE_HIDDEN
-            }
+                addBottomSheetCallback(object :
+                    BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        when (newState) {
+                            BottomSheetBehavior.STATE_HIDDEN -> {
+                                binding.playlistDetailsOverlay.visibility = View.GONE
+                                tracksBottomSheetBehavior.state =
+                                    BottomSheetBehavior.STATE_COLLAPSED
+                            }
 
-        menuBottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.playlistDetailsOverlay.visibility = View.GONE
-                        tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                            else -> binding.playlistDetailsOverlay.visibility = View.VISIBLE
+                        }
                     }
 
-                    else -> binding.playlistDetailsOverlay.visibility = View.VISIBLE
-                }
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    }
+                })
             }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            }
-        })
 
         viewModel.observePlaylistData().observe(viewLifecycleOwner) { data ->
             renderPlaylistData(data)
