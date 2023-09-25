@@ -29,17 +29,19 @@ SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
 
-    private val searchResultAdapter = TrackAdapter(object : TrackAdapter.TrackClickListener {
-        override fun onTrackClickListener(track: Track) {
-            onCLickDebounce(track)
-        }
-    })
+    private val searchResultAdapter =
+        TrackAdapter<TrackViewHolder>(object : TrackAdapter.TrackClickListener {
+            override fun onTrackClickListener(track: Track) {
+                onCLickDebounce(track)
+            }
+        })
 
-    private val searchHistoryAdapter = TrackAdapter(object : TrackAdapter.TrackClickListener {
-        override fun onTrackClickListener(track: Track) {
-            onCLickDebounce(track)
-        }
-    })
+    private val searchHistoryAdapter =
+        TrackAdapter<TrackViewHolder>(object : TrackAdapter.TrackClickListener {
+            override fun onTrackClickListener(track: Track) {
+                onCLickDebounce(track)
+            }
+        })
 
     private lateinit var binding: FragmentSearchBinding
     private lateinit var onCLickDebounce: (Track) -> Unit
@@ -155,7 +157,7 @@ SearchFragment : Fragment() {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) = Unit
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            viewModel.onTextChanged(p0.toString() ?: "")
+            viewModel.onTextChanged(p0.toString())
         }
 
         override fun afterTextChanged(editable: Editable?) {

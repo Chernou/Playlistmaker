@@ -48,6 +48,7 @@ class SearchRepositoryImpl(
                         it.releaseDate ?: "",
                         getYear(it.releaseDate) ?: "",
                         it.duration ?: 0,
+                        TextUtils.getLowResArtwork(it.artworkUri),
                         it.artworkUri,
                         TextUtils.getHighResArtwork(it.artworkUri),
                         it.genre,

@@ -14,6 +14,7 @@ data class TrackInPlEntity(
     val releaseYear: String,
     val duration: Int,
     val lowResArtworkUri: String,
+    val midResArtworkUri: String,
     val highResArtworkUri: String,
     val genre: String,
     val album: String,

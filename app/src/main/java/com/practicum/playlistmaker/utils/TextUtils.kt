@@ -5,8 +5,11 @@ import com.practicum.playlistmaker.utils.DateUtils.formatTime
 
 object TextUtils {
 
-    fun getHighResArtwork(lowResArtworkUri: String) =
-        lowResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
+    fun getHighResArtwork(midResArtworkUri: String) =
+        midResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
+
+    fun getLowResArtwork(midResArtworkUri: String) =
+        midResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
 
     fun getNumberOfTracksString(numberOfTracks: Int): String =
         when (numberOfTracks % 100) {

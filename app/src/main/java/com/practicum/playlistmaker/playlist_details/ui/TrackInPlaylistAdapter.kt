@@ -4,9 +4,10 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 import com.practicum.playlistmaker.search.ui.TrackViewHolder
 
-class TrackInPlaylistAdapter(private val clickListener: TrackClickListener) : TrackAdapter(clickListener) {
+class TrackInPlaylistAdapter<TrackInPlaylistViewHolder : TrackViewHolder>(private val clickListener: TrackClickListener) :
+    TrackAdapter<TrackInPlaylistViewHolder>(clickListener) {
 
-    override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TrackInPlaylistViewHolder, position: Int) {
         holder.itemView.setOnLongClickListener { clickListener.onTrackLongClickListener(trackList[position]) }
         super.onBindViewHolder(holder, position)
     }

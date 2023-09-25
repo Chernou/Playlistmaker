@@ -1,29 +1,22 @@
-package com.practicum.playlistmaker.search.ui
+package com.practicum.playlistmaker.playlist_details.ui
 
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
+import com.practicum.playlistmaker.search.ui.TrackViewHolder
 import com.practicum.playlistmaker.utils.DateUtils
 
-open class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class TrackInPlaylistViewHolder(itemView: View) : TrackViewHolder(itemView) {
 
-    protected val trackName: TextView = itemView.findViewById(R.id.track_name)
-    protected val artistName: TextView = itemView.findViewById(R.id.artist_name)
-    protected val trackTime: TextView = itemView.findViewById(R.id.track_time)
-    protected val artwork: ImageView = itemView.findViewById(R.id.album_artwork)
-
-    open fun bind(model: Track) {
+    override fun bind(model: Track) {
         trackName.text = model.trackName
         artistName.text = model.artistName
         trackTime.text = DateUtils.formatTime(model.duration)
         Glide.with(artwork)
-            .load(model.midResArtworkUri)
+            .load(model.lowResArtworkUri)
             .fitCenter()
             .apply(
                 RequestOptions

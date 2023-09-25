@@ -30,18 +30,16 @@ import org.koin.core.parameter.parametersOf
 
 class PlaylistDetailsFragment : Fragment() {
 
-    private var playlistId: Int = 0
     private lateinit var binding: FragmentPlaylistDetailsBinding
+    private lateinit var deleteTrackDialog: MaterialAlertDialogBuilder
     private lateinit var onCLickDebounce: (Track) -> Unit
-
+    private var playlistId: Int = 0
     private val viewModel: PlaylistDetailsViewModel by viewModel {
         parametersOf(playlistId)
     }
 
-    private lateinit var deleteTrackDialog: MaterialAlertDialogBuilder
-
     private val trackAdapter =
-        TrackInPlaylistAdapter(object : TrackInPlaylistAdapter.TrackClickListener {
+        TrackInPlaylistAdapter<TrackInPlaylistViewHolder>(object : TrackInPlaylistAdapter.TrackClickListener {
             override fun onTrackLongClickListener(track: Track): Boolean {
                 viewModel.onTrackLongClicked(track)
                 deleteTrackDialog.show()
