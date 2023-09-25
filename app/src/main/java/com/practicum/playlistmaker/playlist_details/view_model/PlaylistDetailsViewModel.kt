@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.playlist_details.view_model
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,8 +11,6 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.utils.DateUtils.getMinutesFromMillis
 import com.practicum.playlistmaker.utils.TextUtils
-import com.practicum.playlistmaker.utils.TextUtils.getNumberOfTracksString
-import com.practicum.playlistmaker.utils.TextUtils.getTotalMinutesString
 import kotlinx.coroutines.launch
 
 class PlaylistDetailsViewModel(
@@ -66,18 +65,17 @@ class PlaylistDetailsViewModel(
         )
     }
 
-    private fun getDuration(): String {
+    private fun getDuration(): Int {
         var durationInMillis = 0
         for (track in tracks) {
             durationInMillis += track.duration
         }
-        return getTotalMinutesString(getMinutesFromMillis(durationInMillis))
+        return getMinutesFromMillis(durationInMillis)
     }
 
-    private fun getNumberOfTracks(): String = getNumberOfTracksString(tracks.size)
-
     private fun renderTracksData() {
-        tracksLiveData.value = TracksInPlaylistData(getDuration(), getNumberOfTracks(), tracks)
+        tracksLiveData.value = TracksInPlaylistData(getDuration(), playlist.numberOfTracks, tracks)
+        Log.d("!@#", playlist.numberOfTracks.toString())
     }
 
     fun onTrackLongClicked(track: Track) {
@@ -89,13 +87,20 @@ class PlaylistDetailsViewModel(
             interactor.deleteTrackFromPl(trackToDelete!!.trackId, playlistId)
         }
         tracks.remove(trackToDelete)
+        playlist = playlist.copy(numberOfTracks = playlist.numberOfTracks - 1)
         trackToDelete = null
         renderTracksData()
     }
 
-    fun onShareClicked() {
+    fun onShareClicked(numberOfTracks: String) {
         if (tracks.isEmpty()) toastLiveData.value = EmptyPlaylistToastState.SHOW
-        else sharingInteractor.shareString(TextUtils.getSharedTracksString(playlist, tracks))
+        else sharingInteractor.shareString(
+            TextUtils.getSharedTracksString(
+                playlist,
+                tracks,
+                numberOfTracks
+            )
+        )
     }
 
     fun onMenuClicked() {

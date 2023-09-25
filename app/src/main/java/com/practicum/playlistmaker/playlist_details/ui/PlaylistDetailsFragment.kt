@@ -120,67 +120,66 @@ class PlaylistDetailsFragment : Fragment() {
                 })
             }
 
-        viewModel.observePlaylistData().observe(viewLifecycleOwner) { data ->
-            renderPlaylistData(data)
-        }
+        viewModel.apply {
+            observePlaylistData().observe(viewLifecycleOwner) { data ->
+                renderPlaylistData(data)
+            }
 
-        viewModel.observeTracksLiveDate().observe(viewLifecycleOwner) { tracks ->
-            renderTrackData(tracks)
-        }
+            observeTracksLiveDate().observe(viewLifecycleOwner) { tracksData ->
+                renderTrackData(tracksData)
+            }
 
-        viewModel.observeToastLiveData().observe(viewLifecycleOwner) { state ->
-            if (state == EmptyPlaylistToastState.SHOW) {
-                showEmptyPlaylistToast()
-                viewModel.toastWasShown()
+            observeToastLiveData().observe(viewLifecycleOwner) { state ->
+                if (state == EmptyPlaylistToastState.SHOW) {
+                    showEmptyPlaylistToast()
+                    viewModel.toastWasShown()
+                }
+            }
+
+            observePlaylistMenuState().observe(viewLifecycleOwner) { state ->
+                if (state == PlaylistMenuState.SHOW) {
+                    menuBottomSheetBehavior.state =
+                        BottomSheetBehavior.STATE_HALF_EXPANDED
+                    tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    viewModel.menuWasShown()
+                }
             }
         }
 
-        viewModel.observePlaylistMenuState().observe(viewLifecycleOwner) { state ->
-            if (state == PlaylistMenuState.SHOW) {
-                menuBottomSheetBehavior.state =
-                    BottomSheetBehavior.STATE_HALF_EXPANDED
-                tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                viewModel.menuWasShown()
+        binding.apply {
+            playlistToolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+
+            tracksInPlRecyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = trackAdapter
+            }
+
+            sharePlaylistImage.setOnClickListener {
+                viewModel.onShareClicked(binding.numberOfTracks.text.toString())
+            }
+
+            menuImage.setOnClickListener {
+                viewModel.onMenuClicked()
+            }
+
+            shareMenuItem.setOnClickListener {
+                viewModel.onShareClicked(binding.numberOfTracks.text.toString())
+            }
+
+            editInfo.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_playlistDetailsFragment_to_playlistEditFragment,
+                    PlaylistEditFragment.createArgs(playlistId)
+                )
+            }
+
+            deletePlaylist.setOnClickListener {
+                deletePlaylistDialog.setMessage(getDialogueTitle())
+                deletePlaylistDialog.show()
             }
         }
-
-        binding.playlistToolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.tracksInPlRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = trackAdapter
-        }
-
-        binding.sharePlaylistImage.setOnClickListener {
-            viewModel.onShareClicked()
-        }
-
-        binding.menuImage.setOnClickListener {
-            viewModel.onMenuClicked()
-        }
-
-        binding.shareMenuItem.setOnClickListener {
-            viewModel.onShareClicked()
-        }
-
-        binding.editInfo.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_playlistDetailsFragment_to_playlistEditFragment,
-                PlaylistEditFragment.createArgs(playlistId)
-            )
-        }
-
-        binding.deletePlaylist.setOnClickListener {
-            deletePlaylistDialog.setMessage(getDialogueTitle())
-            deletePlaylistDialog.show()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
     }
 
     private fun renderPlaylistData(playlistData: PlaylistDetails) {
@@ -194,9 +193,24 @@ class PlaylistDetailsFragment : Fragment() {
 
     private fun renderTrackData(tracksData: TracksInPlaylistData) {
         with(binding) {
-            playlistDuration.text = tracksData.duration
-            numberOfTracks.text = tracksData.numberOfTracks
-            numberOfTracksSmall.text = tracksData.numberOfTracks
+            playlistDuration.text =
+                resources.getQuantityString(
+                    R.plurals.plurals_minutes,
+                    tracksData.duration,
+                    tracksData.duration
+                )
+            numberOfTracks.text =
+                resources.getQuantityString(
+                    R.plurals.plurals_tracks,
+                    tracksData.numberOfTracks,
+                    tracksData.numberOfTracks
+                )
+            numberOfTracksSmall.text =
+                resources.getQuantityString(
+                    R.plurals.plurals_tracks,
+                    tracksData.numberOfTracks,
+                    tracksData.numberOfTracks
+                )
         }
         if (tracksData.tracks.isEmpty()) {
             with(binding) {
@@ -239,6 +253,12 @@ class PlaylistDetailsFragment : Fragment() {
     private fun getDialogueTitle(): String {
         return "${resources.getString(R.string.delete_playlist_question)} \"${binding.playlistName.text}\"?"
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
+
 
     companion object {
         fun createArgs(playlistId: Int): Bundle = bundleOf(PLAYLIST_ARG to playlistId)

@@ -10,35 +10,15 @@ object TextUtils {
         midResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
 
     fun getLowResArtwork(midResArtworkUri: String) =
-        midResArtworkUri.replaceAfterLast('/', "512x512bb.jpg")
+        midResArtworkUri.replaceAfterLast('/', "60x60bb.jpg")
 
-    fun getNumberOfTracksString(numberOfTracks: Int): String =
-        when (numberOfTracks % 100) {
-            in (5..20) -> "$numberOfTracks треков"
-            else -> when (numberOfTracks % 10) {
-                1 -> "$numberOfTracks трек"
-                in (2..4) -> "$numberOfTracks трека"
-                else -> "$numberOfTracks треков"
-            }
-        }
-
-    fun getTotalMinutesString(minutes: Int): String =
-        when (minutes % 100) {
-            in (5..20) -> "$minutes минут"
-            else -> when (minutes % 10) {
-                1 -> "$minutes минута"
-                in (2..4) -> "$minutes минуты"
-                else -> "$minutes минут"
-            }
-        }
-
-    fun getSharedTracksString(playlist: Playlist, tracks: ArrayList<Track>): String {
+    fun getSharedTracksString(playlist: Playlist, tracks: ArrayList<Track>, numberOfTracks: String): String {
         val tracksString = buildString {
             append(playlist.name)
             appendLine()
             append(playlist.description)
             appendLine()
-            append(getNumberOfTracksString(tracks.size))
+            append(numberOfTracks)
             for (i in 0 until tracks.size) {
                 appendLine()
                 append("${i + 1}. ${tracks[i].artistName} - ${tracks[i].trackName} ${

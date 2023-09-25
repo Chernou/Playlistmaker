@@ -21,7 +21,6 @@ import com.practicum.playlistmaker.playlist_creation.data.db.entity.TrackInPlEnt
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
-
     abstract fun favoritesDao(): FavoritesDao
     abstract fun playlistsDao(): PlaylistsDao
     abstract fun tracksInPlDao(): TracksInPlDao

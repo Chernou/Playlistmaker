@@ -54,7 +54,7 @@ class FavoritesFragment : Fragment() {
             render(it)
         }
 
-        onClickDebounce = debounce<Track>(
+        onClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false
