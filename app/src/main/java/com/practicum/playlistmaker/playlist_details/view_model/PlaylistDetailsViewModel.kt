@@ -111,11 +111,11 @@ class PlaylistDetailsViewModel(
         toastLiveData.value = EmptyPlaylistToastState.NONE
     }
 
-    fun onPlaylistDeleteConfirmed() {
+    suspend fun onPlaylistDeleteConfirmed() {
         viewModelScope.launch {
             playlistInteractor.deletePlaylist(playlistId)
-            filesInteractor.deleteFromPrivateStorage(playlist.coverUri)
         }
+        filesInteractor.deleteFromPrivateStorage(playlist.coverUri)
     }
 
     fun menuWasShown() {

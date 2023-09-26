@@ -25,6 +25,7 @@ import com.practicum.playlistmaker.playlist_details.view_model.TracksInPlaylistD
 import com.practicum.playlistmaker.playlist_edit.ui.PlaylistEditFragment
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.debounce
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -74,8 +75,10 @@ class PlaylistDetailsFragment : Fragment() {
                 })
                 .setNegativeButton(resources.getString(R.string.no)) { _, _ ->
                 }.setPositiveButton(resources.getString(R.string.yes)) { _, _ ->
-                    viewModel.onPlaylistDeleteConfirmed()
-                    findNavController().navigateUp()
+                    lifecycleScope.launch {
+                        viewModel.onPlaylistDeleteConfirmed()
+                        findNavController().navigateUp()
+                    }
                 }
 
         deleteTrackDialog =

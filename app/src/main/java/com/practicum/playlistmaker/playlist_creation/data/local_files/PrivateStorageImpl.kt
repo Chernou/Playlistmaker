@@ -11,6 +11,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
 
+
 class PrivateStorageImpl(private val context: Context) : PrivateStorage {
 
     override suspend fun saveImage(uri: Uri): URI = withContext(Dispatchers.IO) {
@@ -31,7 +32,8 @@ class PrivateStorageImpl(private val context: Context) : PrivateStorage {
     }
 
     override suspend fun deleteFromPrivateStorage(coverUri: String) {
-        //todo implement
+        val file = File((Uri.parse(coverUri)).path)
+        file.delete()
     }
 
     companion object {
