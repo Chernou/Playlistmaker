@@ -40,7 +40,7 @@ class PlaylistDetailsFragment : Fragment() {
     }
 
     private val trackAdapter =
-        TrackInPlaylistAdapter<TrackInPlaylistViewHolder>(object :
+        TrackInPlaylistAdapter(object :
             TrackInPlaylistAdapter.TrackClickListener {
             override fun onTrackLongClickListener(track: Track): Boolean {
                 viewModel.onTrackLongClicked(track)
