@@ -6,6 +6,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackAdapter
 
+
 class TrackInPlaylistAdapter(private val clickListener: TrackClickListener) :
     TrackAdapter<TrackInPlaylistViewHolder>(clickListener) {
 

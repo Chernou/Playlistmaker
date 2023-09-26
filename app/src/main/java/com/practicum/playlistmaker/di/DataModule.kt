@@ -33,6 +33,11 @@ val dataModule = module {
     factoryOf(::SearchRequest)
     singleOf(::PrivateStorageImpl) bind PrivateStorage::class
 
+    single {
+        val connectivityManager = androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+    }
+
     single<ItunesService> {
         Retrofit.Builder()
             .baseUrl(RetrofitNetworkClient.BASE_URL)
@@ -44,10 +49,6 @@ val dataModule = module {
     single {
         androidContext()
             .getSharedPreferences("shared_preference", Context.MODE_PRIVATE)
-    }
-
-    single {
-        androidContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
     single {
