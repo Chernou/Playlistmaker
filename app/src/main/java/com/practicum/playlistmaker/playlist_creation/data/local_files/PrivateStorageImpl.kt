@@ -5,35 +5,40 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
-
+import kotlin.coroutines.CoroutineContext
 
 class PrivateStorageImpl(private val context: Context) : PrivateStorage {
 
-    override suspend fun saveImage(uri: Uri): URI = withContext(Dispatchers.IO) {
-        val filePath = File(
-            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-            PLAYLISTS_COVERS_FOLDER
-        )
-        if (!filePath.exists()) {
-            filePath.mkdirs()
+    override suspend fun saveImage(coroutineContext: CoroutineContext, uri: Uri): URI =
+        withContext(coroutineContext) {
+            val filePath = File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                PLAYLISTS_COVERS_FOLDER
+            )
+            if (!filePath.exists()) {
+                filePath.mkdirs()
+            }
+            val file = File(filePath, uri.toString().substringAfterLast('/'))
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val outputStream = FileOutputStream(file)
+            BitmapFactory
+                .decodeStream(inputStream)
+                .compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, outputStream)
+            file.toURI()
         }
-        val file = File(filePath, uri.toString().substringAfterLast('/'))
-        val inputStream = context.contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, outputStream)
-        file.toURI()
-    }
 
-    override suspend fun deleteFromPrivateStorage(coverUri: String) {
-        val file = File((Uri.parse(coverUri)).path)
-        file.delete()
+    override suspend fun deleteFromPrivateStorage(
+        coroutineContext: CoroutineContext,
+        coverUri: String
+    ) {
+        withContext(coroutineContext) {
+            val file = File((Uri.parse(coverUri)).path)
+            file.delete()
+        }
     }
 
     companion object {

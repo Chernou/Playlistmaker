@@ -8,12 +8,12 @@ import com.practicum.playlistmaker.playlist_creation.data.db.entity.PlaylistTrac
 import com.practicum.playlistmaker.playlist_creation.domain.api.db.PlaylistsRepository
 import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import kotlin.coroutines.CoroutineContext
 
 class PlaylistsRepositoryImpl(
     private val database: AppDatabase,
@@ -21,13 +21,13 @@ class PlaylistsRepositoryImpl(
     private val trackDbConverter: TrackDbConverter
 ) : PlaylistsRepository {
 
-    override suspend fun addPlaylist(playlist: Playlist) {
-        withContext(Dispatchers.IO) {
+    override suspend fun addPlaylist(coroutineContext: CoroutineContext, playlist: Playlist) {
+        withContext(coroutineContext) {
             database.playlistsDao().insertPlaylist(playlistDbConverter.map(playlist))
         }
     }
 
-    override fun getPlaylists(): Flow<List<Playlist>> = flow {
+    override fun getPlaylists(coroutineContext: CoroutineContext): Flow<List<Playlist>> = flow {
         val playlists = convertFromPlaylistEntity(database.playlistsDao().getPlaylists())
         for (playlist in playlists) {
             playlist.tracks.addAll(
@@ -37,21 +37,34 @@ class PlaylistsRepositoryImpl(
             )
         }
         emit(playlists)
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(coroutineContext)
 
-    override suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
-        withContext(Dispatchers.IO) {
+    override suspend fun addTrackToPlaylist(
+        coroutineContext: CoroutineContext,
+        track: Track,
+        playlist: Playlist
+    ) {
+        withContext(coroutineContext) {
             database.playlistsDao().updateNumberOfTracks(
                 playlist.playlistId,
                 playlist.numberOfTracks
             )
             database.tracksInPlDao().addTrackToPlaylist(trackDbConverter.map(track))
             database.playlistsTracksCrossRefDao()
-                .addTrackToPlaylist(PlaylistTracksCrossRef(track.trackId, playlist.playlistId, Calendar.getInstance().time.time))
+                .addTrackToPlaylist(
+                    PlaylistTracksCrossRef(
+                        track.trackId,
+                        playlist.playlistId,
+                        Calendar.getInstance().time.time
+                    )
+                )
         }
     }
 
-    override suspend fun getPlaylist(playlistId: Int): Playlist = withContext(Dispatchers.IO) {
+    override suspend fun getPlaylist(
+        coroutineContext: CoroutineContext,
+        playlistId: Int
+    ): Playlist = withContext(coroutineContext) {
         playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))
     }
 

@@ -6,8 +6,8 @@ import com.practicum.playlistmaker.playlist_details.domain.api.PlaylistRepositor
 import com.practicum.playlistmaker.playlist_creation.data.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 class PlaylistRepositoryImpl(
     private val database: AppDatabase,
@@ -15,8 +15,11 @@ class PlaylistRepositoryImpl(
     private val playlistDbConverter: PlaylistDbConverter
 ) : PlaylistRepository {
 
-    override suspend fun getTracksInPlaylist(playlist: Playlist): List<Track> =
-        withContext(Dispatchers.IO) {
+    override suspend fun getTracksInPlaylist(
+        coroutineContext: CoroutineContext,
+        playlist: Playlist
+    ): List<Track> =
+        withContext(coroutineContext) {
             val tracksIds =
                 database.playlistsTracksCrossRefDao().getTracksInPlaylist(playlist.playlistId)
                     .sortedByDescending { it.addingTime }.map { crossRef -> crossRef.trackId }
@@ -24,21 +27,29 @@ class PlaylistRepositoryImpl(
                 .map { trackInPlEntity ->
                     trackDbConverter.map(
                         trackInPlEntity,
-                        checkIsFavorite(trackInPlEntity.trackId)
+                        checkIsFavorite(coroutineContext, trackInPlEntity.trackId)
                     )
                 }
         }
 
-    private fun checkIsFavorite(trackId: Int): Boolean {
-        return database.favoritesDao().isInFavorite(trackId)
-    }
+    private suspend fun checkIsFavorite(coroutineContext: CoroutineContext, trackId: Int): Boolean =
+        withContext(coroutineContext) {
+            database.favoritesDao().isInFavorite(trackId)
+        }
 
-    override suspend fun getPlaylist(playlistId: Int): Playlist = withContext(Dispatchers.IO) {
+    override suspend fun getPlaylist(
+        coroutineContext: CoroutineContext,
+        playlistId: Int
+    ): Playlist = withContext(coroutineContext) {
         playlistDbConverter.map(database.playlistsDao().getPlaylist(playlistId))
     }
 
-    override suspend fun deleteTrackFromPlaylist(trackId: Int, playlistId: Int) {
-        withContext(Dispatchers.IO) {
+    override suspend fun deleteTrackFromPlaylist(
+        coroutineContext: CoroutineContext,
+        trackId: Int,
+        playlistId: Int
+    ) {
+        withContext(coroutineContext) {
             database.playlistsTracksCrossRefDao()
                 .deleteTrack(trackId, playlistId)
             val updatedNumberOfTracks = database.playlistsDao().getNumberOfTracks(playlistId) - 1
@@ -47,8 +58,8 @@ class PlaylistRepositoryImpl(
         }
     }
 
-    override suspend fun deletePlaylist(playlistId: Int) {
-        withContext(Dispatchers.IO) {
+    override suspend fun deletePlaylist(coroutineContext: CoroutineContext, playlistId: Int) {
+        withContext(coroutineContext) {
             database.playlistsDao().deletePlaylist(playlistId)
             val tracksInPlaylist =
                 database.playlistsTracksCrossRefDao().getTracksInPlaylist(playlistId)
