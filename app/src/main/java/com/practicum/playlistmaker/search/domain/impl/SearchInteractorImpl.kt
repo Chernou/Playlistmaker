@@ -4,7 +4,6 @@ import com.practicum.playlistmaker.search.data.api.SearchRepository
 import com.practicum.playlistmaker.search.domain.api.SearchInteractor
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.Resource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -13,7 +12,7 @@ class SearchInteractorImpl(
 ) : SearchInteractor {
 
     override fun searchTracks(query: String): Flow<Pair<List<Track>?, String?>> {
-        return repository.searchTracks(Dispatchers.IO, query).map { result ->
+        return repository.searchTracks(query).map { result ->
             when (result) {
                 is Resource.Success -> {
                     Pair(result.data!!, null)
@@ -26,7 +25,7 @@ class SearchInteractorImpl(
         }
     }
 
-    override fun getSearchHistory() = repository.getSearchHistory(Dispatchers.IO)
+    override fun getSearchHistory() = repository.getSearchHistory()
 
     override fun addTrackToSearchHistory(track: Track) {
         repository.addTrackToSearchHistory(track)

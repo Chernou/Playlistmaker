@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
@@ -105,8 +106,8 @@ class PlayerFragment : Fragment() {
         val artworkUriHighRes = track.highResArtworkUri
         Glide.with(binding.coverImage)
             .load(artworkUriHighRes)
-            .centerCrop()
             .transform(
+                CenterCrop(),
                 RoundedCorners(
                     binding.coverImage.resources
                         .getDimensionPixelSize(R.dimen.rounded_corners_album)

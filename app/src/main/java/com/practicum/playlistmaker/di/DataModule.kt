@@ -25,11 +25,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
-    singleOf(::PlayerImpl) bind Player::class
+    factoryOf(::PlayerImpl) bind Player::class
     singleOf(::LocalStorageImpl) bind LocalStorage::class
     singleOf(::RetrofitNetworkClient) bind NetworkClient::class
-    singleOf(::Gson)
-    singleOf(::MediaPlayer)
+    factoryOf(::Gson)
+    factoryOf(::MediaPlayer)
     factoryOf(::SearchRequest)
     singleOf(::PrivateStorageImpl) bind PrivateStorage::class
 

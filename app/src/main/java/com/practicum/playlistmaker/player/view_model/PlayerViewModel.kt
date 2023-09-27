@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils.formatTime
 import com.practicum.playlistmaker.utils.ResourceProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -82,7 +83,7 @@ class PlayerViewModel(
 
     fun onFavoriteClicked() {
         isFavoriteLiveData.value = !track.isFavorite
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (track.isFavorite) {
                 favoritesInteractor.deleteFavorite(track)
                 track.isFavorite = false
@@ -94,7 +95,7 @@ class PlayerViewModel(
     }
 
     fun addToPlaylistClicked() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             playlistsDbInteractor.getPlaylists().collect {
                 playlistsLiveData.postValue(PlaylistsInPlayerState.DisplayPlaylists(it))
             }
@@ -105,7 +106,7 @@ class PlayerViewModel(
         if (playlist.tracks.contains(track.trackId)) {
             showToast("${resourceProvider.getString(R.string.track_is_in_pl_already)} ${playlist.name}")
         } else {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 playlist.tracks.add(track.trackId)
                 val updatedPlaylist = playlist.copy(numberOfTracks = playlist.numberOfTracks + 1)
                 playlistsDbInteractor.addTrackToPlaylist(track, updatedPlaylist)

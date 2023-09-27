@@ -11,7 +11,9 @@ import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.sharing.domain.api.SharingInteractor
 import com.practicum.playlistmaker.utils.DateUtils.getMinutesFromMillis
 import com.practicum.playlistmaker.utils.TextUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PlaylistDetailsViewModel(
     private val playlistId: Int,
@@ -43,19 +45,19 @@ class PlaylistDetailsViewModel(
 
     private fun renderScreen() {
         viewModelScope.launch {
-            getPlaylistById()
-            initTrackList()
+            playlist = getPlaylistById()
+            tracks.addAll(initTrackList())
             renderPlaylistData()
             renderTracksData()
         }
     }
 
-    private suspend fun getPlaylistById() {
-        playlist = playlistInteractor.getPlaylist(playlistId)
+    private suspend fun getPlaylistById(): Playlist = withContext(Dispatchers.IO) {
+        playlistInteractor.getPlaylist(playlistId)
     }
 
-    private suspend fun initTrackList() {
-        tracks.addAll(playlistInteractor.getTracksInPlaylist(playlist))
+    private suspend fun initTrackList(): List<Track> = withContext(Dispatchers.IO) {
+        playlistInteractor.getTracksInPlaylist(playlist)
     }
 
     private fun renderPlaylistData() {
@@ -84,12 +86,21 @@ class PlaylistDetailsViewModel(
 
     fun onTrackDeleteConfirmed() {
         viewModelScope.launch {
-            playlistInteractor.deleteTrackFromPlaylist(trackToDelete!!.trackId, playlistId)
+            deleteTrackFromPlaylist()
+            tracks.remove(trackToDelete)
+            playlist = playlist.copy(numberOfTracks = playlist.numberOfTracks - 1)
+            trackToDelete = null
+            renderTracksData()
         }
-        tracks.remove(trackToDelete)
-        playlist = playlist.copy(numberOfTracks = playlist.numberOfTracks - 1)
-        trackToDelete = null
-        renderTracksData()
+    }
+
+    private fun deleteTrackFromPlaylist() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (trackToDelete != null) playlistInteractor.deleteTrackFromPlaylist(
+                trackToDelete!!.trackId,
+                playlistId
+            )
+        }
     }
 
     fun onShareClicked(numberOfTracks: String) {
@@ -112,10 +123,10 @@ class PlaylistDetailsViewModel(
     }
 
     suspend fun onPlaylistDeleteConfirmed() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             playlistInteractor.deletePlaylist(playlistId)
+            filesInteractor.deleteFromPrivateStorage(playlist.coverUri)
         }
-        filesInteractor.deleteFromPrivateStorage(playlist.coverUri)
     }
 
     fun menuWasShown() {
@@ -124,7 +135,7 @@ class PlaylistDetailsViewModel(
 
     fun onResume() {
         viewModelScope.launch {
-            getPlaylistById()
+            playlist = getPlaylistById()
             renderPlaylistData()
         }
     }

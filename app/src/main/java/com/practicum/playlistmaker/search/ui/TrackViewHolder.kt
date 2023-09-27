@@ -5,8 +5,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.utils.DateUtils
@@ -24,16 +24,12 @@ open class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         trackTime.text = DateUtils.formatTime(model.duration)
         Glide.with(artwork)
             .load(model.midResArtworkUri)
-            .fitCenter()
-            .apply(
-                RequestOptions
-                    .bitmapTransform(
-                        RoundedCorners(
-                            itemView
-                                .resources
-                                .getDimensionPixelSize(R.dimen.rounded_corners_album_preview)
-                        )
-                    )
+            .transform(
+                FitCenter(),
+                RoundedCorners(
+                    itemView.resources
+                        .getDimensionPixelSize(R.dimen.rounded_corners_album_preview)
+                )
             )
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(artwork)

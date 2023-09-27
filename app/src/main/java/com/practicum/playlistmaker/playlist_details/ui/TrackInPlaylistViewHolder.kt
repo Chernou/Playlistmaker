@@ -2,8 +2,8 @@ package com.practicum.playlistmaker.playlist_details.ui
 
 import android.view.View
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.search.domain.model.Track
 import com.practicum.playlistmaker.search.ui.TrackViewHolder
@@ -17,16 +17,12 @@ class TrackInPlaylistViewHolder(itemView: View) : TrackViewHolder(itemView) {
         trackTime.text = DateUtils.formatTime(model.duration)
         Glide.with(artwork)
             .load(model.lowResArtworkUri)
-            .fitCenter()
-            .apply(
-                RequestOptions
-                    .bitmapTransform(
-                        RoundedCorners(
-                            itemView
-                                .resources
-                                .getDimensionPixelSize(R.dimen.rounded_corners_album_preview)
-                        )
-                    )
+            .transform(
+                FitCenter(),
+                RoundedCorners(
+                    itemView.resources
+                        .getDimensionPixelSize(R.dimen.rounded_corners_album_preview)
+                )
             )
             .placeholder(R.drawable.ic_track_placeholder_small)
             .into(artwork)

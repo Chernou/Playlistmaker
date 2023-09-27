@@ -69,7 +69,6 @@ class PlaylistDetailsFragment : Fragment() {
             MaterialAlertDialogBuilder(requireContext(), R.style.AppTheme_MyMaterialAlertDialog)
                 .setMessage(buildString {
                     append(resources.getString(R.string.want_to_delete_playlist))
-                    append("binding.playlistName.text")
                     append(binding.playlistName.text)
                     append("?")
                 })
@@ -202,18 +201,13 @@ class PlaylistDetailsFragment : Fragment() {
                     tracksData.duration,
                     tracksData.duration
                 )
-            numberOfTracks.text =
-                resources.getQuantityString(
-                    R.plurals.plurals_tracks,
-                    tracksData.numberOfTracks,
-                    tracksData.numberOfTracks
-                )
-            numberOfTracksSmall.text =
-                resources.getQuantityString(
-                    R.plurals.plurals_tracks,
-                    tracksData.numberOfTracks,
-                    tracksData.numberOfTracks
-                )
+            val numberOfTracksString = resources.getQuantityString(
+                R.plurals.plurals_tracks,
+                tracksData.numberOfTracks,
+                tracksData.numberOfTracks
+            )
+            numberOfTracks.text = numberOfTracksString
+            numberOfTracksSmall.text = numberOfTracksString
         }
         if (tracksData.tracks.isEmpty()) {
             with(binding) {
@@ -261,7 +255,6 @@ class PlaylistDetailsFragment : Fragment() {
         super.onResume()
         viewModel.onResume()
     }
-
 
     companion object {
         fun createArgs(playlistId: Int): Bundle = bundleOf(PLAYLIST_ARG to playlistId)

@@ -4,23 +4,23 @@ import android.net.NetworkCapabilities
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.dto.Response
 import com.practicum.playlistmaker.search.data.dto.SearchRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
-import kotlin.coroutines.CoroutineContext
 
 class RetrofitNetworkClient(
     private val itunesService: ItunesService,
     private val capabilities: NetworkCapabilities?
 ) : NetworkClient, KoinComponent {
 
-    override suspend fun doRequest(coroutineContext: CoroutineContext, dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
         if (!isConnected()) {
             return Response().apply { resultCode = NO_CONNECTIVITY_ERROR }
         }
         if (dto !is SearchRequest) {
             return Response().apply { resultCode = BAD_REQUEST_ERROR }
         }
-        return withContext(coroutineContext) {
+        return withContext(Dispatchers.IO) {
             try {
                 val response = itunesService.search(dto.query)
                 response.apply { resultCode = SUCCESSFUL_REQUEST }

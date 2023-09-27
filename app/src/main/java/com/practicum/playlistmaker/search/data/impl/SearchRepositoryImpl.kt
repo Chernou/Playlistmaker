@@ -12,13 +12,10 @@ import com.practicum.playlistmaker.utils.DateUtils.getYear
 import com.practicum.playlistmaker.utils.Resource
 import com.practicum.playlistmaker.utils.ResourceProvider
 import com.practicum.playlistmaker.utils.TextUtils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import org.koin.core.component.KoinComponent
 import org.koin.core.parameter.parametersOf
-import kotlin.coroutines.CoroutineContext
 
 class SearchRepositoryImpl(
     private val localStorage: LocalStorage,
@@ -28,13 +25,12 @@ class SearchRepositoryImpl(
 ) : SearchRepository, KoinComponent {
 
     override fun searchTracks(
-        coroutineContext: CoroutineContext,
         query: String
     ): Flow<Resource<List<Track>>> = flow {
         val searchRequest: SearchRequest = getKoin().get {
             parametersOf(query)
         }
-        val response = networkClient.doRequest(Dispatchers.IO, searchRequest)
+        val response = networkClient.doRequest(searchRequest)
         when (response.resultCode) {
             NO_CONNECTIVITY_ERROR -> {
                 emit(Resource.Error(resourceProvider.getString(R.string.no_internet_connection)))
@@ -66,15 +62,15 @@ class SearchRepositoryImpl(
                 emit(Resource.Error(resourceProvider.getString(R.string.server_error)))
             }
         }
-    }.flowOn(coroutineContext)
+    }
 
-    override fun getSearchHistory(coroutineContext: CoroutineContext): Flow<List<Track>> = flow {
+    override fun getSearchHistory(): Flow<List<Track>> = flow {
         val searchHistory = localStorage.getSearchHistory()
         val favoritesIds = appDatabase.favoritesDao().getFavoritesIds()
         emit(searchHistory.map {
             it.copy(isFavorite = favoritesIds.contains(it.trackId))
         })
-    }.flowOn(coroutineContext)
+    }
 
     override fun clearSearchHistory() {
         localStorage.clearSearchHistory()

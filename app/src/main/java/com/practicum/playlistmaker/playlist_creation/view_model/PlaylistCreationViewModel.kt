@@ -12,6 +12,7 @@ import com.markodevcic.peko.PermissionResult
 import com.practicum.playlistmaker.playlist_creation.domain.api.db.PlaylistsDbInteractor
 import com.practicum.playlistmaker.playlist_creation.domain.api.local_files.PlaylistsFilesInteractor
 import com.practicum.playlistmaker.playlist_creation.domain.model.Playlist
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 open class PlaylistCreationViewModel(
@@ -72,7 +73,7 @@ open class PlaylistCreationViewModel(
     }
 
     open fun onCreatePlClicked() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (!coverUri.isNullOrEmpty()) {
                 coverUri = filesInteractor.addToPrivateStorage(Uri.parse(coverUri)).toString()
             }
@@ -83,6 +84,8 @@ open class PlaylistCreationViewModel(
                     coverUri = coverUri ?: ""
                 )
             )
+        }
+        viewModelScope.launch {
             screenStateLiveData.value = PlaylistCreationState.PLAYLIST_CREATED
         }
     }
